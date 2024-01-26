@@ -6,97 +6,42 @@ using UnityEngine.UI;
 
 public class ResidentHealth : MonoBehaviour
 {
-    public GameObject player;
-    private GameObject canvas;
+    [Header("Stats")]
+    public ResidentStats residentStats;
 
-    [SerializeField]
-    public int maxHealth = 100;
+    [Header("Other")]
+    public Image HealthBar;
 
-    public int currentHealth;
-
-    public event Action<float> onHleathPctChanged = delegate { };
-    public Item.ItemType[] itemType;
-    public int maxDrops;
-    private ResidentStats residentStats;
-
-    private void Awake()
+    private void Start()
     {
-        canvas = transform.Find("Stats").gameObject;
-        residentStats = transform.GetComponent<ResidentStats>();
-        //player = GameObject.Find("Main Character");
-
-        canvas.SetActive(false);
-    }
-    // Start is called before the first frame update
-    private void OnEnable()
-    {
-        currentHealth = residentStats.Stats[0];
-    }
-
-    public void ModifyHealth(int amount)
-    {
-        currentHealth += amount;
-        residentStats.Stats[0] += amount;
-
-        float currentHealthPct = (float)currentHealth / (float)maxHealth;
-        onHleathPctChanged(currentHealthPct);
+        HealthBar.fillAmount = (residentStats.Stats[0] / 100.0f);
     }
 
     private void Update()
     {
-        if (Vector3.Distance(player.transform.position, transform.position) < 15)
-        {
-            canvas.GetComponent<CanvasGroup>().alpha = 1;
-            canvas.SetActive(true);
-        }
-        else
-        {
-            CanvasAlphaChangeOverTime(canvas, 2f);
-        }
-
-        if (currentHealth < 0)
-        {
-            if (maxDrops != 0)
-            {
-                ItemDropByType();
-            }
-            Destroy(gameObject);
-        }
-
+        if (HealthBar.fillAmount == 0) Destroy(gameObject);
     }
 
-    public string FixName(string name)
+    private IEnumerator changeToPct(float pct)
     {
-        int strSet = name.IndexOf("(");
+        residentStats.Stats[0] += (int)pct; //stats[0] because its the health bar
 
-        return name.Substring(0, strSet);
+        pct /= 100.0f;
+        float preChangedPct = HealthBar.fillAmount;
+        float elapsed = 0f;
+        float amount = preChangedPct + pct;
+
+        while (elapsed < 0.5f)
+        {
+            elapsed += Time.deltaTime;
+            HealthBar.fillAmount = Mathf.Lerp(preChangedPct, amount, elapsed / 0.5f);
+            yield return null;
+        }
+        HealthBar.fillAmount = amount;
     }
 
-    public void ItemDropByType()
+    public void ChangeValue(float pct)
     {
-        int num;
-        for (int i = 0; i < itemType.Length; i++)
-        {
-            num = UnityEngine.Random.Range(1, maxDrops);
-            ItemWorld.SpawnItemWorld(transform.position + new Vector3(0, 5, 0), new Item { itemType = itemType[i], amount = num });
-        }
-
-        if (transform.GetComponent<ParticleHolder>() != null)
-        {
-            ParticleIndicator indicatorParticle = Instantiate(transform.GetComponent<ParticleHolder>().ParticleBreak, transform.position + new Vector3(0, 5, 0), Quaternion.identity).GetComponent<ParticleIndicator>();
-        }
-    }
-
-    public void CanvasAlphaChangeOverTime(GameObject canvas, float speed)
-    {
-        float alphaColor = canvas.GetComponent<CanvasGroup>().alpha;
-
-        alphaColor -= Time.deltaTime * speed;
-        canvas.GetComponent<CanvasGroup>().alpha = alphaColor;
-
-        if (alphaColor <= 0)
-        {
-            canvas.SetActive(false);
-        }
+        StartCoroutine(changeToPct(pct));
     }
 }

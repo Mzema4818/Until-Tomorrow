@@ -5,21 +5,32 @@ using UnityEngine.AI;
 
 public class ResidentWander : MonoBehaviour
 {
+    [Header("GameObjects")]
+    public LightingManager time;
+    public GameObject home;
+    public GameObject job;
+    public GameObject player;
+
+    [Header("NavMeshStuff")]
     public NavMeshAgent agent;
     Animator animator;
+    public NavMeshPath lastAgentPath;
+    public Vector3 lastAgentVelocity;
 
+    [Header("Resident Movement")]
     [Range(0, 100)] public float speed;
     public float realSpeed;
     [Range(0, 500)] public float walkRadius;
-    private bool shouldWander;
-    public bool shouldRun;
-    public bool getOffBoat;
-    public bool BeingTalkedTo;
-    public ExportPrisoners exportPrisoners;
-    public GameObject player;
 
-    public Vector3 lastAgentVelocity;
-    public NavMeshPath lastAgentPath;
+    [Header("Conditions")]
+    public bool shouldWander;
+
+    public bool shouldGoHome;
+    public bool shouldWork;
+    public bool shouldDoNothing;
+
+    public bool shouldRun;
+    public bool BeingTalkedTo;
 
     private void Awake()
     {
@@ -31,23 +42,15 @@ public class ResidentWander : MonoBehaviour
         shouldWander = true;
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
-        if(agent != null && getOffBoat)
-        {
-            agent.speed = speed;
-            agent.SetDestination(RandomNavMeshLocation());
-        }
+        agent.speed = realSpeed;
+        speed = agent.speed;
     }
 
     public void Update()
     {
-        if(agent != null && agent.remainingDistance <= agent.stoppingDistance && shouldWander && !getOffBoat)
+        if (agent != null && agent.remainingDistance <= agent.stoppingDistance && shouldWander)
         {
             StartCoroutine(WaitForWander());
-        }
-
-        if (agent != null && agent.remainingDistance <= agent.stoppingDistance && getOffBoat)
-        {
-            agent.SetDestination(RandomNavMeshLocation());
         }
 
         //animator.SetFloat("velocity X", Mathf.Clamp(agent.velocity.magnitude,0, 0.5f));
@@ -65,6 +68,54 @@ public class ResidentWander : MonoBehaviour
             pause();
             LookAtPlayer();
         }
+        else
+        {
+            //Go to places
+            if (shouldWork)
+            {
+                agent.SetDestination(job.transform.position);
+                shouldWork = false;
+            }
+
+            if (shouldGoHome)
+            {
+                agent.SetDestination(home.transform.position);
+                shouldGoHome = false;
+            }
+
+            //telling resident where to go
+            if (time.workTime && job != null && !shouldWork)
+            {
+                StopAllCoroutines();
+                shouldWork = true;
+                shouldDoNothing = false;
+                shouldGoHome = false;
+                shouldWander = false;
+            }
+
+            if (time.sleepTime && home != null && !shouldGoHome)
+            {
+                StopAllCoroutines();
+                shouldWork = false;
+                shouldDoNothing = false;
+                shouldGoHome = true;
+                shouldWander = false;
+            }
+
+            if (time.wanderTime && !shouldDoNothing)
+            {
+                StopAllCoroutines();
+                shouldWork = false;
+                shouldDoNothing = true;
+                shouldGoHome = false;
+                shouldWander = true;
+                agent.SetDestination(RandomNavMeshLocation());
+            }
+        }
+
+        //disapear at home
+        //if (home != null) Disappear(home, time.sleepTime);
+        //if (job != null) Disappear(job, time.workTime);
     }
 
     public Vector3 RandomNavMeshLocation()
@@ -89,18 +140,6 @@ public class ResidentWander : MonoBehaviour
         agent.SetDestination(RandomNavMeshLocation());
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.transform.name == "Terrain" && exportPrisoners != null && getOffBoat)
-        {
-            //print(collision.transform.name);
-            speed = realSpeed;
-            agent.speed = realSpeed;
-            exportPrisoners.prisonersExported++;
-            getOffBoat = false;
-        }
-    }
-
     void pause()
     {
         lastAgentVelocity = agent.velocity;
@@ -122,4 +161,40 @@ public class ResidentWander : MonoBehaviour
         var rotation = Quaternion.LookRotation(lookPos);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime);
     }
+
+    public void SetDestination()
+    {
+        agent.SetDestination(RandomNavMeshLocation());
+    }
+
+    public void ResetSchedule()
+    {
+        shouldWork = false;
+        shouldDoNothing = false;
+        shouldGoHome = false;
+        shouldWander = true;
+        try { agent.SetDestination(RandomNavMeshLocation()); } catch { };
+    }
+
+
+    /*private void Disappear(GameObject location, bool time)
+    {
+        if (time && !BeingTalkedTo)
+        {
+            if (Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
+            {
+                if (location.GetComponent<Job>() != null)
+                {
+                    location.GetComponent<Job>().WorkersWorking++;
+                    //location.GetComponent<Job>().SendWorkers();
+                    location.GetComponent<Job>().StatMultiplier += transform.GetComponent<ResidentStats>().Stats[3];
+                    location.GetComponent<Job>().SendStats();
+                }
+
+                if (location.GetComponent<Tent>() != null && !location.GetComponent<Tent>().enableResidents) location.GetComponent<Tent>().enableResidents = true;
+                if (location.GetComponent<Job>() != null && !location.GetComponent<Job>().enableWorkers) location.GetComponent<Job>().enableWorkers = true;
+                gameObject.SetActive(false);
+            }
+        }
+    }*/
 }

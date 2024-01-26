@@ -11,30 +11,4 @@ public class NameBar : MonoBehaviour
     {
         canvas = transform.Find("Name").gameObject;
     }
-
-    private void Update()
-    {
-        if (Vector3.Distance(player.transform.position, transform.position) < 15)
-        {
-            canvas.GetComponent<CanvasGroup>().alpha = 1;
-            canvas.SetActive(true);
-        }
-        else
-        {
-            CanvasAlphaChangeOverTime(canvas, 2f);
-        }
-    }
-
-    public void CanvasAlphaChangeOverTime(GameObject canvas, float speed)
-    {
-        float alphaColor = canvas.GetComponent<CanvasGroup>().alpha;
-
-        alphaColor -= Time.deltaTime * speed;
-        canvas.GetComponent<CanvasGroup>().alpha = alphaColor;
-
-        if (alphaColor <= 0)
-        {
-            canvas.SetActive(false);
-        }
-    }
 }

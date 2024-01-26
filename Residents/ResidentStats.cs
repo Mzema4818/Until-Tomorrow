@@ -9,6 +9,8 @@ public class ResidentStats : MonoBehaviour
     public int[] Stats;
     public bool joinedTown;
     public Item.ItemType FavoriteItem;
+    public GameObject textBox;
+    public GameObject schedule;
 
     private string ResidentName;
     public TextMeshProUGUI namebar;
@@ -19,8 +21,10 @@ public class ResidentStats : MonoBehaviour
         resident = new Resident {residentType = GetTypeByName()};
         Stats = resident.GetStats();
         FavoriteItem = GetFavoriteItem(Random.Range(1, 7));
-        transform.GetComponent<StatBar>().stats = Stats;
-        transform.GetComponent<StatBar>().UpdateStats();
+        //transform.GetComponent<StatBar>().stats = Stats;
+        //transform.GetComponent<StatBar>().UpdateStats();
+        textBox = transform.Find("Actions").gameObject;
+        schedule = transform.Find("Schedule").gameObject;
     }
 
     private void Start()

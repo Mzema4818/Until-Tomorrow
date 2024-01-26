@@ -1,63 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class StatBar : MonoBehaviour
 {
-    public int[] stats;
-    public GameObject starbar;
+    public ResidentStats residentStats;
+    public GameObject statBar;
+    public GameObject jobName;
 
-    public bool test;
-    [SerializeField]
-    private int maxStats = 20;
-
-    public event Action<float> onHleathPctChanged = delegate { };
-
-    private void Awake()
+    private void Start()
     {
-        starbar = transform.Find("Stats").Find("CanvasStats").gameObject;
+        UpdateStatBar();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void UpdateStatBar()
     {
-        
-    }
+        int Index = 3; //this is where the strength stat starts (first stat besides health and food and stuff)
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (test)
+        for(int i = 0; i < statBar.transform.childCount - 5; i++) //strength is the first actual stat, the last children are stuff we dont change
         {
-            UpdateStats();
-            test = false;
+            statBar.transform.GetChild(i).GetChild(0).GetComponent<Image>().fillAmount = (residentStats.Stats[Index] * 5) / 100.0f; //this is because stats have a max of 20.  So we make it out of 100 first then we divide it by 100 to get a decimal
+            Index++;
         }
+
+        UpdateJob();
     }
 
-    public void UpdateStats()
+    public void UpdateJob()
     {
-        for(int i = 0; i < starbar.transform.childCount - 4; i++)
+        TextMeshProUGUI text = jobName.GetComponent<TextMeshProUGUI>();
+        if (transform.GetComponent<ResidentScheudle>().job != null)
         {
-            Image foregroundImage = starbar.transform.GetChild(i).Find("Foreground").GetComponent<Image>();
-            foregroundImage.fillAmount = (float)stats[i + 3] / (float)maxStats; //+3 is because of we dont want to update the stats for health, food and moral because they arent "stats" really
+            string name = transform.GetComponent<ResidentScheudle>().job.name;
+            text.text = "Job: " + name.Substring(0, name.IndexOf("_"));
         }
-        UpdateHealthFood();
-    }
-
-    public void UpdateHealthFood()
-    {
-        int num = starbar.transform.childCount;
-        Image foregroundImage = starbar.transform.GetChild(num - 3).Find("Foreground").GetComponent<Image>(); //Health
-        foregroundImage.fillAmount = (float)stats[0] / (float)100; //0 because first stat is health
-        GetComponent<ResidentHealth>().currentHealth = stats[0];
-
-        Image foregroundImage2 = starbar.transform.GetChild(num - 4).Find("Foreground").GetComponent<Image>(); //Food
-        foregroundImage2.fillAmount = (float)stats[1] / (float)100; //1 because secons stat is food
-        GetComponent<ResidentFood>().currentFood = stats[1];
-
-        Image foregroundImage3 = starbar.transform.GetChild(num - 2).Find("Foreground").GetComponent<Image>(); //Moral
-        foregroundImage3.fillAmount = (float)stats[2] / (float)20; //3 because first stat is health
+        else { text.text = "Job: None"; }
     }
 }
