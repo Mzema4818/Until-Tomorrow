@@ -1,86 +1,106 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class ShipMovement : MonoBehaviour
 {
-    public bool orientation;
     public float moveSpeed;
-    public float rotateSpeed = 1.0f;
 
+    private float originalSpeed;
+
+    public bool readyForExport;
     private bool move;
-    private bool rotate;
-    private bool returnHome;
+    public bool rotate;
+    public bool slowSpeed;
+    public bool docked;
 
     [Header("Ship Activities")]
     public bool leave;
     public bool ReadyForActivity;
-    public NavMeshSurface navMeshSurface;
-    public NavMeshLink navMeshLink;
     public bool destroyed;
 
-    private Quaternion target;
-    private Quaternion original;
-    private Animator animator;
+    private Quaternion targetAngle_90 = Quaternion.Euler(0, 0, 0);
+    private Quaternion targetAngle_180 = Quaternion.Euler(0, 0, 0);
+
+    private GameObject plank;
+    private GameObject cube;
 
     public bool test;
 
     void Awake()
     {
-        animator = transform.Find("Plank").GetComponent<Animator>();
-        navMeshLink = transform.Find("Plank").Find("Cube").GetComponent<NavMeshLink>();
-        navMeshSurface = transform.Find("Plank").GetComponent<NavMeshSurface>();
+        docked = false;
+        originalSpeed = moveSpeed;
+
+        plank = transform.Find("Plank").gameObject;
+        cube = transform.Find("Plank").Find("Cube").gameObject;
+
         transform.LookAt(new Vector3(0, 10, 0));
+
+        targetAngle_90 = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + 90, transform.eulerAngles.z);
+        targetAngle_180 = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y + 180, transform.eulerAngles.z);
     }
 
     void Start()
     {
         move = true;
-        target = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + 90, transform.rotation.eulerAngles.z);
-        original = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + 180, transform.rotation.eulerAngles.z);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (test)
-        {
-            navMeshSurface.BuildNavMesh();
-            test = false;
-        }
-
         if (move)
         {
             transform.position += transform.forward * moveSpeed * Time.deltaTime;
         }
 
-        if (rotate)
+        if (rotate && !destroyed)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, target, Time.deltaTime * rotateSpeed);
-            //print("Transform: " + Mathf.Floor(transform.rotation.eulerAngles.y) + "| Target: " + Mathf.Floor(target.eulerAngles.y));
-            if (Mathf.Floor(transform.rotation.eulerAngles.y) == Mathf.Floor(target.eulerAngles.y))
+            if (Quaternion.Angle(transform.rotation, targetAngle_90) > 5.0F)
             {
-                rotate = false;
-                animator.SetBool("Extend", true);
-                StartCoroutine(ReadyForExport());
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetAngle_90, 2 * Time.deltaTime);
             }
+            else
+            {
+                StartCoroutine(ExtendPlank());
+                rotate = false;
+            }
+        }
+
+        if (slowSpeed)
+        {
+            moveSpeed = Mathf.Lerp(moveSpeed, 0, 1.5f * Time.deltaTime);
+            if (moveSpeed < 1)
+            {
+                slowSpeed = false;
+                move = false;
+                rotate = true;
+                moveSpeed = originalSpeed;
+            }
+        }
+
+        if (readyForExport)
+        {
+            StartCoroutine(ExportResidents());
+            readyForExport = false;
         }
 
         if (leave)
         {
-            animator.SetBool("Extend", false);
-            animator.SetTrigger("deExtend");
-            StartCoroutine(RetractPlank());
+            StartCoroutine(UnExtendPlank());
+            leave = false;
+        }
 
-            if (returnHome)
+        if (rotate && destroyed)
+        {
+            if (Quaternion.Angle(transform.rotation, targetAngle_180) > 5.0F)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, original, Time.deltaTime * rotateSpeed);
+                this.transform.rotation = Quaternion.Slerp(this.transform.rotation, targetAngle_180, 2 * Time.deltaTime);
             }
-            if (Mathf.Floor(transform.rotation.eulerAngles.y) == Mathf.Floor(original.eulerAngles.y))
+            else
             {
                 move = true;
-                returnHome = false;
+                rotate = false;
                 StartCoroutine(DestroyObject());
             }
         }
@@ -90,13 +110,13 @@ public class ShipMovement : MonoBehaviour
     {
         RaycastHit hit;
         // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 10, transform.position.z), transform.TransformDirection(Vector3.forward), out hit, 20))
+        if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y - 10, transform.position.z), transform.TransformDirection(Vector3.forward), out hit, 45) && !docked)
         {
             Debug.DrawRay(new Vector3(transform.position.x, transform.position.y - 10, transform.position.z), transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
             if (hit.transform.name == "Terrain")
             {
-                move = false;
-                rotate = true;
+                slowSpeed = true;
+                docked = true;
             }
         }
     }
@@ -108,17 +128,21 @@ public class ShipMovement : MonoBehaviour
         Destroy(gameObject);
     }
 
-    IEnumerator RetractPlank()
+    IEnumerator ExtendPlank()
     {
         yield return new WaitForSeconds(2);
-        returnHome = true;
+        plank.GetComponent<PlankExtend>().Extend = true;
     }
 
-    IEnumerator ReadyForExport()
+    IEnumerator ExportResidents()
     {
         yield return new WaitForSeconds(2);
-        navMeshSurface.BuildNavMesh();
-        navMeshLink.UpdateLink();
         ReadyForActivity = true;
+    }
+
+    IEnumerator UnExtendPlank()
+    {
+        yield return new WaitForSeconds(2);
+        plank.GetComponent<PlankExtend>().unExtend = true;
     }
 }
