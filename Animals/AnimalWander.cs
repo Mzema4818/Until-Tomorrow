@@ -22,6 +22,7 @@ public class AnimalWander : MonoBehaviour
     private bool setLocation;
     private bool distanceRun;
     private bool distanceFollow;
+    private bool shouldHurt;
     public bool isHurt;
     // Start is called before the first frame update
     void Start()
@@ -133,7 +134,8 @@ public class AnimalWander : MonoBehaviour
 
     public void DealDamage()
     {
-        Player.GetComponent<PlayerHealth>().changeHealth(-25);
+        //Player.GetComponent<PlayerHealth>().changeHealth(-25);
+        shouldHurt = true;
     }
 
     IEnumerator StartMoving()
@@ -141,5 +143,14 @@ public class AnimalWander : MonoBehaviour
         float seconds = Random.Range(5, 15);
         yield return new WaitForSeconds(seconds);
         setLocation = true;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (shouldFollow && shouldHurt && other.GetComponent<PlayerHealth>() != null)
+        {
+            Player.GetComponent<PlayerHealth>().changeHealth(-25);
+            shouldHurt = false;
+        }
     }
 }

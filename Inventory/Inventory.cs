@@ -6,11 +6,12 @@ using UnityEngine;
 public class Inventory
 {
     public event EventHandler OnItemListChanged;
-    private List<Item> itemList;
+    public Item[] itemList;
+    public int inventorySize = 35;
 
-    public Inventory()
+    public Inventory(int size)
     {
-        itemList = new List<Item>();
+        itemList = new Item[size];
     }
 
     public void AddItem(Item item)
@@ -20,20 +21,38 @@ public class Inventory
             bool itemAlreadyInInventory = false;
             foreach(Item inventoryItem in itemList)
             {
-                if(inventoryItem.itemType == item.itemType)
-                {
-                    inventoryItem.amount += item.amount;
+                if (inventoryItem == null) continue;
+                //if(inventoryItem.itemType == item.itemType && inventoryItem.amount + 1 <= item.MaxAmount())
+                //{
+                    //inventoryItem.amount += item.amount;
                     itemAlreadyInInventory = true;
-                }
+                    break;
+                //}
             }
             if (!itemAlreadyInInventory)
             {
-                itemList.Add(item);
+                for(int i = 0; i < itemList.Length; i++)
+                {
+                    if (itemList[i] != null) continue;
+                    else
+                    {
+                        itemList[i] = item;
+                        break;
+                    }
+                }
             }
         }
         else
         {
-            itemList.Add(item);
+            for (int i = 0; i < itemList.Length; i++)
+            {
+                if (itemList[i] != null) continue;
+                else
+                {
+                    itemList[i] = item;
+                    break;
+                }
+            }
         }
 
         OnItemListChanged?.Invoke(this, EventArgs.Empty);
@@ -41,29 +60,47 @@ public class Inventory
 
     public void RemoveItem(Item item)
     {
+        int i = 0;
+
         if (item.IsStackable())
         {
             Item itemInInventory = null;
             foreach (Item inventoryItem in itemList)
             {
-                if (inventoryItem.itemType == item.itemType)
+                if (inventoryItem == null)
                 {
-                    inventoryItem.amount -= item.amount;
-                    itemInInventory = inventoryItem;
+                    i++; 
+                    continue;
                 }
+                if (inventoryItem.itemType == item.itemType && item.index == i)
+                {
+                   // inventoryItem.amount -= item.amount;
+                    itemInInventory = inventoryItem;
+                    break;
+                }
+                i++;
             }
-            if (itemInInventory != null && itemInInventory.amount <= 0)
-            {
-                itemList.Remove(itemInInventory);
-            }
+            //if (itemInInventory != null && itemInInventory.amount <= 0)
+            //{
+                //itemList.Remove(itemInInventory);
+                //itemList[i] = null;
+            //}
         }
         else
         {
-            itemList.Remove(item);
+            itemList[i] = null;
         }
         OnItemListChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    public void SwitchItems(int index1, int index2)
+    {
+        Item temp = itemList[index1];
+        itemList[index1] = itemList[index2];
+        itemList[index2] = temp;
+    }
+
+    //broken
     public bool CheckIfEmpty(Item item)
     {
         Item itemInInventory = null;
@@ -89,17 +126,18 @@ public class Inventory
 
     public List<Item> GetItemList()
     {
-        return itemList;
+        List<Item> returnItem = new List<Item>();
+        return returnItem;
     }
 
-    public Item.ItemType[] GetItemArrayList()
+    public string[] GetItemArrayList()
     {
-        Item[] items = GetItemArray();
-        Item.ItemType[] itemTypes = new Item.ItemType[itemList.Count];
+        string[] itemTypes = new string[itemList.Length];
 
-        for(int i = 0; i < items.Length; i++)
+        for(int i = 0; i < itemList.Length; i++)
         {
-            itemTypes[i] = items[i].itemType;
+            if (itemList[i] == null) continue;
+            itemTypes[i] = itemList[i].itemType.ToString();
         }
 
         return itemTypes;
@@ -107,12 +145,12 @@ public class Inventory
 
     public int[] GetItemArrayListAmount()
     {
-        Item[] items = GetItemArray();
-        int[] itemAmount = new int[itemList.Count];
+        int[] itemAmount = new int[itemList.Length];
 
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < itemList.Length; i++)
         {
-            itemAmount[i] = items[i].amount;
+            if (itemList[i] == null) continue;
+            //itemAmount[i] = itemList[i].amount;
         }
 
         return itemAmount;
@@ -120,10 +158,10 @@ public class Inventory
 
     private Item[] GetItemArray()
     {
-        return itemList.ToArray();
+        return itemList;
     }
 
-    public void TransferItems(Inventory OriginalInventory, Inventory TransferInventory)
+    /*public void TransferItems(Inventory OriginalInventory, Inventory TransferInventory)
     {
         Item.ItemType[] itemTypes = GetItemArrayList();
         int[] itemAmount = GetItemArrayListAmount();
@@ -136,18 +174,82 @@ public class Inventory
             TransferInventory.AddItem(new Item { itemType = itemTypes[i], amount = itemAmount[i] });
             OriginalInventory.RemoveItem(new Item { itemType = itemTypes[i], amount = itemAmount[i] });
         }
+    }*/
+
+    public int[] GetAmountArrayByName(Item.ItemType itemType)
+    {
+        int[] num = new int[itemList.Length];
+
+        for(int i = 0; i < itemList.Length; i++)
+        {
+            if (itemList[i] == null) continue;
+            if (itemList[i].itemType == itemType)
+            {
+                //num[i] = itemList[i].amount;
+            }
+        }
+
+        return num;
     }
 
     public int GetAmountByName(Item.ItemType itemType)
     {
-        for(int i = 0; i < itemList.Count; i++)
+        int num = 0;
+
+        for (int i = 0; i < itemList.Length; i++)
         {
-            if(itemList[i].itemType == itemType)
+            if (itemList[i] == null) continue;
+            if (itemList[i].itemType == itemType)
             {
-                return itemList[i].amount;
+                //num += itemList[i].amount;
             }
         }
 
-        return 0;
+        return num;
+    }
+
+    public int GetLastLocationOfItem(Item.ItemType itemType)
+    {
+        int[] itemArray = GetAmountArrayByName(itemType);
+
+        for (int i = 0; i < itemArray.Length; i++)
+        {
+            if (itemArray[i] == 0) continue;
+            return i;
+        }
+
+        return -1;
+    }
+
+    public Item[] GetArray()
+    {
+        return itemList;
+    }
+
+    public void ChangeAmount(int index1, int index2, int amount)
+    {
+        //itemList[index1].amount = amount;
+        itemList[index2] = null;
+    }
+
+    public void ChangeAmount(int index1, int index2, int amount1, int amount2)
+    {
+        //itemList[index1].amount = amount1;
+        //itemList[index2].amount = amount2;
+    }
+
+    public void ChangeAmount(int index, int amount)
+    {
+        //itemList[index].amount = amount;
+    }
+
+    public void SetItem(int index, Item item)
+    {
+        itemList[index] = item;
+    }
+
+    public void RefreshInventory()
+    {
+        OnItemListChanged?.Invoke(this, EventArgs.Empty);
     }
 }

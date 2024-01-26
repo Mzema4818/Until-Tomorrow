@@ -8,7 +8,7 @@ public class ColorChange : MonoBehaviour
     public bool touching;
 
     private float x, y, z;
-    private float rotationLimit = 20f;
+    //private float rotationLimit = 20f;
 
     // Start is called before the first frame update
     void Start()
@@ -49,15 +49,8 @@ public class ColorChange : MonoBehaviour
     {
         if (other.transform.name != "Terrain")
         {
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                Renderer renderer = transform.GetChild(i).GetComponent<Renderer>();
-                if (renderer != null)
-                {
-                    transform.GetChild(i).GetComponent<Renderer>().material.color = Color.red;
-                    touching = true;
-                }
-            }
+            ChangeColor(Color.red);
+            touching = true;
         }
     }
 
@@ -67,14 +60,10 @@ public class ColorChange : MonoBehaviour
         y = transform.localEulerAngles.y;
         z = transform.localEulerAngles.z;
 
-        for (int i = 0; i < transform.childCount; i++)
+        if (other.transform.name != "Terrain")
         {
-            Renderer renderer = transform.GetChild(i).GetComponent<Renderer>();
-            if (renderer != null && (x <= rotationLimit || y <= rotationLimit || z <= rotationLimit))
-            {
-                transform.GetChild(i).GetComponent<Renderer>().material.color = Color.green;
-                touching = false;
-            }
+            ChangeColor(Color.green);
+            touching = false;
         }
     }
 
@@ -102,5 +91,17 @@ public class ColorChange : MonoBehaviour
         cube.transform.position = transform.position;
         yield return new WaitForSeconds(1);
         Destroy(cube);
+    }
+
+    private void ChangeColor(Color color)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Renderer renderer = transform.GetChild(i).GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                transform.GetChild(i).GetComponent<Renderer>().material.color = color;
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Builder : MonoBehaviour
 {
@@ -25,14 +26,10 @@ public class Builder : MonoBehaviour
     public GameObject hammer;
 
     [Header("Materials")]
-    public Inventory inventory;
+    public InventoryManager inventory;
     private Dictionary<Item.ItemType[], int[]> inventoryItems;
-    public MaterialManager materialManager;
     public TextMeshProUGUI woodText;
     public TextMeshProUGUI stoneText;
-
-    private int wood;
-    private int stone;
 
     // Start is called before the first frame update
     void Start()
@@ -40,26 +37,59 @@ public class Builder : MonoBehaviour
         placed = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        wood = int.Parse(woodText.text);
-        stone = int.Parse(stoneText.text);
-    }
-
     public void BuildCampfire()
     {
-        BuildBuilding(StageOneBuildings[0], 10, 10, parent.GetChild(0)); //First child in "Buildings" is the campfire parent
+        BuildBuilding(StageOneBuildings[0], new int[] { 10, 10 }, parent.GetChild(0), 0); //First child in "Buildings" is the campfire parent
     }
 
     public void BuildTent()
     {
-        BuildBuilding(StageOneBuildings[1], 4, 10, parent.GetChild(1)); //second child in "Buildings" is the tent parent... and so on 
+        BuildBuilding(StageOneBuildings[1], new int[] { 10, 10 }, parent.GetChild(1), 0); //second child in "Buildings" is the tent parent... and so on 
+    }
+
+    public void BuildMine()
+    {
+        BuildBuilding(StageOneBuildings[2], new int[] { 10, 10 }, parent.GetChild(2), 0);
+    }
+
+    public void BuildLumbermill()
+    {
+        BuildBuilding(StageOneBuildings[3], new int[] { 10, 10 }, parent.GetChild(3), 0);
+    }
+
+    public void BuildFarm()
+    {
+        BuildBuilding(StageOneBuildings[4], new int[] { 10, 10 }, parent.GetChild(4), 0);
+    }
+
+    public void BuildWall()
+    {
+        BuildBuilding(StageOneBuildings[5], new int[] { 10, 10 }, parent.GetChild(5), 0);
+    }
+
+    public void BuildDoor()
+    {
+        BuildBuilding(StageOneBuildings[6], new int[] { 10, 10 }, parent.GetChild(6), 0);
+    }
+
+    public void BuildChest()
+    {
+        BuildBuilding(StageOneBuildings[7], new int[] { 10, 10 }, parent.GetChild(7), 0);
+    }
+
+    public void BuildMesshall()
+    {
+        BuildBuilding(StageOneBuildings[8], new int[] { 10, 10 }, parent.GetChild(8), 0);
+    }
+
+    public void BuildTavern()
+    {
+        BuildBuilding(StageOneBuildings[9], new int[] { 10, 10 }, parent.GetChild(9), 0);
     }
 
     public void MoveBuilding()
     {
-        if(buildingData != null)
+        if (buildingData != null)
         {
             AddBuildingScripts(buildingData, true, CheckParentName(buildingData.transform.name));
         }
@@ -70,14 +100,18 @@ public class Builder : MonoBehaviour
         Destroy(buildingData);
     }
 
-    private void BuildBuilding(GameObject buildingPrefab, int woodValue, int stoneValue, Transform parent)
+    private void BuildBuilding(GameObject buildingPrefab, int[] amounts, Transform parent, float offset)
     {
-        if(inventory.GetAmountByName(Item.ItemType.wood) >= woodValue && inventory.GetAmountByName(Item.ItemType.rock) >= stoneValue)
+        //Array index to type
+        //0 - wood
+        //1 - rock
+
+        if (inventory.GetAmountByName(Item.ItemType.wood) >= amounts[0] &&
+           inventory.GetAmountByName(Item.ItemType.rock) >= amounts[1])
         {
-            inventory.RemoveItem(new Item { itemType = Item.ItemType.wood, amount = woodValue });
-            inventory.RemoveItem(new Item { itemType = Item.ItemType.rock, amount = stoneValue });
             GameObject building = Instantiate(buildingPrefab, player.transform.position, player.transform.rotation);
-            AddBuildingScripts(building, parent);
+            buildingData = building;
+            AddBuildingScripts(building, parent, offset, amounts);
         }
         else
         {
@@ -85,21 +119,23 @@ public class Builder : MonoBehaviour
         }
     }
 
-    private void AddBuildingScripts(GameObject building, Transform parent)
+    private void AddBuildingScripts(GameObject building, Transform parent, float offset, int[] cost)
     {
         building.AddComponent<GroundPlacementController>();
+        building.GetComponent<GroundPlacementController>().offset = offset;
         building.GetComponent<GroundPlacementController>().Announcement = Announcement;
         building.GetComponent<GroundPlacementController>().buildMenuUpdater = buildMenuUpdater;
         building.GetComponent<GroundPlacementController>().hammer = hammer;
         building.GetComponent<GroundPlacementController>().distance = 50;
+        building.GetComponent<GroundPlacementController>().inventoryManager = inventory;
+        building.GetComponent<GroundPlacementController>().Cost = cost;
         building.GetComponent<GroundPlacementController>().currentPlaceableObject = building;
         building.GetComponent<GroundPlacementController>().parent = parent;
         building.GetComponent<GroundPlacementController>().builder = this;
-        building.GetComponent<GroundPlacementController>().materialManager = materialManager;
+        building.GetComponent<NavMeshObstacle>().enabled = false;
         building.AddComponent<ColorChange>();
         isBuilding = true;
-        openMenus.turnOffAllMenus();
-        openMenus.CloseBuildMenus();
+        openMenus.TurnOffMenus();
     }
 
     private void AddBuildingScripts(GameObject building, bool moving, Transform parent)
@@ -113,24 +149,62 @@ public class Builder : MonoBehaviour
         building.GetComponent<GroundPlacementController>().parent = parent;
         building.GetComponent<GroundPlacementController>().builder = this;
         building.GetComponent<GroundPlacementController>().moving = moving;
-        building.GetComponent<GroundPlacementController>().materialManager = materialManager;
+        building.GetComponent<NavMeshObstacle>().enabled = false;
         building.AddComponent<ColorChange>();
         isBuilding = true;
-        openMenus.turnOffAllMenus();
-        openMenus.CloseBuildMenus();
+        openMenus.TurnOffMenus();
     }
 
     private Transform CheckParentName(string name)
     {
         Transform transform = null;
 
-        if (name.Contains("Campfire")){
-            transform = parent.GetChild(0);
-        }else if (name.Contains("Tent"))
-        {
-            transform = parent.GetChild(1);
-        }
+        if (name.Contains("Campfire")) transform = parent.GetChild(0);
+        else if (name.Contains("Tent")) transform = parent.GetChild(1);
+        else if (name.Contains("Mine")) transform = parent.GetChild(2);
+        else if (name.Contains("Lumbermill")) transform = parent.GetChild(3);
+        else if (name.Contains("Farm")) transform = parent.GetChild(4);
+        else if (name.Contains("Wall")) transform = parent.GetChild(5);
+        else if (name.Contains("Door")) transform = parent.GetChild(6);
+        else if (name.Contains("Chest")) transform = parent.GetChild(7);
+        else if (name.Contains("Messhall")) transform = parent.GetChild(8);
+        else if (name.Contains("Tavern")) transform = parent.GetChild(9);
 
         return transform;
     }
+
+    private void RemoveItems(Item.ItemType item, int length)
+    {
+        for(int i = 0; i < length; i++)
+        {
+            inventory.RemoveItem(item);
+        }
+    }
+
+    /*private void RemoveItems(Item.ItemType item, int amount)
+    {
+        int[] array = inventory.GetAmountArrayByName(item);
+
+        for (int i = array.Length - 1; i >= 0; i--)
+        {
+            print(amount);
+            if (array[i] == 0) continue;
+
+            if (amount == 0) break;
+
+            if (amount - array[i] > 0)
+            {
+                amount -= array[i];
+                //inventory.RemoveItem(new Item { itemType = item, amount = array[i], index = i });
+            }
+            else
+            {
+                for (int j = 0; j < amount; j++)
+                {
+                    //inventory.RemoveItem(new Item { itemType = item, amount = 1, index = i });
+                }
+                break;
+            }
+        }
+    }*/
 }

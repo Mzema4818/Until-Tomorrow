@@ -5,22 +5,25 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_Inventory : MonoBehaviour
+public class UI_InventoryChest : MonoBehaviour
 {
+    public Inventory SecondaryInventory;
     private Inventory inventory;
-    public Transform itemSlotTemplate;
-    public bool HalfStackActive;
-    public GameObject HalfStack;
+    private Transform itemSlotContainer;
+    private Transform itemSlotTemplate;
+    public int spacing = 4;
 
-    private GameObject[] tools;
-
-    private OpenMenus openMenus;
-
-    public bool TurnOffOnStart;
-
-    private void Awake()
+    // Start is called before the first frame update
+    void Awake()
     {
-        if(TurnOffOnStart) gameObject.SetActive(false);
+        itemSlotContainer = transform.Find("itemSlotContainer");
+        itemSlotTemplate = itemSlotContainer.Find("itemSlotTemplate");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
     }
 
     public void SetInventory(Inventory inventory)
@@ -31,11 +34,6 @@ public class UI_Inventory : MonoBehaviour
         RefreshInventoryItems();
     }
 
-    public Inventory ReturnInventory()
-    {
-        return inventory;
-    }
-
     public void Inventory_OnItemListChanged(object sender, System.EventArgs e)
     {
         RefreshInventoryItems();
@@ -44,7 +42,7 @@ public class UI_Inventory : MonoBehaviour
     private void RefreshInventoryItems()
     {
         print("refreshed inventory");
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             if (child == itemSlotTemplate) continue;
             Destroy(child.gameObject);
@@ -69,13 +67,13 @@ public class UI_Inventory : MonoBehaviour
             image.sprite = item.getSprite();
             TextMeshProUGUI uiText = image.transform.Find("amountText").GetComponent<TextMeshProUGUI>();
             //if (item.amount > 1)
-            //{
+           // {
                 //uiText.SetText(item.amount.ToString());
             //}
             //else
-           //{
-                //uiText.SetText("");
-            //}
+           // {
+               // uiText.SetText("");
+            //
 
             ItemHeld itemHeld = itemSlotRectTransform.Find("image").GetComponent<ItemHeld>();
             itemHeld.inventory = inventory;

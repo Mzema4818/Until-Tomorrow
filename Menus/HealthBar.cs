@@ -23,14 +23,14 @@ public class HealthBar : MonoBehaviour
             }
             else if (GetComponentInParent<ResidentHealth>() != null)
             {
-                GetComponentInParent<ResidentHealth>().onHleathPctChanged += HandleHealthChanged;
+                //GetComponentInParent<ResidentHealth>().onHleathPctChanged += HandleHealthChanged;
             }
         }
         else
         {
             if (GetComponentInParent<ResidentFood>() != null)
             {
-                GetComponentInParent<ResidentFood>().onHleathPctChanged += HandleHealthChanged;
+                //GetComponentInParent<ResidentFood>().onHleathPctChanged += HandleHealthChanged;
             }
         }
         

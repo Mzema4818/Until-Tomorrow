@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
     public GameObject player;
+    public Transform DropableParent;
     private GameObject canvas;
 
     [SerializeField]
@@ -15,17 +16,16 @@ public class Health : MonoBehaviour
     private int currentHealth;
 
     public event Action<float> onHleathPctChanged = delegate { };
+    
     public Item.ItemType[] itemType;
     public int maxDrops;
 
     private void Awake()
     {
         canvas = transform.Find("Canvas").gameObject;
-        //player = GameObject.Find("Main Character");
-
         canvas.SetActive(false);
     }
-    // Start is called before the first frame update
+
     private void OnEnable()
     {
         currentHealth = maxHealth;
@@ -75,7 +75,14 @@ public class Health : MonoBehaviour
         for (int i = 0; i < itemType.Length; i++)
         {
             num = UnityEngine.Random.Range(1, maxDrops);
-            ItemWorld.SpawnItemWorld(transform.position + new Vector3(0, 5, 0), new Item { itemType = itemType[i], amount = num });
+            for(int j = 0; j < num; j++)
+            {
+                //Item item = new Item { itemType = itemType[i] };
+                //Transform dropable = Instantiate(item.GetMesh(), transform.position, Quaternion.identity);
+                //dropable.parent = DropableParent;
+                ItemWorld.DropItem(transform, new Item { itemType = itemType[i] }, DropableParent);
+            }
+            //ItemWorld.SpawnItemWorld(transform.position + new Vector3(0, 5, 0), new Item { itemType = itemType[i], amount = num });
         }
 
         if(transform.GetComponent<ParticleHolder>() != null)
