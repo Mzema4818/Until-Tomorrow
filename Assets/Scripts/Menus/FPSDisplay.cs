@@ -18,7 +18,7 @@ public class FPSDisplay : MonoBehaviour
         if (time > pollingTime)
         {
             int frameRate = Mathf.RoundToInt(frameCount / time);
-            fpsTxt.text = frameRate.ToString() + " FPS";
+            fpsTxt.text = frameRate.ToString() + " FPSS";
             time -= pollingTime;
             frameCount = 0;
         }
