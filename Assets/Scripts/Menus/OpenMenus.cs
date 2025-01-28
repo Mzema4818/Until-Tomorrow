@@ -33,6 +33,8 @@ public class OpenMenus : MonoBehaviour
     [Header("Other")]
     public GameObject Camera;
     public GameObject MainMenuWorld;
+    public GameObject ContinueSign;
+    public GameObject ConintueWords;
 
     [Header("Tools")]
     public GameObject hammer;
@@ -189,7 +191,18 @@ public class OpenMenus : MonoBehaviour
     {
         MainMenuWorld.SetActive(true);
         TurnOffMenus();
+        ContinueSign.SetActive(true);
+        ConintueWords.SetActive(true);
         changePlayerState(false);
+    }
+
+    public void MainMenuClose()
+    {
+        MainMenuWorld.SetActive(false);
+        TurnOffMenus();
+        ContinueSign.SetActive(false);
+        ConintueWords.SetActive(false);
+        changePlayerState(true);
     }
 
     public void changePlayerState(bool state)

@@ -39,7 +39,7 @@ public class Hunger : MonoBehaviour
     {
         if (currentHunger >= 0)
         {
-            ModifyHunger(0);
+            ModifyHunger(-5);
         }
     }
 
@@ -53,9 +53,17 @@ public class Hunger : MonoBehaviour
 
     public void ModifyHunger(int amount)
     {
-        if (changeStat) residentStats.Stats[1] += amount;
+        if (amount < 0)
+            amount = Mathf.Max(amount, -currentHunger); // Ensure we don't go below 0
+        else
+            amount = Mathf.Min(amount, maxHunger - currentHunger); // Ensure we don't exceed maxHunger
+
         currentHunger += amount;
 
+        // Ensure maxHunger stays within valid bounds
+        maxHunger = Mathf.Clamp(maxHunger, 0, 100);
+
+        // Calculate the current hunger percentage
         float currentHungerPct = (float)currentHunger / (float)maxHunger;
         onHungerPctChanged(currentHungerPct);
     }

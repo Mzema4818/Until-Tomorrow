@@ -20,7 +20,7 @@ public class Health : MonoBehaviour
     public ResidentStats residentStats;
 
     [SerializeField]
-    private int maxHealth = 100;
+    public int maxHealth = 100;
     public int currentHealth;
 
     public event Action<float> onHealthPctChanged = delegate { };
@@ -52,12 +52,19 @@ public class Health : MonoBehaviour
 
     public void ModifyHealth(int amount)
     {
-        if(changeStat) residentStats.Stats[0] += amount;
+        if (amount < 0)
+            amount = Mathf.Max(amount, -currentHealth); // Ensure we don't go below 0
+        else
+            amount = Mathf.Min(amount, maxHealth - currentHealth); // Ensure we don't exceed maxHunger
 
         currentHealth += amount;
 
-        float currentHealthPct = (float)currentHealth / (float)maxHealth;
-        onHealthPctChanged(currentHealthPct);
+        // Ensure maxHunger stays within valid bounds
+        maxHealth = Mathf.Clamp(maxHealth, 0, 100);
+
+        // Calculate the current hunger percentage
+        float currentHungerPct = (float)currentHealth / (float)maxHealth;
+        onHealthPctChanged(currentHungerPct);
     }
 
     private void Update()
@@ -103,7 +110,6 @@ public class Health : MonoBehaviour
             if (currentHealth <= 0)
             {
                 onDeath.PlayerDied();
-                ModifyHealth(maxHealth);
             }
         }
     }

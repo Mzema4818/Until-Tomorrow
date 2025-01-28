@@ -18,8 +18,9 @@ public class OnDeath : MonoBehaviour
     public OpenMenus openMenus;
     public InventoryManager inventoryManager;
     public PlayerController playerController;
+    public Health health;
     public Hunger hunger;
-    public PlayerBreath playerBreath;
+    public Breath breath;
     public GameObject weapons;
 
     public GameObject character;
@@ -59,6 +60,10 @@ public class OnDeath : MonoBehaviour
         openMenus.CloseAllMenus();
         openMenus.CloseAllOtherMenus();
 
+        health.ModifyHealth(-health.maxHealth);
+        hunger.ModifyHunger(-hunger.maxHunger);
+        breath.ModifyBreath(-breath.maxBreath);
+
         openMenus.ToolBar.SetActive(false);
         deathMenu.SetActive(true);
 
@@ -95,12 +100,12 @@ public class OnDeath : MonoBehaviour
 
     public void Respawn()
     {
+        health.ModifyHealth(health.maxHealth);
         hunger.ModifyHunger(hunger.maxHunger);
-        //playerHealth.changeHealth(100);
-        playerBreath.restoreBreath();
+        breath.ModifyBreath(breath.maxBreath);
         //playerHealth.isAlive = true;
 
-       // mainCamera.SetActive(true);
+        // mainCamera.SetActive(true);
         deathCamera.SetActive(false);
 
         setRigidbodyState(true);
@@ -122,6 +127,11 @@ public class OnDeath : MonoBehaviour
         GetComponent<Animator>().enabled = true;
 
         mainCharacter.transform.position = playerController.respawnPoint;
+
+        //Just to make sure the sliders reset
+        health.ModifyHealth(0);
+        hunger.ModifyHunger(0);
+        breath.ModifyBreath(0);
     }
 
     public void TransferInventory()

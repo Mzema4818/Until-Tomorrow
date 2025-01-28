@@ -5,12 +5,18 @@ using UnityEngine.UI;
 
 public class Food : MonoBehaviour
 {
+    public Hunger hunger;
     public int food = 50;
-    [SerializeField] private Slider foodBar;
     public InventoryManager inventory;
     public int itemIndex;
 
     public OpenMenus openMenus;
+
+    private void Awake()
+    {
+        hunger = transform.root.GetComponent<Hunger>();
+
+    }
 
     private void Update()
     {
@@ -23,7 +29,7 @@ public class Food : MonoBehaviour
 
     public void Eat()
     {
-        foodBar.value += food;
+        hunger.ModifyHunger(food);
         bool Result = inventory.RemoveItemAtIndex(itemIndex, 1);
         if (Result) gameObject.SetActive(false);
     }

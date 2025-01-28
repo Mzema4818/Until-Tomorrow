@@ -11,17 +11,17 @@ public class SliderValues : MonoBehaviour
     public TextMeshProUGUI sensitivityValue;
 
     [Header("Scripts")]
-    public MouseLook mouseLook;
+    public PlayerController playerController;
     // Start is called before the first frame update
     void OnEnable()
     {
-        sensitivitySlider.value = mouseLook.mouseSensitivity;
+        sensitivitySlider.value = playerController.sensitivity;
     }
 
     // Update is called once per frame
     void Update()
     {
         sensitivityValue.text = sensitivitySlider.value.ToString();
-        mouseLook.mouseSensitivity = sensitivitySlider.value;
+        playerController.sensitivity = sensitivitySlider.value;
     }
 }

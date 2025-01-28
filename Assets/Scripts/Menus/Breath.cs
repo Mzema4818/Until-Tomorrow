@@ -67,8 +67,17 @@ public class Breath : MonoBehaviour
 
     public void ModifyBreath(int amount)
     {
+        if (amount < 0)
+            amount = Mathf.Max(amount, -currentBreath); // Ensure we don't go below 0
+        else
+            amount = Mathf.Min(amount, maxBreath - currentBreath); // Ensure we don't exceed maxHunger
+
         currentBreath += amount;
 
+        // Ensure maxHunger stays within valid bounds
+        maxBreath = Mathf.Clamp(maxBreath, 0, 100);
+
+        // Calculate the current hunger percentage
         float currentHungerPct = (float)currentBreath / (float)maxBreath;
         onBreathPctChanged(currentHungerPct);
     }
