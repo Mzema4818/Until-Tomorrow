@@ -87,7 +87,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, idealHit))
         {
-            HitTarget(hit.point);
+            HitTarget(hit.point, hit.transform.parent.GetComponent<ParticleHolder>());
 
             StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
 
@@ -98,7 +98,7 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator ScaleTreeEffect(Vector3 originalScale, GameObject hit)
     {
-        float scaleUpFactor = 0.93f; // Scale factor when the tree grows
+        float scaleUpFactor = 0.95f; // Scale factor when the tree grows
         float scaleDuration = 0.1f; // Duration of the scale effect
 
         Vector3 targetScale = originalScale * scaleUpFactor;
@@ -107,13 +107,16 @@ public class PlayerAttack : MonoBehaviour
         // Smoothly scale up
         while (timeElapsed < scaleDuration)
         {
+            // Check if the object is destroyed
+            if (hit == null) yield break; // Exit the coroutine if the object is destroyed
+
             hit.transform.localScale = Vector3.Lerp(originalScale, targetScale, timeElapsed / scaleDuration);
             timeElapsed += Time.deltaTime;
             yield return null; // Wait until next frame
         }
 
         // Ensure the final scale is set exactly
-        hit.transform.localScale = targetScale;
+        if (hit != null) hit.transform.localScale = targetScale;
 
         // Wait for the scale-up effect to finish before returning to original size
         yield return new WaitForSeconds(0.1f);
@@ -122,14 +125,18 @@ public class PlayerAttack : MonoBehaviour
         timeElapsed = 0f;
         while (timeElapsed < scaleDuration)
         {
+            // Check if the object is destroyed
+            if (hit == null) yield break; // Exit the coroutine if the object is destroyed
+
             hit.transform.localScale = Vector3.Lerp(targetScale, originalScale, timeElapsed / scaleDuration);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
 
         // Ensure the scale is exactly the original size
-        hit.transform.localScale = originalScale;
+        if (hit != null) hit.transform.localScale = originalScale;
     }
+
 
     void OnEnable()
     { input.Enable(); }
@@ -137,10 +144,11 @@ public class PlayerAttack : MonoBehaviour
     void OnDisable()
     { input.Disable(); }
 
-    void HitTarget(Vector3 pos)
+    void HitTarget(Vector3 pos, ParticleHolder particleHolder)
     {
         //audioSource.pitch = 1;
         //audioSource.PlayOneShot(hitSound);
+        Instantiate(particleHolder.ParticleHit, pos, Quaternion.identity);
 
         GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
         GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();

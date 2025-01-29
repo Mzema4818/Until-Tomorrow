@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     bool isGrounded;
     bool isRunning;
+    bool isCrouching;
 
     [Header("Camera")]
     public Camera cam;
@@ -32,26 +33,27 @@ public class PlayerController : MonoBehaviour
     public bool shouldMove;
     public Vector3 respawnPoint;
 
-    //Animations
+    // Animations
     float maximumWalkVelocity = 0.5f;
     float maximumRunVelocity = 1.0f;
     float currentMaxVelocity = 0.0f;
     float VelocityX = 0;
     float VelocityY = 0;
 
+    [Header("Crouch")]
+    public float crouchHeight = 0.5f;  // Height when crouched
+    public float standingHeight = 2.0f; // Default standing height
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
-        //animator = GetComponentInChildren<Animator>();
-
         playerInput = new PlayerInput();
         input = playerInput.Main;
         AssignInputs();
 
-        //input.Disable();
-
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
+        // Set initial camera height
+        controller.height = standingHeight;
+        cam.transform.localPosition = new Vector3(0, standingHeight / 2, 0);
     }
 
     void Update()
@@ -61,10 +63,14 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate()
-    { MoveInput(input.Movement.ReadValue<Vector2>()); }
+    {
+        MoveInput(input.Movement.ReadValue<Vector2>());
+    }
 
     void LateUpdate()
-    { if(shouldMove) LookInput(input.Look.ReadValue<Vector2>()); }
+    {
+        if (shouldMove) LookInput(input.Look.ReadValue<Vector2>());
+    }
 
     void MoveInput(Vector2 input)
     {
@@ -73,13 +79,15 @@ public class PlayerController : MonoBehaviour
         moveDirection.z = input.y;
 
         float speed = isRunning ? runSpeed : walkSpeed;
-        if(shouldMove) controller.Move(transform.TransformDirection(moveDirection) * speed * Time.deltaTime);
+        if (isCrouching) speed *= 0.5f; // Reduce speed when crouching
+
+        if (shouldMove) controller.Move(transform.TransformDirection(moveDirection) * speed * Time.deltaTime);
         _PlayerVelocity.y += gravity * Time.deltaTime;
         if (isGrounded && _PlayerVelocity.y < 0)
             _PlayerVelocity.y = -2f;
         controller.Move(_PlayerVelocity * Time.deltaTime);
 
-        if(shouldMove) Animate(input);
+        if (shouldMove) Animate(input);
         else
         {
             VelocityX = 0;
@@ -94,11 +102,9 @@ public class PlayerController : MonoBehaviour
 
         currentMaxVelocity = isRunning ? maximumRunVelocity : maximumWalkVelocity;
 
-        //Smoothly interpolate the current velocity towards the target velocity
-        VelocityX = Mathf.Lerp(VelocityX, targetVelocityX * currentMaxVelocity, 0.1f);
-        VelocityY = Mathf.Lerp(VelocityY, targetVelocityY * currentMaxVelocity, 0.1f);
+        VelocityX = targetVelocityX * currentMaxVelocity;
+        VelocityY = targetVelocityY * currentMaxVelocity;
 
-        //Clamp small values to zero
         if (Mathf.Abs(VelocityX) < 0.01f) VelocityX = 0f;
         if (Mathf.Abs(VelocityY) < 0.01f) VelocityY = 0f;
 
@@ -120,14 +126,17 @@ public class PlayerController : MonoBehaviour
     }
 
     void OnEnable()
-    { input.Enable(); }
+    {
+        input.Enable();
+    }
 
     void OnDisable()
-    { input.Disable(); }
+    {
+        input.Disable();
+    }
 
     void Jump()
     {
-        // Adds force to the player rigidbody to jump
         if (isGrounded)
             _PlayerVelocity.y = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
     }
@@ -135,5 +144,24 @@ public class PlayerController : MonoBehaviour
     void AssignInputs()
     {
         input.Jump.performed += ctx => Jump();
+        input.Crouch.performed += ctx => ToggleCrouch();  // Add crouch input
+    }
+
+    void ToggleCrouch()
+    {
+        if (isCrouching)
+        {
+            // Stand up
+            controller.height = standingHeight;
+            cam.transform.localPosition = new Vector3(0, standingHeight / 2, 0);
+        }
+        else
+        {
+            // Crouch
+            controller.height = crouchHeight;
+            cam.transform.localPosition = new Vector3(0, crouchHeight / 2, 0);
+        }
+
+        isCrouching = !isCrouching;
     }
 }

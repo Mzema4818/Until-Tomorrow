@@ -134,7 +134,7 @@ public class Health : MonoBehaviour
 
         if(transform.GetComponent<ParticleHolder>() != null)
         {
-            ParticleIndicator indicatorParticle = Instantiate(transform.GetComponent<ParticleHolder>().ParticleBreak, transform.position + new Vector3(0, 5, 0), Quaternion.identity).GetComponent<ParticleIndicator>();
+            ParticleIndicator indicatorParticle = Instantiate(transform.GetComponent<ParticleHolder>().ParticleBreak, transform.position, Quaternion.identity).GetComponent<ParticleIndicator>();
         }
     }
 
