@@ -9,7 +9,7 @@ public class InventoryManager : MonoBehaviour
     public InventorySlot[] inventorySlots;
     public GameObject inventoryItemPrefab;
     public Builder builder;
-    public Animator armsAnimator;
+    //public Animator armsAnimator;
     
     [HideInInspector] public bool DraggingItem;
     [HideInInspector] public GameObject ItemDragged;
@@ -17,7 +17,7 @@ public class InventoryManager : MonoBehaviour
 
     int selectedSlot = -1;
     int selectedItem = 0;
-    public string currentAnimationState;
+    //public string currentAnimationState;
 
     //Change depending on how many hotbar slots we have (rn its 7)
     [HideInInspector] public KeyCode[] keyCodes = {
@@ -50,7 +50,7 @@ public class InventoryManager : MonoBehaviour
                     ListOfHeldItems[selectedItem].SetActive(false);
                     if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
                     {
-                        ChangeAnimationState(GetSelectedItem().GetArmAnimation());
+                        //ChangeAnimationState(GetSelectedItem().GetArmAnimation());
                         int num = ReturnNumByItem(GetSelectedItem().itemType);
 
                         if (ListOfHeldItems[num].GetComponent<Food>() != null) ListOfHeldItems[num].GetComponent<Food>().itemIndex = selectedSlot;
@@ -58,15 +58,7 @@ public class InventoryManager : MonoBehaviour
                         ListOfHeldItems[num].SetActive(true);
                         selectedItem = num;
                     }
-                    else
-                    {
-                        //Set all arm animations to false
-                        foreach (AnimatorControllerParameter parameter in armsAnimator.parameters)
-                        {
-                            armsAnimator.SetBool(parameter.name, false);
-                        }
-                        currentAnimationState = "";
-                    }
+
                 }
             }
         }
@@ -95,7 +87,7 @@ public class InventoryManager : MonoBehaviour
         }*/
     }
 
-    public void ChangeAnimationState(string newState)
+    /*public void ChangeAnimationState(string newState)
     {
         // STOP THE SAME ANIMATION FROM INTERRUPTING WITH ITSELF //
         if (currentAnimationState == newState) return;
@@ -109,7 +101,7 @@ public class InventoryManager : MonoBehaviour
             if (parameter.name == currentAnimationState) continue;
             armsAnimator.SetBool(parameter.name, false);
         }
-    }
+    }*/
 
     public void ChangeSlot(){
         if(selectedSlot == -1) return;

@@ -36,7 +36,7 @@ public class CollectableRandomizer : MonoBehaviour
             else
             {
                 int randValue = Random.Range(0, newVertices.Count);
-                transform.GetChild(i).transform.position = newVertices[randValue] * meshObject.transform.localScale.y;
+                transform.GetChild(i).transform.position = newVertices[randValue] * meshObject.transform.localScale.y + new Vector3(0, 0.5f, 0);
             }
         }
 
@@ -54,6 +54,6 @@ public class CollectableRandomizer : MonoBehaviour
         }
 
         IsRandomized = true; // Mark as completed
-        getData.SaveData();
+        getData.SaveData(); //not happy with this fix but, the data is being saved before the collectables
     }
 }

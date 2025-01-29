@@ -3,47 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
+using TMPro;
 
 public class PlayerAttack : MonoBehaviour
 {
-    public PlayerInput playerInput;
-    public PlayerInput.MainActions input;
-
     [Header("Attacking")]
+    public bool canAttack;
     public float attackDistance = 3f;
-    public float attackDelay;
-    public float attackSpeed;
-    public int attackDamage;
+    public float attackDelay = 0.4f;
+    public float attackSpeed = 1f;
+    public int attackDamage = 1;
     public LayerMask idealHit;
-    public LayerMask attackLayer;
 
     public GameObject hitEffect;
     public AudioClip swordSwing;
     public AudioClip hitSound;
 
-    public string IDLE = "Arms Idle";
-    public string attackOneHand1 = "Swing One Hand 1";
-    public string attackOneHand2 = "Swing One Hand 2";
-    public string attackTwoHand1 = "Swing Two Hand 1";
-    public string attackTwoHand2 = "Swing Two Hand 2";
+    bool attacking = false;
+    bool readyToAttack = true;
+    int attackCount;
 
-    public bool attacking = false;
-    public bool readyToAttack = true;
-    public int attackCountOne;
-    public int attackCountTwo;
-
+    [Header("Animations")]
+    public Animator animator;
+    public GameObject[] heldItems;
     string currentAnimationState;
-    Animator animator;
-    AudioSource audioSource;
+    public bool heldHand; //false = 1 hand, true = 2 hand
+    public string ATTACK1 = "Attack 1";
+    public string ATTACK2 = "Attack 2";
 
     [Header("Camera")]
     public Camera cam;
+    PlayerInput playerInput;
+    PlayerInput.MainActions input;
 
-    void Awake()
+    private void Awake()
     {
         animator = GetComponent<Animator>();
-        audioSource = GetComponent<AudioSource>();
-
         playerInput = new PlayerInput();
         input = playerInput.Main;
         AssignInputs();
@@ -51,12 +46,105 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        if (input.Attack.IsPressed() && readyToAttack)
+        if (canAttack && input.Attack.IsPressed())
         {
-            Attack(); 
+            Attack();
+        }
+    }
+
+    public void Attack()
+    {
+        if (!readyToAttack || attacking) return;
+
+        readyToAttack = false;
+        attacking = true;
+
+        Invoke(nameof(ResetAttack), attackSpeed);
+        Invoke(nameof(AttackRaycast), attackDelay);
+
+        //audioSource.pitch = Random.Range(0.9f, 1.1f);
+        //audioSource.PlayOneShot(swordSwing);
+
+        if (attackCount == 0)
+        {
+            ChangeAnimationState(ATTACK1);
+            attackCount++;
+        }
+        else
+        {
+            ChangeAnimationState(ATTACK2);
+            attackCount = 0;
+        }
+    }
+
+    void ResetAttack()
+    {
+        attacking = false;
+        readyToAttack = true;
+    }
+
+    void AttackRaycast()
+    {
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, idealHit))
+        {
+            HitTarget(hit.point);
+
+            StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
+
+            if (hit.transform.parent.TryGetComponent(out Health T))
+            { T.ModifyHealth(-attackDamage); }
+        }
+    }
+
+    private IEnumerator ScaleTreeEffect(Vector3 originalScale, GameObject hit)
+    {
+        float scaleUpFactor = 0.93f; // Scale factor when the tree grows
+        float scaleDuration = 0.1f; // Duration of the scale effect
+
+        Vector3 targetScale = originalScale * scaleUpFactor;
+        float timeElapsed = 0f;
+
+        // Smoothly scale up
+        while (timeElapsed < scaleDuration)
+        {
+            hit.transform.localScale = Vector3.Lerp(originalScale, targetScale, timeElapsed / scaleDuration);
+            timeElapsed += Time.deltaTime;
+            yield return null; // Wait until next frame
         }
 
-        SetAnimations();
+        // Ensure the final scale is set exactly
+        hit.transform.localScale = targetScale;
+
+        // Wait for the scale-up effect to finish before returning to original size
+        yield return new WaitForSeconds(0.1f);
+
+        // Smoothly scale back to the original size
+        timeElapsed = 0f;
+        while (timeElapsed < scaleDuration)
+        {
+            hit.transform.localScale = Vector3.Lerp(targetScale, originalScale, timeElapsed / scaleDuration);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure the scale is exactly the original size
+        hit.transform.localScale = originalScale;
+    }
+
+    void OnEnable()
+    { input.Enable(); }
+
+    void OnDisable()
+    { input.Disable(); }
+
+    void HitTarget(Vector3 pos)
+    {
+        //audioSource.pitch = 1;
+        //audioSource.PlayOneShot(hitSound);
+
+        GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
+        GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
+        Destroy(GO, 20);
     }
 
     public void ChangeAnimationState(string newState)
@@ -69,110 +157,9 @@ public class PlayerAttack : MonoBehaviour
         animator.CrossFadeInFixedTime(currentAnimationState, 0.2f);
     }
 
-    public void Attack()
-    {
-        if (!readyToAttack || attacking || attackDamage == 0) return;
-
-        readyToAttack = false;
-        attacking = true;
-
-        Invoke(nameof(ResetAttack), attackSpeed);
-        Invoke(nameof(AttackRaycast), attackDelay);
-
-        //audioSource.pitch = Random.Range(0.9f, 1.1f);
-        //audioSource.PlayOneShot(swordSwing);
-
-        if (animator.GetBool("Holding"))
-        {
-            if (attackCountOne == 0)
-            {
-                ChangeAnimationState(attackOneHand1);
-                attackCountOne++;
-            }
-            else
-            {
-                ChangeAnimationState(attackOneHand2);
-                attackCountOne = 0;
-            }
-        }
-        else if(animator.GetBool("Holding 2"))
-        {
-            if (attackCountTwo == 0)
-            {
-                ChangeAnimationState(attackTwoHand1);
-                attackCountTwo++;
-            }
-            else
-            {
-                ChangeAnimationState(attackTwoHand2);
-                attackCountTwo = 0;
-            }
-        }
-
-    }
-
-    void ResetAttack()
-    {
-        attacking = false;
-        readyToAttack = true;
-    }
-
-    void AttackRaycast()
-    {
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, attackLayer))
-        {
-            //hit.transform.parent.GetComponent<Health>().ModifyHealth(-15);
-            //HitTarget(hit.point);
-
-            print(idealHit.value);
-            print(hit.transform.gameObject.layer);
-
-            if(idealHit == hit.transform.gameObject.layer)
-            {
-                if (hit.transform.TryGetComponent(out Health itself)) itself.ModifyHealth(-attackDamage);
-                else if (hit.transform.parent.TryGetComponent(out Health parent)) parent.ModifyHealth(-attackDamage);
-            }
-            else
-            {
-                if (hit.transform.TryGetComponent(out Health itself)) itself.ModifyHealth(-1);
-                else if (hit.transform.parent.TryGetComponent(out Health parent)) parent.ModifyHealth(-1);
-            }
-        }
-    }
-
-    void SetAnimations()
-    {
-        // If player is not attacking
-        if (!attacking)
-        {
-            if (animator.GetBool("Holding"))
-            {
-                ChangeAnimationState("Arms holding");
-            }
-            else if (animator.GetBool("Holding 2"))
-            {
-                ChangeAnimationState("Arms holding 2");
-            }
-        }
-    }
-
-    void OnEnable()
-    { input.Enable(); }
-
-    void OnDisable()
-    { input.Disable(); }
-
-    void HitTarget(Vector3 pos)
-    {
-        audioSource.pitch = 1;
-        audioSource.PlayOneShot(hitSound);
-
-        GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
-        Destroy(GO, 20);
-    }
-
     void AssignInputs()
     {
         input.Attack.started += ctx => Attack();
     }
+
 }

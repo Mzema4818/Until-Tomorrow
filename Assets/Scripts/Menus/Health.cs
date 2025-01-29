@@ -27,6 +27,7 @@ public class Health : MonoBehaviour
     
     public Item.ItemType[] itemType;
     public int maxDrops;
+    public GameObject FallenTree;
 
     public bool kill;
 
@@ -93,6 +94,7 @@ public class Health : MonoBehaviour
                 if (maxDrops != 0)
                 {
                     ItemDropByType();
+                    if(GetComponent<TreeLocation>() != null){ SpawnFallingTree(); }
                 }
 
                 if (!changeStat)
@@ -147,5 +149,54 @@ public class Health : MonoBehaviour
         {
             canvas.SetActive(false);
         }
+    }
+
+    public void SpawnFallingTree()
+    {
+        GameObject newTree = Instantiate(gameObject, transform.position, transform.rotation);
+        newTree.layer = LayerMask.NameToLayer("Temp");
+        Destroy(newTree.GetComponent<TreeLocation>());
+
+        // Remove all components except LODGroup
+        Component[] components = newTree.GetComponents<Component>();
+        foreach (Component comp in components)
+        {
+            if (!(comp is Transform) && !(comp is LODGroup))
+            {
+                Destroy(comp);
+            }
+        }
+
+        // Add Rigidbody
+        newTree.AddComponent<Rigidbody>();
+
+        // Collect children to remove before modifying hierarchy
+        List<Transform> childrenToRemove = new List<Transform>();
+
+        foreach (Transform child in newTree.transform)
+        {
+            if (child.name == "Canvas" || child.name == "Location")
+            {
+                childrenToRemove.Add(child); // Mark for removal
+            }
+        }
+
+        // Remove children after iteration
+        foreach (Transform child in childrenToRemove)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // Wait until after deletion to modify remaining children
+        foreach (Transform child in newTree.transform)
+        {
+            child.gameObject.layer = LayerMask.NameToLayer("Temp");
+            MeshCollider meshCollider = child.GetComponent<MeshCollider>();
+            if (meshCollider != null) // Ensure the component exists before using it
+            {
+                meshCollider.convex = true;
+            }
+        }
+        Destroy(newTree, 5f);
     }
 }
