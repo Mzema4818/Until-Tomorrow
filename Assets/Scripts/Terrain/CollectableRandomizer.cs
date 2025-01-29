@@ -7,42 +7,19 @@ public class CollectableRandomizer : MonoBehaviour
     public GameObject player;
     public GetData getData;
     public GameObject HotBar;
-    public bool randomize;
-
     public bool spawnatfeet;
-    // Start is called before the first frame update
-    void Update()
-    {
-        if (randomize)
-        {
-            RandomizeCollectables();
-            //getData.SaveData();
-            foreach(Transform transform in transform)
-            {
-                transform.gameObject.SetActive(true);
-            }
 
-            if(HotBar != null)
-            {
-                foreach (Transform transform in HotBar.transform)
-                {
-                    transform.gameObject.SetActive(false);
-                }
-            }
-            randomize = false;
-        }
-    }
+    public bool IsRandomized { get; private set; } = false; // Track completion
 
-    // Update is called once per frame
-    public void RandomizeCollectables()
+    public void Randomize()
     {
+        IsRandomized = false; // Reset before starting
+
         Mesh mesh = meshObject.GetComponent<MeshFilter>().mesh;
         Vector3[] vertices = mesh.vertices;
-
         List<Vector3> newVertices = new List<Vector3>();
 
-
-        for (int i = 0; i < vertices.Length; i += 1)
+        for (int i = 0; i < vertices.Length; i++)
         {
             if (vertices[i].y >= 1.6)
             {
@@ -50,9 +27,9 @@ public class CollectableRandomizer : MonoBehaviour
             }
         }
 
-        for(int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < transform.childCount; i++)
         {
-            if(transform.GetChild(i).name == "Opening Letter" || spawnatfeet)
+            if (transform.GetChild(i).name == "Opening Letter" || spawnatfeet)
             {
                 transform.GetChild(i).transform.position = player.transform.position;
             }
@@ -62,5 +39,21 @@ public class CollectableRandomizer : MonoBehaviour
                 transform.GetChild(i).transform.position = newVertices[randValue] * meshObject.transform.localScale.y;
             }
         }
+
+        foreach (Transform t in transform)
+        {
+            t.gameObject.SetActive(true);
+        }
+
+        if (HotBar != null)
+        {
+            foreach (Transform t in HotBar.transform)
+            {
+                t.gameObject.SetActive(false);
+            }
+        }
+
+        IsRandomized = true; // Mark as completed
+        getData.SaveData();
     }
 }

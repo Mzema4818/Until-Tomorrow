@@ -30,8 +30,8 @@ public class NoiseData : UpdatableData {
 
 	public void setNewSeed()
 	{
-		//seed = Random.Range(1, 999999);
-		seed = 344148;
+		seed = Random.Range(1, 999999);
+		//seed = 344148;
 	}
 
 	public void loadSeed(int newSeed)

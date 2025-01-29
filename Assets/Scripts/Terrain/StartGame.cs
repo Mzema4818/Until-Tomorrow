@@ -70,8 +70,6 @@ public class StartGame : MonoBehaviour
         ClearGameObjects();
         player.GetComponent<CharacterController>().enabled = true;
         StartInventory();
-        collectableRandomizer.randomize = true;
-        collectableRandomizer2.randomize = true;
         lightingManager.multiplier = 30;
         lightingManager.TimeOfDay = 10;
         lightingManager.numberOfDays = 0;
@@ -84,6 +82,8 @@ public class StartGame : MonoBehaviour
         forestGenerator.Generate();
         turnOnPlayer();
         randomizePlayer();
+        collectableRandomizer.Randomize();
+        collectableRandomizer2.Randomize();
         DayStuff(0);
         buildMenuUpdater.AccessToLevel0Buildings = true;
         Cursor.lockState = CursorLockMode.Locked;
