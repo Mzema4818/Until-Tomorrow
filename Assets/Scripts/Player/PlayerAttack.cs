@@ -97,7 +97,7 @@ public class PlayerAttack : MonoBehaviour
 
             audioSource.PlayOneShot(hit.transform.parent.GetComponent<ParticleHolder>().sound);
         }
-        else
+        else if(canAttack)
         {
             audioSource.PlayOneShot(swingSound);
         }

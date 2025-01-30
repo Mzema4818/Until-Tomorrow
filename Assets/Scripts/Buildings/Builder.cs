@@ -32,6 +32,10 @@ public class Builder : MonoBehaviour
     public TextMeshProUGUI woodText;
     public TextMeshProUGUI stoneText;
 
+    [Header("Sounds")]
+    public AudioSource audioSource;
+    public AudioClip placingItem;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -118,6 +122,7 @@ public class Builder : MonoBehaviour
             GameObject building = Instantiate(buildingPrefab, player.transform.position, player.transform.rotation);
             buildingData = building;
             AddBuildingScripts(building, parent, offset, amounts);
+            //audioSource.PlayOneShot(placingItem);
         }
         else
         {
@@ -139,6 +144,8 @@ public class Builder : MonoBehaviour
         building.GetComponent<GroundPlacementController>().parent = parent;
         building.GetComponent<GroundPlacementController>().builder = this;
         building.GetComponent<GroundPlacementController>().spawnEnemies = spawnEnemies;
+        building.GetComponent<GroundPlacementController>().audioSource = audioSource;
+        building.GetComponent<GroundPlacementController>().placingItem = placingItem;
         building.GetComponent<NavMeshObstacle>().enabled = false;
         building.AddComponent<ColorChange>();
         isBuilding = true;
@@ -158,6 +165,8 @@ public class Builder : MonoBehaviour
         building.GetComponent<GroundPlacementController>().moving = moving;
         building.GetComponent<NavMeshObstacle>().enabled = false;
         building.AddComponent<ColorChange>();
+        building.GetComponent<GroundPlacementController>().audioSource = audioSource;
+        building.GetComponent<GroundPlacementController>().placingItem = placingItem;
         isBuilding = true;
         openMenus.TurnOffMenus();
     }

@@ -25,6 +25,9 @@ public class GroundPlacementController : MonoBehaviour
     public bool moving;
     public bool shouldPlace;
 
+    public AudioSource audioSource;
+    public AudioClip placingItem;
+
     private Vector3 originalPosition;
 
     private void Start()
@@ -121,6 +124,9 @@ public class GroundPlacementController : MonoBehaviour
 
             currentPlaceableObject = null;
             builder.isBuilding = false;
+
+            audioSource.PlayOneShot(placingItem);
+
             Destroy(this);
         }
     }

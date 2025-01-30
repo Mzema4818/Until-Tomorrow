@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Crouch")]
     public float crouchHeight = 0.5f;  // Height when crouched
-    public float standingHeight = 2.0f; // Default standing height
+    public float standingHeight;
 
     void Awake()
     {
@@ -52,8 +52,9 @@ public class PlayerController : MonoBehaviour
         AssignInputs();
 
         // Set initial camera height
-        controller.height = standingHeight;
-        cam.transform.localPosition = new Vector3(0, standingHeight / 2, 0);
+        controller.height = cam.transform.parent.localPosition.y;
+        standingHeight = cam.transform.parent.localPosition.y;
+        //cam.transform.localPosition = new Vector3(0, standingHeight / 2, 0);
     }
 
     void Update()
