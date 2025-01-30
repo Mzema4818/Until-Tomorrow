@@ -39,6 +39,9 @@ public class OpenMenus : MonoBehaviour
     [Header("Tools")]
     public GameObject hammer;
 
+    [Header("Animator")]
+    public Animator animator;
+
     // Update is called once per frame
     void Update()
     {
@@ -208,6 +211,8 @@ public class OpenMenus : MonoBehaviour
     public void changePlayerState(bool state)
     {
         playerController.shouldMove = state;
+        animator.SetFloat("velocity X", 0);
+        animator.SetFloat("velocity Z", 0);
         //axe.shouldSwing = state;
         //pick.shouldSwing = state;
         //sword.shouldSwing = state;
