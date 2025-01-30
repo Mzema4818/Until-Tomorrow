@@ -15,9 +15,9 @@ public class PlayerAttack : MonoBehaviour
     public int attackDamage = 1;
     public LayerMask idealHit;
 
+    public AudioSource audioSource;
     public GameObject hitEffect;
-    public AudioClip swordSwing;
-    public AudioClip hitSound;
+    public AudioClip swingSound;
 
     bool attacking = false;
     bool readyToAttack = true;
@@ -38,6 +38,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Awake()
     {
+        audioSource = transform.root.GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         playerInput = new PlayerInput();
         input = playerInput.Main;
@@ -93,6 +94,12 @@ public class PlayerAttack : MonoBehaviour
 
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
+
+            audioSource.PlayOneShot(hit.transform.parent.GetComponent<ParticleHolder>().sound);
+        }
+        else
+        {
+            audioSource.PlayOneShot(swingSound);
         }
     }
 

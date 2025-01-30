@@ -6,5 +6,5 @@ public class ParticleHolder : MonoBehaviour
 {
     public GameObject ParticleHit;
     public GameObject ParticleBreak;
-    public AudioSource sound;
+    public AudioClip sound;
 }

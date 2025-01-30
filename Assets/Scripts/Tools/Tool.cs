@@ -126,7 +126,7 @@ public class Tool : MonoBehaviour
             DamageIndicator indicator = Instantiate(damageText, hit.point, Quaternion.identity).GetComponent<DamageIndicator>();
             indicator.SetDamageText(damage, crit);
 
-            particalHolder.sound.Play();
+            //particalHolder.sound.Play();
         }
     }
 }

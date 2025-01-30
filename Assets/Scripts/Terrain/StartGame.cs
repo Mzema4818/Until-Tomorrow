@@ -68,7 +68,7 @@ public class StartGame : MonoBehaviour
         StartMusic(true);
 
         ClearGameObjects();
-        player.GetComponent<CharacterController>().enabled = true;
+        player.GetComponent<PlayerController>().enabled = true;
         StartInventory();
         lightingManager.multiplier = 30;
         lightingManager.TimeOfDay = 10;
@@ -99,7 +99,7 @@ public class StartGame : MonoBehaviour
         mainMenuMusic.Stop();
         StartMusic(true);
 
-        player.GetComponent<CharacterController>().enabled = true;
+        player.GetComponent<PlayerController>().enabled = true;
         StartInventory();
         lightingManager.multiplier = 30;
         lightingManager.countDaysStart = true;
