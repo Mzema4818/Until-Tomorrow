@@ -30,7 +30,7 @@ public class SpawnEnemies : MonoBehaviour
     public void SpawnEnemy(GameObject enemyPrefab)
     {
         GameObject enemy = Instantiate(enemyPrefab, spawnLocations[Random.Range(0, spawnLocations.Count)], Quaternion.identity, enemyParent);
-        enemy.transform.LookAt(townhall.transform);
+        enemy.transform.LookAt(townhall.transform); //test
         enemy.GetComponent<Enemy>().townhall = townhall;
     }
 
