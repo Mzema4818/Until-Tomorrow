@@ -18,7 +18,7 @@ public class EnemyMovement : MonoBehaviour
 
     //Attacking
     public float timeBetweenAttacks;
-    bool alreadyAttacked;
+    private bool alreadyAttacked;
 
     //states
     public float sightRange, attackRange;
@@ -131,8 +131,8 @@ public class EnemyMovement : MonoBehaviour
         {
             animator.SetTrigger("Attack");
 
-            alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            alreadyAttacked = true;
         }
     }
 
