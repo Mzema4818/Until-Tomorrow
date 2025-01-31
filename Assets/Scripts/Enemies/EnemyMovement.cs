@@ -7,8 +7,9 @@ public class EnemyMovement : MonoBehaviour
 {
     private NavMeshAgent agent;
     private Animator animator;
-    public Transform player;
-    public LayerMask groundMask, playerMask;
+    public Transform townhallParent;
+    public Transform attackingObject;
+    public LayerMask groundMask, playerMask, residentMask, buildingMask;
 
     //Patroling
     public Vector3 walkPoint;
@@ -21,26 +22,76 @@ public class EnemyMovement : MonoBehaviour
 
     //states
     public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    public bool playerInSightRange, playerInAttackRange, runToTownHall;
 
     public void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+
+        runToTownHall = true;
+        Transform townhall = townhallParent.GetChild(0);
+        if (townhall != null)
+        {
+            transform.LookAt(townhall);
+            agent.SetDestination(townhall.position);
+        }
     }
 
     private void Update()
     {
-        //Set Animations
+        // Set Animations
         animator.SetFloat("Velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 0.5f));
 
-        //Check for sight attack range;
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, playerMask);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, playerMask);
+        // Check for sight and attack range
+        LayerMask combinedMask = playerMask | residentMask | buildingMask;
+        Collider[] objectsInRange = Physics.OverlapSphere(transform.position, sightRange, combinedMask);
 
-        if (!playerInSightRange && !playerInAttackRange) Patroling();
-        else if (playerInSightRange && !playerInAttackRange) chasePlayer();
-        else if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        // Determine the closest object to attack
+        if (objectsInRange.Length > 0)
+        {
+            attackingObject = FindClosestObject(objectsInRange);
+            playerInSightRange = true;
+        }
+        else
+        {
+            attackingObject = null;
+            playerInSightRange = false;
+        }
+
+        playerInAttackRange = attackingObject != null && Vector3.Distance(transform.position, attackingObject.position) <= attackRange;
+
+        // Decide behavior
+        if (runToTownHall) AttackTownHall();
+        else if (attackingObject == null) Patroling();
+        else if (!playerInAttackRange) ChasePlayer();
+        else AttackPlayer();
+    }
+
+    private Transform FindClosestObject(Collider[] objects)
+    {
+        Transform closest = null;
+        float minDistance = Mathf.Infinity;
+
+        foreach (Collider obj in objects)
+        {
+            float distance = Vector3.Distance(transform.position, obj.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closest = obj.transform;
+            }
+        }
+        return closest;
+    }
+
+
+    private void AttackTownHall()
+    {
+        if (playerInSightRange)
+        {
+            runToTownHall = false;
+        }
     }
 
     private void Patroling()
@@ -65,20 +116,20 @@ public class EnemyMovement : MonoBehaviour
         if (Physics.Raycast(walkPoint, -transform.up, 2f, groundMask)) walkPointSet = true;
     }
 
-    private void chasePlayer()
+    private void ChasePlayer()
     {
-        agent.SetDestination(player.position);
+        agent.SetDestination(attackingObject.position);
     }
 
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position);
 
-        transform.LookAt(player);
+        transform.LookAt(attackingObject);
 
         if (!alreadyAttacked)
         {
-            //Attack Code here
+            animator.SetTrigger("Attack");
 
             alreadyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
