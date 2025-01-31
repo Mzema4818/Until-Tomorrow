@@ -9,6 +9,8 @@ public class InventoryManager : MonoBehaviour
     public InventorySlot[] inventorySlots;
     public GameObject inventoryItemPrefab;
     public Builder builder;
+    public Animator armsAnimator;
+    public PlayerAttack playerAttack;
     //public Animator armsAnimator;
     
     [HideInInspector] public bool DraggingItem;
@@ -57,6 +59,14 @@ public class InventoryManager : MonoBehaviour
                         if (ListOfHeldItems[num].GetComponent<PlacingSeeds>() != null) ListOfHeldItems[num].GetComponent<PlacingSeeds>().itemIndex = selectedSlot;
                         ListOfHeldItems[num].SetActive(true);
                         selectedItem = num;
+                    }
+                    else
+                    {
+                        //When you are holding nothing, go back to idle animation for arms
+                        armsAnimator.SetTrigger("Not Holding");
+                        playerAttack.canAttack = false;
+                        playerAttack.ATTACK1 = "";
+                        playerAttack.ATTACK2 = "";
                     }
 
                 }

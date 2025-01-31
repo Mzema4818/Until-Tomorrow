@@ -47,10 +47,13 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        if (canAttack && input.Attack.IsPressed())
+        //Dont think i need this because of AssignInputs()
+        /*if (canAttack && input.Attack.IsPressed())
         {
+            print(canAttack);
             Attack();
-        }
+            //print("hi");
+        }*/
     }
 
     public void Attack()
@@ -143,7 +146,6 @@ public class PlayerAttack : MonoBehaviour
         // Ensure the scale is exactly the original size
         if (hit != null) hit.transform.localScale = originalScale;
     }
-
 
     void OnEnable()
     { input.Enable(); }
