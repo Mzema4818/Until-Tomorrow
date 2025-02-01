@@ -14,6 +14,7 @@ public class OpenMenus : MonoBehaviour
     public GameObject CharacterStuff;
     public GameObject ToolBar;
     public GameObject ChestInventory;
+    public GameObject deathMenu;
 
     [Header("Other Menus")]
     public GameObject ResidentMenus;
@@ -45,10 +46,13 @@ public class OpenMenus : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        KeyPressed(KeyCode.Escape, PauseMenu, false);
-        KeyPressed(KeyCode.E, Inventory, false);
-        KeyPressed(KeyCode.B, BuildMenu, true);
-        KeyPressed(KeyCode.U, CollectionMenu, false);
+        if (!deathMenu.activeSelf)
+        {
+            KeyPressed(KeyCode.Escape, PauseMenu, false);
+            KeyPressed(KeyCode.E, Inventory, false);
+            KeyPressed(KeyCode.B, BuildMenu, true);
+            KeyPressed(KeyCode.U, CollectionMenu, false);
+        }
     }
 
     private void KeyPressed(KeyCode keycode, GameObject menu, bool NeedHammer)
