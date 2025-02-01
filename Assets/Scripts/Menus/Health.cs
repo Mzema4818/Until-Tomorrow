@@ -29,6 +29,8 @@ public class Health : MonoBehaviour
     public int maxDrops;
     public GameObject FallenTree;
 
+    [Header("Arms stuff (for player only)")]
+    public PlayerAttack playerAttack;
     public bool kill;
 
     private void Awake()
@@ -112,6 +114,12 @@ public class Health : MonoBehaviour
             if (currentHealth <= 0)
             {
                 onDeath.PlayerDied();
+
+                playerAttack.canAttack = false;
+                playerAttack.ATTACK1 = "";
+                playerAttack.ATTACK2 = "";
+                //To ensure that more gravestones down spawn
+                ModifyHealth(maxHealth);
             }
         }
     }

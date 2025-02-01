@@ -36,7 +36,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
-        //ChangeSelectedSlot(0);
+        ChangeSelectedSlot(0);
     }
 
     private void Update()

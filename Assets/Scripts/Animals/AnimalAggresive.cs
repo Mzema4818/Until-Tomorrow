@@ -82,7 +82,7 @@ public class AnimalAggresive : MonoBehaviour
 
     private void AttackPlayer()
     {
-        agent.SetDestination(transform.position);
+        agent.SetDestination(player.transform.position);
 
         transform.LookAt(player);
 

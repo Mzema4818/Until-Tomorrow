@@ -21,7 +21,11 @@ public class OnDeath : MonoBehaviour
     public Health health;
     public Hunger hunger;
     public Breath breath;
-    public GameObject weapons;
+
+    [Header("Arms stuff")]
+    public Transform HeldItems;
+    public PlayerAttack playerAttack;
+    public Animator armsAnimator;
 
     public GameObject character;
     public GameObject deathParent;
@@ -114,7 +118,14 @@ public class OnDeath : MonoBehaviour
         deathMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         playerController.shouldMove = true;
-        weapons.SetActive(true);
+        // HeldItems.SetActive(true);
+
+        //Arms stuff
+        for (int i = 1; i < HeldItems.childCount; i++)
+        {
+            HeldItems.GetChild(i).gameObject.SetActive(false);
+        }
+        armsAnimator.SetTrigger("Not Holding");
 
         for (int i = 0; i < canvas.transform.childCount; i++)
         {

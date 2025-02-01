@@ -24,6 +24,9 @@ public class EnemyMovement : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange, runToTownHall;
 
+    //Stats
+    public int damage;
+
     public void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -130,6 +133,11 @@ public class EnemyMovement : MonoBehaviour
         if (!alreadyAttacked)
         {
             animator.SetTrigger("Attack");
+            Health parentHealth = attackingObject.parent.GetComponent<Health>();
+            Health itselfHealth = attackingObject.GetComponent<Health>();
+
+            if (parentHealth != null) parentHealth.ModifyHealth(-damage);
+            else if (itselfHealth != null) itselfHealth.ModifyHealth(-damage);
 
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;
