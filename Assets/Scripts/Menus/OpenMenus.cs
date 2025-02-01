@@ -25,6 +25,7 @@ public class OpenMenus : MonoBehaviour
     public LightingManager lightingManager;
     public Builder builder;
     public InventoryManager inventoryManager;
+    public PlayerAttack playerAttack;
 
     [Header("Tool Scripts")]
     public Tool axe;
@@ -74,6 +75,7 @@ public class OpenMenus : MonoBehaviour
 
                 menu.SetActive(true);
                 changePlayerState(false);
+                playerAttack.shouldAttack = !playerAttack.shouldAttack;
                 return;
             }
 
@@ -83,6 +85,7 @@ public class OpenMenus : MonoBehaviour
                 menu.SetActive(false);
                 changePlayerState(true);
                 ChestInventory.SetActive(false);
+                playerAttack.shouldAttack = !playerAttack.shouldAttack;
                 return;
             }
 
@@ -97,18 +100,20 @@ public class OpenMenus : MonoBehaviour
                     {
                         menu.SetActive(true);
                         changePlayerState(false);
+                        playerAttack.shouldAttack = !playerAttack.shouldAttack;
                     }
                     else
                     {
                         menu.SetActive(false);
                         changePlayerState(true);
+                        playerAttack.shouldAttack = !playerAttack.shouldAttack;
                     }
                 }
 
                 if (menu == Inventory)
                 {
                     ToolBar.SetActive(true);
-                    inventoryManager.TurnOffItem();
+                    //inventoryManager.TurnOffItem();
                 }
             }
         }
@@ -210,6 +215,7 @@ public class OpenMenus : MonoBehaviour
         ContinueSign.SetActive(false);
         ConintueWords.SetActive(false);
         changePlayerState(true);
+        playerAttack.shouldAttack = true;
     }
 
     public void changePlayerState(bool state)

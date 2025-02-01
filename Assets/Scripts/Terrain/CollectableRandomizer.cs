@@ -54,6 +54,6 @@ public class CollectableRandomizer : MonoBehaviour
         }
 
         IsRandomized = true; // Mark as completed
-        getData.SaveData(); //not happy with this fix but, the data is being saved before the collectables
+        //getData.SaveData(); //not happy with this fix but, the data is being saved before the collectables
     }
 }

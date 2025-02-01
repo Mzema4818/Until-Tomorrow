@@ -17,8 +17,8 @@ public class InventoryManager : MonoBehaviour
     [HideInInspector] public GameObject ItemDragged;
     public OpenMenus openMenus;
 
-    int selectedSlot = -1;
-    int selectedItem = 0;
+    public int selectedSlot = -1;
+    public int selectedItem = 0;
     //public string currentAnimationState;
 
     //Change depending on how many hotbar slots we have (rn its 7)
@@ -36,7 +36,7 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
-        ChangeSelectedSlot(0);
+
     }
 
     private void Update()
@@ -67,6 +67,7 @@ public class InventoryManager : MonoBehaviour
                         playerAttack.canAttack = false;
                         playerAttack.ATTACK1 = "";
                         playerAttack.ATTACK2 = "";
+                        selectedItem = 0;
                     }
 
                 }
@@ -231,6 +232,13 @@ public class InventoryManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    private void RemoveAllAtIndex(int index)
+    {
+        InventoryItem itemInSlot = inventorySlots[index].GetComponentInChildren<InventoryItem>();
+        itemInSlot.count = 0;
+        itemInSlot.RefreshCount();
     }
 
     private void SpawnNewItem(Item item, InventorySlot slot)
@@ -422,6 +430,40 @@ public class InventoryManager : MonoBehaviour
         ListOfHeldItems[selectedItem].SetActive(false);
         if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
         {
+            int num = ReturnNumByItem(GetSelectedItem().itemType);
+
+            if (ListOfHeldItems[num].GetComponent<Food>() != null) ListOfHeldItems[num].GetComponent<Food>().itemIndex = selectedSlot;
+            if (ListOfHeldItems[num].GetComponent<PlacingSeeds>() != null) ListOfHeldItems[num].GetComponent<PlacingSeeds>().itemIndex = selectedSlot;
+            ListOfHeldItems[num].SetActive(true);
+            selectedItem = num;
+        }
+    }
+
+    public void WipeInventory()
+    {
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            InventorySlot slot = inventorySlots[i];
+            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+
+            if (itemInSlot != null)
+            {
+                RemoveAllAtIndex(i);
+            }
+        }
+    }
+
+    //working here, when inventory wipes item im holding before hand is still on
+    public void StartOnSelectedItem()
+    {
+        inventorySlots[0].Select();
+        selectedSlot = 0;
+
+        ListOfHeldItems[selectedItem].SetActive(false);
+        selectedItem = 0;
+        if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
+        {
+            //ChangeAnimationState(GetSelectedItem().GetArmAnimation());
             int num = ReturnNumByItem(GetSelectedItem().itemType);
 
             if (ListOfHeldItems[num].GetComponent<Food>() != null) ListOfHeldItems[num].GetComponent<Food>().itemIndex = selectedSlot;

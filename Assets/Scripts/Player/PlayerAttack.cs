@@ -19,6 +19,7 @@ public class PlayerAttack : MonoBehaviour
     public GameObject hitEffect;
     public AudioClip swingSound;
 
+    public bool shouldAttack = true;
     bool attacking = false;
     bool readyToAttack = true;
     int attackCount;
@@ -58,7 +59,7 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack()
     {
-        if (!readyToAttack || attacking) return;
+        if (!shouldAttack || !readyToAttack || attacking) return;
 
         readyToAttack = false;
         attacking = true;
@@ -177,6 +178,11 @@ public class PlayerAttack : MonoBehaviour
     void AssignInputs()
     {
         input.Attack.started += ctx => Attack();
+    }
+
+    public void SwingSound()
+    {
+        //might need this later, if i switch to a weapon mid swing, it still plays the sound
     }
 
 }

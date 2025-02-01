@@ -22,7 +22,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     private void Awake()
     {
         image = transform.GetComponent<Image>();
-        Deselect();
+        //Deselect(); //this was on last time i used this, it might have another use i forgot about
     }
 
     public void Select()

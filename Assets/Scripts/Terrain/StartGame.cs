@@ -13,6 +13,7 @@ public class StartGame : MonoBehaviour
     public PlayerController playerController;
     public PlayInventory playInventory;
     public Crosshair crosshair;
+    public PlayerAttack playerAttack;
     public GetData getData;
     public BuildMenuUpdater buildMenuUpdater;
     public LightingManager lightingManager;
@@ -69,6 +70,7 @@ public class StartGame : MonoBehaviour
 
         ClearGameObjects();
         player.GetComponent<PlayerController>().enabled = true;
+        player.GetComponent<PlayerController>().shouldMove = true;
         StartInventory();
         lightingManager.multiplier = 30;
         lightingManager.TimeOfDay = 10;
@@ -90,6 +92,9 @@ public class StartGame : MonoBehaviour
         Time.timeScale = 1;
         getData.SaveData();
 
+        inventory.StartOnSelectedItem();
+        playerAttack.shouldAttack = true;
+
         navMeshSurface.BuildNavMesh();
         spawnEnemies.GetLocations();
     }
@@ -100,6 +105,7 @@ public class StartGame : MonoBehaviour
         StartMusic(true);
 
         player.GetComponent<PlayerController>().enabled = true;
+        player.GetComponent<PlayerController>().shouldMove = true;
         StartInventory();
         lightingManager.multiplier = 30;
         lightingManager.countDaysStart = true;
@@ -114,6 +120,9 @@ public class StartGame : MonoBehaviour
 
         navMeshSurface.BuildNavMesh();
         spawnEnemies.GetLocations();
+
+        inventory.StartOnSelectedItem();
+        playerAttack.shouldAttack = true;
 
         if (townHallParent.transform.childCount != 0)
         {
@@ -219,5 +228,10 @@ public class StartGame : MonoBehaviour
             noise2.Stop();
             noise3.Stop();
         }
+    }
+
+    public void WipeInventory()
+    {
+        inventory.WipeInventory();
     }
 }
