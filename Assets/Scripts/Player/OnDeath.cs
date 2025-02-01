@@ -64,9 +64,9 @@ public class OnDeath : MonoBehaviour
         openMenus.CloseAllMenus();
         openMenus.CloseAllOtherMenus();
 
-        health.ModifyHealth(-health.maxHealth);
-        hunger.ModifyHunger(-hunger.maxHunger);
-        breath.ModifyBreath(-breath.maxBreath);
+        //health.ModifyHealth(-health.maxHealth);
+        //hunger.ModifyHunger(-hunger.maxHunger);
+        //breath.ModifyBreath(-breath.maxBreath);
 
         openMenus.ToolBar.SetActive(false);
         deathMenu.SetActive(true);

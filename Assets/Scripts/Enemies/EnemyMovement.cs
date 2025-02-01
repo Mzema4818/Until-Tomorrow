@@ -7,6 +7,7 @@ public class EnemyMovement : MonoBehaviour
 {
     private NavMeshAgent agent;
     private Animator animator;
+    public Transform player;
     public Transform townhallParent;
     public Transform attackingObject;
     public LayerMask groundMask, playerMask, residentMask, buildingMask;
@@ -78,6 +79,10 @@ public class EnemyMovement : MonoBehaviour
 
         foreach (Collider obj in objects)
         {
+            PlayerController playerController = obj.GetComponent<PlayerController>();
+            if (playerController != null && !playerController.shouldMove)
+                continue; // Skip the player if their script is disabled (i.e., they're "dead")
+
             float distance = Vector3.Distance(transform.position, obj.transform.position);
             if (distance < minDistance)
             {
@@ -87,6 +92,7 @@ public class EnemyMovement : MonoBehaviour
         }
         return closest;
     }
+
 
 
     private void AttackTownHall()
@@ -133,14 +139,24 @@ public class EnemyMovement : MonoBehaviour
         if (!alreadyAttacked)
         {
             animator.SetTrigger("Attack");
-            Health parentHealth = attackingObject.parent.GetComponent<Health>();
-            Health itselfHealth = attackingObject.GetComponent<Health>();
-
-            if (parentHealth != null) parentHealth.ModifyHealth(-damage);
-            else if (itselfHealth != null) itselfHealth.ModifyHealth(-damage);
-
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;
+
+            Health itselfHealth = attackingObject.GetComponent<Health>();
+            if (itselfHealth != null)
+            {
+                itselfHealth.ModifyHealth(-damage);
+                if (itselfHealth.currentHealth < 0) attackingObject = null;
+                return;
+            }
+
+            Health parentHealth = attackingObject.parent.GetComponent<Health>();
+            if (parentHealth != null)
+            {
+                parentHealth.ModifyHealth(-damage);
+                if (parentHealth.currentHealth < 0) attackingObject = null;
+            }
+
         }
     }
 
