@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class InventoryManager : MonoBehaviour
     [HideInInspector] public GameObject ItemDragged;
     public OpenMenus openMenus;
 
+    public bool firstLoadGame = false;
     public int selectedSlot = -1;
     public int selectedItem = 0;
     //public string currentAnimationState;
@@ -33,11 +35,6 @@ public class InventoryManager : MonoBehaviour
          //KeyCode.Alpha8,
          //KeyCode.Alpha9,
      };
-
-    private void Start()
-    {
-
-    }
 
     private void Update()
     {
@@ -237,7 +234,7 @@ public class InventoryManager : MonoBehaviour
     private void RemoveAllAtIndex(int index)
     {
         InventoryItem itemInSlot = inventorySlots[index].GetComponentInChildren<InventoryItem>();
-        itemInSlot.count = 0;
+        itemInSlot.count = -1;
         itemInSlot.RefreshCount();
     }
 
@@ -260,6 +257,20 @@ public class InventoryManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void Test()
+    {
+        /*for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            InventorySlot slot = inventorySlots[i];
+            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+
+            if (itemInSlot != null)
+            {
+                print(itemInSlot.item.itemType);
+            }
+        }*/
     }
 
     private int ReturnNumByItem(Item.ItemType item)
@@ -448,9 +459,14 @@ public class InventoryManager : MonoBehaviour
 
             if (itemInSlot != null)
             {
-                RemoveAllAtIndex(i);
+                itemInSlot.count = 0;
+                itemInSlot.item = new Item { itemType = Item.ItemType.nothing };
+                itemInSlot.RefreshCount();
+                //Destroy(itemInSlot.gameObject);
             }
         }
+
+        //Test();
     }
 
     //working here, when inventory wipes item im holding before hand is still on
@@ -461,6 +477,35 @@ public class InventoryManager : MonoBehaviour
 
         ListOfHeldItems[selectedItem].SetActive(false);
         selectedItem = 0;
+        if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
+        {
+            //ChangeAnimationState(GetSelectedItem().GetArmAnimation());
+            int num = ReturnNumByItem(GetSelectedItem().itemType);
+
+            if (ListOfHeldItems[num].GetComponent<Food>() != null) ListOfHeldItems[num].GetComponent<Food>().itemIndex = selectedSlot;
+            if (ListOfHeldItems[num].GetComponent<PlacingSeeds>() != null) ListOfHeldItems[num].GetComponent<PlacingSeeds>().itemIndex = selectedSlot;
+            ListOfHeldItems[num].SetActive(true);
+            selectedItem = num;
+        }
+    }
+
+    public void StartOnItem()
+    {
+        //Reset arm animations
+        ListOfHeldItems[selectedItem].SetActive(false);
+        if (selectedSlot != -1) inventorySlots[selectedSlot].Deselect();
+        armsAnimator.SetTrigger("Not Holding");
+        playerAttack.canAttack = false;
+        playerAttack.ATTACK1 = "";
+        playerAttack.ATTACK2 = "";
+
+        //Reset hand slots to first slot and turn on item if needed
+        selectedSlot = 0;
+        selectedItem = 0;
+        inventorySlots[selectedSlot].Select();
+
+        if (GetSelectedItem() != null) print(GetSelectedItem().itemType);
+        if (GetSelectedItem() != null && GetSelectedItem().itemType == Item.ItemType.nothing) return;
         if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
         {
             //ChangeAnimationState(GetSelectedItem().GetArmAnimation());
