@@ -93,7 +93,8 @@ public class StartGame : MonoBehaviour
         getData.SaveData();
 
         //inventory.StartOnSelectedItem();
-        //inventory.StartOnItem();
+        inventory.WipeInventory();
+        inventory.StartOnItem();
         playerAttack.shouldAttack = true;
 
         navMeshSurface.BuildNavMesh();
@@ -123,7 +124,7 @@ public class StartGame : MonoBehaviour
         spawnEnemies.GetLocations();
 
         //inventory.StartOnSelectedItem();
-        //inventory.StartOnItem();
+        inventory.StartOnItem();
         playerAttack.shouldAttack = true;
 
         if (townHallParent.transform.childCount != 0)

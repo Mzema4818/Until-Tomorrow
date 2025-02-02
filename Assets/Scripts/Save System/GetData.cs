@@ -2580,6 +2580,10 @@ public class GetData : MonoBehaviour
     {
         for(int i = 0; i < itemNames.Length; i++)
         {
+            //wipes inventory if its 0, insures player starts game with fresh inventory when loading game from a loaded game
+            InventoryItem itemInSlot = inventory.inventorySlots[i].GetComponentInChildren<InventoryItem>();
+            if (itemInSlot != null) DestroyImmediate(itemInSlot.gameObject);
+
             if (amount[i] == 0) continue;
             inventory.SetItem(new Item { itemType = StringToItem(itemNames[i]) }, amount[i], inventory.inventorySlots[i]);
         }

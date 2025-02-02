@@ -457,16 +457,9 @@ public class InventoryManager : MonoBehaviour
             InventorySlot slot = inventorySlots[i];
             InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
 
-            if (itemInSlot != null)
-            {
-                itemInSlot.count = 0;
-                itemInSlot.item = new Item { itemType = Item.ItemType.nothing };
-                itemInSlot.RefreshCount();
-                //Destroy(itemInSlot.gameObject);
-            }
+            if (itemInSlot != null) DestroyImmediate(itemInSlot.gameObject);
         }
 
-        //Test();
     }
 
     //working here, when inventory wipes item im holding before hand is still on
@@ -504,8 +497,6 @@ public class InventoryManager : MonoBehaviour
         selectedItem = 0;
         inventorySlots[selectedSlot].Select();
 
-        if (GetSelectedItem() != null) print(GetSelectedItem().itemType);
-        if (GetSelectedItem() != null && GetSelectedItem().itemType == Item.ItemType.nothing) return;
         if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
         {
             //ChangeAnimationState(GetSelectedItem().GetArmAnimation());
