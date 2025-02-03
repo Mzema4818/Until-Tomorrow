@@ -508,4 +508,24 @@ public class InventoryManager : MonoBehaviour
             selectedItem = num;
         }
     }
+
+    public void ChangeSlotOnDrop(Item.ItemType item)
+    {
+        ListOfHeldItems[selectedItem].SetActive(false);
+        armsAnimator.SetTrigger("Not Holding");
+        playerAttack.canAttack = false;
+        playerAttack.ATTACK1 = "";
+        playerAttack.ATTACK2 = "";
+        selectedItem = 0;
+    }
+
+    public void changeSlotOnDropSame(Item.ItemType item)
+    {
+        selectedItem = ReturnNumByItem(item);
+        print(item);
+
+        if (ListOfHeldItems[selectedItem].GetComponent<Food>() != null) ListOfHeldItems[selectedItem].GetComponent<Food>().itemIndex = selectedSlot;
+        if (ListOfHeldItems[selectedItem].GetComponent<PlacingSeeds>() != null) ListOfHeldItems[selectedItem].GetComponent<PlacingSeeds>().itemIndex = selectedSlot;
+        ListOfHeldItems[selectedItem].SetActive(true);
+    }
 }

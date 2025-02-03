@@ -42,9 +42,18 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         if (!dontDrop)
         {
             InventoryItem inventoryItem = eventData.pointerDrag.GetComponent<InventoryItem>();
+
+            //dropping an item into an active slot/non active slot keeps its size it should be and item held gets changed
             if (inventoryManager.selectedSlot == transform.GetSiblingIndex())
-            {inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);}
-            else inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+            {
+                inventoryManager.changeSlotOnDropSame(inventoryItem.item.itemType);
+                inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+            }
+            else 
+            {
+                inventoryManager.ChangeSlotOnDrop(inventoryItem.item.itemType);
+                inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+            }
 
             if (OnlyFood && inventoryItem.item.IsFood())
             {
