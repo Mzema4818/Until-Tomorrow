@@ -7,9 +7,11 @@ public class CollectableRandomizer : MonoBehaviour
     public GameObject player;
     public GetData getData;
     public GameObject HotBar;
+    public LayerMask collisionLayerMask;
     public bool spawnatfeet;
 
     public bool IsRandomized { get; private set; } = false; // Track completion
+
 
     public void Randomize()
     {
@@ -36,7 +38,15 @@ public class CollectableRandomizer : MonoBehaviour
             else
             {
                 int randValue = Random.Range(0, newVertices.Count);
-                transform.GetChild(i).transform.position = newVertices[randValue] * meshObject.transform.localScale.y + new Vector3(0, 0.5f, 0);
+                transform.GetChild(i).transform.position = newVertices[randValue] * meshObject.transform.localScale.y + new Vector3(0, 1f, 0);
+
+                //Make sure radomized element doesnt spawn in a tree or rock
+                while (Physics.CheckSphere(transform.GetChild(i).transform.position, 2, collisionLayerMask))
+                {
+                    print("new position");
+                    randValue = Random.Range(0, newVertices.Count);
+                    transform.GetChild(i).transform.position = newVertices[randValue] * meshObject.transform.localScale.y + new Vector3(0, 1f, 0);
+                }
             }
         }
 
