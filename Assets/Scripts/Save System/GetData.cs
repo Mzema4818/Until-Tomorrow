@@ -1589,6 +1589,9 @@ public class GetData : MonoBehaviour
         SetActive(data.collectableActive, ref collectableActive);
         for(int i = 0; i < collectableMenu.transform.childCount; i++)
         {
+            collectableObjects[i].SetActive(false);
+            collectableObjectsButton[i].SetActive(false);
+
             if (collectableMenu.transform.GetChild(i).gameObject.activeSelf)
             {
                 SetPositions(data.collectablePosition, ref collectablePosition);
