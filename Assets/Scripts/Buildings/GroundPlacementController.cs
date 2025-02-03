@@ -107,7 +107,7 @@ public class GroundPlacementController : MonoBehaviour
 
                 Announcement.gameObject.SetActive(true);
                 Announcement.text = "New Buildings Unlocked";
-                //spawnEnemies.townhall = currentPlaceableObject;
+                spawnEnemies.townhall = currentPlaceableObject;
             }
 
             transform.GetComponent<IsABuilding>().beingMoved = false;

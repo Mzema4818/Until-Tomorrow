@@ -35,7 +35,11 @@ public class EnemyMovement : MonoBehaviour
 
         runToTownHall = true;
         Transform townhall = townhallParent.GetChild(0);
-        if (townhall != null)
+        if (townhall == null)
+        {
+            Destroy(gameObject);
+        }
+        else
         {
             transform.LookAt(townhall);
             agent.SetDestination(townhall.position);

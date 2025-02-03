@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor.Rendering;
 using UnityEngine;
 using static UnityEditor.Searcher.SearcherWindow.Alignment;
@@ -12,6 +13,7 @@ public class SpawnEnemies : MonoBehaviour
     public float edgeThreshold = 10.0f;
     public List<Vector3> spawnLocations = new List<Vector3>();
 
+    public TextMeshProUGUI notifiation;
     public Transform enemyParent;
     public GameObject[] EnemyPrefabs;
     public GameObject townhall;
@@ -25,6 +27,19 @@ public class SpawnEnemies : MonoBehaviour
             SpawnEnemy(EnemyPrefabs[0]);
             spawn = false;
         }
+    }
+
+    public void SpawnEnemyWave()
+    {
+        if (townhall == null) return;
+
+        int num = Random.Range(5, 10);
+        for(int i = 0; i < num; i++)
+        {
+            SpawnEnemy(EnemyPrefabs[0]);
+        }
+
+        notifiation.gameObject.SetActive(true);
     }
 
     public void SpawnEnemy(GameObject enemyPrefab)

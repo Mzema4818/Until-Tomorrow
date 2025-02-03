@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class GetData : MonoBehaviour
 {
+    [Header("Save Game")]
+    public TextMeshProUGUI notifiation;
+
     [Header("Terrain Data")]
     public NoiseData noiseData;
     public int seed;
@@ -251,6 +254,9 @@ public class GetData : MonoBehaviour
     public StoryManager storyManager;
     public bool SpawnPrisonShips;
     public int SpawnPrisonShipDay;
+
+    [Header("Enemies")]
+    public Transform enemyParent;
 
     private void Start()
     {
@@ -1514,6 +1520,13 @@ public class GetData : MonoBehaviour
     //Other End
     public void SaveData()
     {
+        if(enemyParent.childCount != 0)
+        {
+            storyManager.Error.gameObject.SetActive(true);
+            return;
+        }
+
+        notifiation.gameObject.SetActive(true);
         SaveSystem.SaveData(this);
     }
 

@@ -26,6 +26,9 @@ public class LightingManager : MonoBehaviour
 
     public bool[] Hours = new bool[24];
 
+    [Header("Story")]
+    public StoryManager storyManager;
+
     private void Start()
     {
         countDays = true;
@@ -89,6 +92,7 @@ public class LightingManager : MonoBehaviour
 
                 if (TimeOfDay >= 18 && TimeOfDay < 20 && !wanderTime) //wanderirng time (night)
                 {
+                    if(storyManager.ShouldSpawnEnemies) storyManager.DoSpawnEnemies = true;
                     sleepTime = false;
                     wanderTime = true;
                     workTime = false;

@@ -12,6 +12,7 @@ public class StoryManager : MonoBehaviour
 
     [Header("Game Objects Needed")]
     public TextMeshProUGUI Announcement;
+    public TextMeshProUGUI Error;
     public GameObject hotbar;
 
     [Header("Story Moments")]
@@ -20,8 +21,12 @@ public class StoryManager : MonoBehaviour
     public int SpawnPrisonShipDay;
     public Transform prisonShipParent;
     public bool test;
-
     private string direction;
+
+    [Header("Enemy Moments")]
+    public SpawnEnemies spawnEnemies;
+    public bool ShouldSpawnEnemies;
+    public bool DoSpawnEnemies;
 
     // Update is called once per frame
     void Update()
@@ -56,6 +61,14 @@ public class StoryManager : MonoBehaviour
                 SpawnPrisonShip();
                 SpawnPrisonShipDay += 2;
             }
+        }
+
+        if (lightingManager.numberOfDays >= 7 && !ShouldSpawnEnemies) ShouldSpawnEnemies = true;
+
+        if(ShouldSpawnEnemies && DoSpawnEnemies)
+        {
+            spawnEnemies.SpawnEnemyWave();
+            DoSpawnEnemies = false;
         }
 
         if (test)
