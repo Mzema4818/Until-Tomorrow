@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,6 +14,7 @@ public class SpawnEnemies : MonoBehaviour
     public float edgeThreshold = 10.0f;
     public List<Vector3> spawnLocations = new List<Vector3>();
 
+    public LightingManager lightingManager;
     public TextMeshProUGUI notifiation;
     public Transform enemyParent;
     public GameObject[] EnemyPrefabs;
@@ -33,7 +35,12 @@ public class SpawnEnemies : MonoBehaviour
     {
         if (townhall == null) return;
 
-        int num = Random.Range(5, 10);
+        int spawnMin = lightingManager.numberOfDays <= 7
+                ? 5
+                : 5 + (int)Math.Log(lightingManager.numberOfDays - 6);
+
+
+        int num = UnityEngine.Random.Range(spawnMin, 10);
         for(int i = 0; i < num; i++)
         {
             SpawnEnemy(EnemyPrefabs[0]);
@@ -44,7 +51,7 @@ public class SpawnEnemies : MonoBehaviour
 
     public void SpawnEnemy(GameObject enemyPrefab)
     {
-        GameObject enemy = Instantiate(enemyPrefab, spawnLocations[Random.Range(0, spawnLocations.Count)], Quaternion.identity, enemyParent);
+        GameObject enemy = Instantiate(enemyPrefab, spawnLocations[UnityEngine.Random.Range(0, spawnLocations.Count)], Quaternion.identity, enemyParent);
         //enemy.transform.LookAt(townhall.transform); //test
         //enemy.GetComponent<Enemy>().townhall = townhall;
     }
