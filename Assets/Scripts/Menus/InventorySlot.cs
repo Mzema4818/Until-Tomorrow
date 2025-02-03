@@ -42,6 +42,9 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         if (!dontDrop)
         {
             InventoryItem inventoryItem = eventData.pointerDrag.GetComponent<InventoryItem>();
+            if (inventoryManager.selectedSlot == transform.GetSiblingIndex())
+            {inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);}
+            else inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
 
             if (OnlyFood && inventoryItem.item.IsFood())
             {

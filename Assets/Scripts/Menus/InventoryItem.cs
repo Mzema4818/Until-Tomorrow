@@ -121,12 +121,15 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnDrag(PointerEventData eventData)
     {
+        //transform.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
         if (ClickedLeft) transform.position = Input.mousePosition;
         if (ClickedRight) halfStack.transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        //transform.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+        //print(transform.localScale);
         if (ClickedLeft)
         {
             transform.SetParent(ParentAfterDrag);
