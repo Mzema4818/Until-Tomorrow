@@ -44,10 +44,14 @@ public class StartGame : MonoBehaviour
 
     [Header("Sounds")]
     public AudioSource mainMenuMusic;
-    [Header("Ambaint")]
+    [Header("Ambient")]
     public AudioSource noise1;
     public AudioSource noise2;
     public AudioSource noise3;
+
+    [Header("Continue Game Check")]
+    public GameObject continueGame;
+    public bool wasContinueOn;
 
     void Awake()
     {
@@ -241,5 +245,15 @@ public class StartGame : MonoBehaviour
     public void inventoryTest()
     {
         inventory.StartOnItem();
+    }
+
+    public void checkContinueGame()
+    {
+        wasContinueOn = continueGame.activeSelf;
+    }
+
+    public void turnOnOrOffContinueGame()
+    {
+        continueGame.SetActive(wasContinueOn);
     }
 }
