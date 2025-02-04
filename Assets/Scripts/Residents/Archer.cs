@@ -62,6 +62,7 @@ public class Archer : MonoBehaviour
         {
             if (targetTransform == null || targetTransform != fieldOfView.objectSeen.transform)
             {
+                if (fieldOfView.objectSeen == null) return;
                 targetTransform = fieldOfView.objectSeen.transform;
             }
 

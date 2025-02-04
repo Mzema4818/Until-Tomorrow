@@ -42,6 +42,7 @@ public class FieldOfView : MonoBehaviour
         if (rangeChecks.Length != 0)
         {
             objectSeen = rangeChecks[0].gameObject;
+            if (objectSeen == null) objectSeen = null;
             Transform target = rangeChecks[0].transform;
             Vector3 directionToTarget = (target.position - transform.position).normalized;
 
