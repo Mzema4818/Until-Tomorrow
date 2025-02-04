@@ -16,6 +16,7 @@ public class footsteps : MonoBehaviour
 
     public void Step(AnimationEvent animationEvent)
     {
+        if (clips.Length == 0) return;
         if (animationEvent.animatorClipInfo.weight > 0.2)
         {
             AudioClip clip = GetRandomClip();
