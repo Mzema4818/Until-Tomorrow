@@ -15,6 +15,7 @@ public class OpenMenus : MonoBehaviour
     public GameObject ToolBar;
     public GameObject ChestInventory;
     public GameObject deathMenu;
+    public GameObject gameOverScreen;
 
     [Header("Other Menus")]
     public GameObject ResidentMenus;
@@ -47,7 +48,7 @@ public class OpenMenus : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!deathMenu.activeSelf)
+        if (!deathMenu.activeSelf && !gameOverScreen.activeSelf)
         {
             KeyPressed(KeyCode.Escape, PauseMenu, false);
             KeyPressed(KeyCode.E, Inventory, false);
@@ -206,6 +207,12 @@ public class OpenMenus : MonoBehaviour
         ContinueSign.SetActive(true);
         ConintueWords.SetActive(true);
         changePlayerState(false);
+    }
+
+    public void TurnOffContinue()
+    {
+        ContinueSign.SetActive(false);
+        ConintueWords.SetActive(false);
     }
 
     public void MainMenuClose()

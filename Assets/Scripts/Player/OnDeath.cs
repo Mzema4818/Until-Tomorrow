@@ -104,6 +104,7 @@ public class OnDeath : MonoBehaviour
 
     public void Respawn()
     {
+        openMenus.MainMenuClose();
         health.ModifyHealth(health.maxHealth);
         hunger.ModifyHunger(hunger.maxHunger);
         breath.ModifyBreath(breath.maxBreath);

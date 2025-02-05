@@ -67,6 +67,28 @@ public class StartGame : MonoBehaviour
         CharacterStuff.SetActive(false);
     }
 
+    public void EndGame()
+    {
+        player.transform.position = new Vector3(0, 200, 0); //to turn off ocean sounds if you are close
+        mainMenuMusic.Play();
+        StartMusic(false);
+
+        ClearGameObjects();
+        player.GetComponent<PlayerController>().enabled = false;
+        player.GetComponent<PlayerController>().shouldMove = false;
+        StartInventory();
+        lightingManager.multiplier = 1;
+        lightingManager.TimeOfDay = 11;
+        lightingManager.numberOfDays = 0;
+        lightingManager.countDaysStart = false;
+        lightingManager.ResetSchedule();
+
+        inventory.WipeInventory();
+        inventory.StartOnItem();
+        playerAttack.shouldAttack = false;
+
+    }
+
     public void GenerateNewSeed()
     {
         mainMenuMusic.Stop();

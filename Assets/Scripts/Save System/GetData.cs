@@ -1533,6 +1533,11 @@ public class GetData : MonoBehaviour
         SaveSystem.SaveData(this);
     }
 
+    public void ClearData()
+    {
+        SaveSystem.WipeData();
+    }
+
     public void LoadData()
     {
         ClearGameObjects();

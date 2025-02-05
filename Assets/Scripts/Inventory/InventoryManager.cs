@@ -36,8 +36,12 @@ public class InventoryManager : MonoBehaviour
          //KeyCode.Alpha9,
      };
 
+    public GameObject gameOverScreen;
+
     private void Update()
     {
+        if (gameOverScreen.activeSelf) return;
+
         for (int i = 0; i < keyCodes.Length; i++)
         {
             if (Input.GetKeyDown(keyCodes[i]))
@@ -423,6 +427,21 @@ public class InventoryManager : MonoBehaviour
                 to.amounts[index] = itemInSlot.count;
                 index++;
 
+                itemInSlot.count = 0;
+                itemInSlot.RefreshCount();
+            }
+        }
+    }
+
+    public void ClearInventory()
+    {
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            InventorySlot slot = inventorySlots[i];
+            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+
+            if (itemInSlot != null)
+            {
                 itemInSlot.count = 0;
                 itemInSlot.RefreshCount();
             }

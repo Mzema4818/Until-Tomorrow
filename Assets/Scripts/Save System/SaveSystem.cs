@@ -35,4 +35,19 @@ public static class SaveSystem
             return null;
         }
     }
+
+    public static void WipeData()
+    {
+        string path = Application.persistentDataPath + "/data.TotallyNotData";
+
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+            Debug.Log("Save data wiped.");
+        }
+        else
+        {
+            Debug.Log("No save data found to wipe.");
+        }
+    }
 }
