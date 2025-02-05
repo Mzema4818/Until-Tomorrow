@@ -159,6 +159,15 @@ public class EnemyMovement : MonoBehaviour
             {
                 parentHealth.ModifyHealth(-damage);
                 if (parentHealth.currentHealth < 0) attackingObject = null;
+                return;
+            }
+
+            ResidentStats residentStats = attackingObject.GetComponent<ResidentStats>();
+            if(residentStats != null)
+            {
+                Health residentHealth = residentStats.StatObject.GetComponent<Health>();
+                residentHealth.ModifyHealth(-damage);
+                return;
             }
 
         }

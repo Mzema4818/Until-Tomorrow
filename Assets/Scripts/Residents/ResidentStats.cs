@@ -14,6 +14,7 @@ public class ResidentStats : MonoBehaviour
 
     private string ResidentName;
     public TextMeshProUGUI namebar;
+    public GameObject StatObject;
 
     void Awake()
     {
