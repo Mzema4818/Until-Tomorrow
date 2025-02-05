@@ -127,7 +127,7 @@ public class Job : MonoBehaviour
         }
 
         //resident.GetComponent<Hats>().RemoveHats();
-        print(resident);
+        //print(resident);
     }
 
     public int GetWorkerIndex(string name)

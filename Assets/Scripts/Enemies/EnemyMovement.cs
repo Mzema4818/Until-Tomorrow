@@ -173,6 +173,14 @@ public class EnemyMovement : MonoBehaviour
                 return;
             }
 
+            ResidentHealth residentHealth = attackingObject.GetComponent<ResidentHealth>();
+            if (residentHealth != null)
+            {
+                residentHealth.ModifyHealth(-damage);
+                if (residentHealth.currentHealth < 0) attackingObject = null;
+                return;
+            }
+
         }
     }
 
