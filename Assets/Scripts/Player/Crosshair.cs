@@ -15,6 +15,7 @@ public class Crosshair : MonoBehaviour
     public StoryManager storyManager;
     public GameObject buildEditor;
     public GameObject menuStats;
+    public GameObject builderHealth;
     public GameObject[] menuNames;
     public OpenMenus openMenus;
     public GameObject hammer;
@@ -95,6 +96,11 @@ public class Crosshair : MonoBehaviour
                     //opening buildings
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
+                        HealthBar healthBar = builderHealth.GetComponent<HealthBar>();
+                        healthBar.buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
+                        healthBar.SetHealth();
+                        BasicBuildingSelect();
+
                         if (hammer.activeSelf)
                         {
                             builder.buildingData = parent.gameObject;
@@ -122,7 +128,6 @@ public class Crosshair : MonoBehaviour
                             //Open Tent
                             if (parent.GetComponent<Tent>() != null)
                             {
-                                BasicBuildingSelect();
                                 ResidentNamesBar.gameObject.SetActive(true);
 
                                 ResidentNames.text = "";
@@ -136,7 +141,7 @@ public class Crosshair : MonoBehaviour
                             //OpenJob
                             if (parent.GetComponent<Job>() != null)
                             {
-                                BasicBuildingSelect();
+                                //BasicBuildingSelect();
 
                                 //Destroy all children
                                 foreach (Transform child in JobNamesBar.transform)
@@ -213,6 +218,7 @@ public class Crosshair : MonoBehaviour
                                 messhall.cookedFood.SetActive(true);
                             }
 
+                            //Open Archertower
                             if (parent.GetComponent<ArcherTower>() != null && !playerInteractions.assign)
                             {
                                 toolBar.SetActive(true);

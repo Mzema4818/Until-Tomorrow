@@ -11,6 +11,7 @@ public class HealthBar : MonoBehaviour
 
     [SerializeField]
     private Health health;
+    public BuildingHealth buildingHealth;
 
     [SerializeField]
     private float updateSpeedSeconds = 0.5f;
@@ -18,7 +19,7 @@ public class HealthBar : MonoBehaviour
     private void Awake()
     {
         if (health != null) health.onHealthPctChanged += HandleHealthChanged;
-        else GetComponentInParent<Health>().onHealthPctChanged += HandleHealthChanged;
+        else if(GetComponentInParent<Health>() != null) GetComponentInParent<Health>().onHealthPctChanged += HandleHealthChanged;
     }
 
     private void HandleHealthChanged(float pct)
@@ -38,5 +39,10 @@ public class HealthBar : MonoBehaviour
             yield return null;
         }
         foregroundImage.fillAmount = pct;
+    }
+
+    public void SetHealth()
+    {
+        buildingHealth.onHealthPctChanged += HandleHealthChanged;
     }
 }

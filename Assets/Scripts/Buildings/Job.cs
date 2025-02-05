@@ -151,6 +151,7 @@ public class Job : MonoBehaviour
                 WorkersActive[i].GetComponent<Hats>().RemoveHats();
                 WorkersActive[i].GetComponent<ResidentTools>().TurnOffAll();
                 WorkersActive[i].GetComponent<ResidentTools>().TurnOffAllAnimations();
+                WorkersActive[i].GetComponent<ResidentScheudle>().RemoveJobs();
                 //try { WorkersActive[i].GetComponent<NavMeshAgent>().ResetPath(); } catch { };
                 //WorkersActive[i].GetComponent<StatBar>().UpdateJob();
             }
