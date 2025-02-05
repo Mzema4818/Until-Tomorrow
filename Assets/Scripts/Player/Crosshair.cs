@@ -60,6 +60,10 @@ public class Crosshair : MonoBehaviour
     [Header("Sounds")]
     public AudioSource pickup;
 
+    [Header("Building Health")]
+    public BuildingHealth buildingHealth;
+    public HealthBar healthBar;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -96,9 +100,11 @@ public class Crosshair : MonoBehaviour
                     //opening buildings
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
-                        HealthBar healthBar = builderHealth.GetComponent<HealthBar>();
-                        healthBar.buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
+                        buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
+                        healthBar.buildingHealth = buildingHealth;
                         healthBar.SetHealth();
+                        buildingHealth.ModifyHealth(0);
+
                         BasicBuildingSelect();
 
                         if (hammer.activeSelf)
