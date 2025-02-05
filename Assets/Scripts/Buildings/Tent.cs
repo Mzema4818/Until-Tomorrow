@@ -23,14 +23,18 @@ public class Tent : MonoBehaviour
         originalPosition = transform.position;
     }
 
+    private void Start()
+    {
+        InvokeRepeating("HealResidents", 0.0f, 1f);
+    }
+
     // Update is called once per frame
     void Update()
     {
         //if (!time.sleepTime && enableResidents) WakeUpResidents();
         //WakeUpSleepingResidents();
 
-        if (transform.position != originalPosition) WakeUpResidents(); originalPosition = transform.position;
-
+        if (transform.position != originalPosition) { WakeUpResidents(); originalPosition = transform.position; }
     }
 
     private void OnDestroy()
@@ -65,6 +69,22 @@ public class Tent : MonoBehaviour
             }
         }
     }*/
+
+    private void HealResidents()
+    {
+        if (ResidentsActive[0] == null) return;
+
+        foreach (GameObject resident in ResidentsActive)
+        {
+            if(resident == null) continue;
+            //ResidentScheudle residentScheudle = resident.GetComponent<ResidentScheudle>();
+            ResidentHealth residentHealth = resident.GetComponent<ResidentHealth>();
+            Sleeping sleeping = resident.GetComponent<Sleeping>();
+
+            //if the resident is sleeping and has a health bar, heal health
+            if (sleeping != null && residentHealth != null) residentHealth.ModifyHealth(10);
+        }
+    }
 
     private void WakeUpResidents()
     {
