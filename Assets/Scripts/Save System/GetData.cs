@@ -1275,6 +1275,9 @@ public class GetData : MonoBehaviour
             }else if (parent.transform.GetChild(i).GetComponent<Chef>() != null && parent.transform.GetChild(i).GetComponent<Chef>().Cooking)
             {
                 positions[i] = parent.transform.GetChild(i).GetComponent<Chef>().locationEntered;
+            }else if (parent.transform.GetChild(i).GetComponent<Archer>() != null)
+            {
+                positions[i] = parent.transform.GetChild(i).GetComponent<Archer>().locationEntered;
             }
             else
             {
