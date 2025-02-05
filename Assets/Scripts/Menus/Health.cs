@@ -35,7 +35,7 @@ public class Health : MonoBehaviour
 
     private void Awake()
     {
-        if(changeStat) residentStats = transform.parent.GetComponent<ResidentStats>();
+        if(changeStat) residentStats = transform.GetComponent<ResidentStats>();
 
         if(canvas == null)
         {

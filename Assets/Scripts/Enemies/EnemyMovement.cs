@@ -146,6 +146,7 @@ public class EnemyMovement : MonoBehaviour
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;
 
+            //Attacking objects that have health on themselfs
             Health itselfHealth = attackingObject.GetComponent<Health>();
             if (itselfHealth != null)
             {
@@ -154,6 +155,7 @@ public class EnemyMovement : MonoBehaviour
                 return;
             }
 
+            //Attacking objects that have health on their parents
             Health parentHealth = attackingObject.parent.GetComponent<Health>();
             if (parentHealth != null)
             {
@@ -162,11 +164,12 @@ public class EnemyMovement : MonoBehaviour
                 return;
             }
 
-            ResidentStats residentStats = attackingObject.GetComponent<ResidentStats>();
-            if(residentStats != null)
+            //Attacking buildings
+            BuildingHealth buildingHealth = attackingObject.parent.GetComponent<BuildingHealth>();
+            if (buildingHealth != null)
             {
-                Health residentHealth = residentStats.StatObject.GetComponent<Health>();
-                residentHealth.ModifyHealth(-damage);
+                buildingHealth.ModifyHealth(-damage);
+                if (buildingHealth.currentHealth < 0) attackingObject = null;
                 return;
             }
 

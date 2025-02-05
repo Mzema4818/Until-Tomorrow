@@ -11,18 +11,21 @@ public class HungerBar : MonoBehaviour
 
     [SerializeField]
     private Hunger hunger;
+    public ResidentHunger residentHunger;
 
     [SerializeField]
     private float updateSpeedSeconds = 0.5f;
     // Start is called before the first frame update
     private void Awake()
     {
-        hunger.onHungerPctChanged += HandleHungerChanged;
+        if (hunger != null) hunger.onHungerPctChanged += HandleHungerChanged;
+        else if (GetComponentInParent<ResidentHunger>() != null) GetComponentInParent<ResidentHunger>().onHungerPctChanged += HandleHungerChanged;
     }
 
     private void HandleHungerChanged(float pct)
     {
-        StartCoroutine(changeToPct(pct));
+        if (gameObject.activeInHierarchy) StartCoroutine(changeToPct(pct));
+        else changeToPctDisabled(pct);
     }
 
     private IEnumerator changeToPct(float pct)
@@ -37,5 +40,15 @@ public class HungerBar : MonoBehaviour
             yield return null;
         }
         foregroundImage.fillAmount = pct;
+    }
+
+    private void changeToPctDisabled(float pct)
+    {
+        foregroundImage.fillAmount = pct;
+    }
+
+    public void SetHungerResident()
+    {
+        GetComponentInParent<ResidentHunger>().onHungerPctChanged += HandleHungerChanged;
     }
 }

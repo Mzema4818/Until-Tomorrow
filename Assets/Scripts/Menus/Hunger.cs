@@ -12,23 +12,17 @@ public class Hunger : MonoBehaviour
     public Health health;
     public int currentHunger;
 
-    [Header("If resident")]
-    public bool changeStat;
-    public ResidentStats residentStats;
-
     public event Action<float> onHungerPctChanged = delegate { };
 
     private void Awake()
     {
         health = GetComponent<Health>();
-        if (changeStat) residentStats = transform.parent.GetComponent<ResidentStats>();
 
         currentHunger = maxHunger;
     }
 
     void Start()
     {
-        if (residentStats != null) currentHunger = residentStats.Stats[1];
         ModifyHunger(0); //this just sets the value when first opened.
 
         InvokeRepeating("naturalHungerDecrease", 0.0f, 1f);

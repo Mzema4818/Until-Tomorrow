@@ -29,7 +29,7 @@ public class ResidentFood : MonoBehaviour
 
     private void outOfHunger()
     {
-        if (FoodBar.fillAmount <= 0) residentHealth.ChangeValue(-10);
+        //if (FoodBar.fillAmount <= 0) residentHealth.ChangeValue(-10);
     }
 
     private IEnumerator changeToPct(float pct)

@@ -2075,6 +2075,15 @@ public class GetData : MonoBehaviour
                 newElement.GetComponent<ResidentStats>().FavoriteItem = StringToItem(FavoriteItem[i]);
                 newElement.GetComponent<ResidentStats>().Stats = ResidentStats[i];
                 newElement.GetComponent<ResidentScheudle>().Schedule = ResidentSchedule[i];
+
+                newElement.GetComponent<ResidentHealth>().currentHealth = ResidentStats[i][0]; //sets health to health
+                newElement.GetComponent<ResidentStats>().StatObject.transform.GetChild(0).GetComponentsInChildren<HealthBar>()[0].SetHeathResident();
+                newElement.GetComponent<ResidentHealth>().ModifyHealth(0); //updates healthbar
+
+                newElement.GetComponent<ResidentHunger>().currentHunger = ResidentStats[i][1]; //sets health to health
+                newElement.GetComponent<ResidentStats>().StatObject.transform.GetChild(0).GetComponentsInChildren<HungerBar>()[0].SetHungerResident();
+                newElement.GetComponent<ResidentHunger>().ModifyHunger(0); //updates healthbar
+
                 //newElement.GetComponent<ResidentScheudle>().AtWork = IsResidentWorking[i];
                 //newElement.GetComponent<StatBar>().starbar = newElement.transform.Find("Stats").Find("CanvasStats").gameObject;
                 //newElement.GetComponent<StatBar>().stats = ResidentStats[i];

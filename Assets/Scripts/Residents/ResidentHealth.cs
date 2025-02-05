@@ -6,42 +6,56 @@ using UnityEngine.UI;
 
 public class ResidentHealth : MonoBehaviour
 {
-    [Header("Stats")]
+    [SerializeField]
+    public int maxHealth = 100;
+    public int currentHealth;
+
+    public event Action<float> onHealthPctChanged = delegate { };
+
     public ResidentStats residentStats;
 
-    [Header("Other")]
-    public Image HealthBar;
+    public bool damage;
 
-    private void Start()
+    private void Awake()
     {
-        HealthBar.fillAmount = (residentStats.Stats[0] / 100.0f);
+        currentHealth = maxHealth;
     }
 
     private void Update()
     {
-        if (HealthBar.fillAmount == 0) Destroy(gameObject);
-    }
-
-    private IEnumerator changeToPct(float pct)
-    {
-        residentStats.Stats[0] += (int)pct; //stats[0] because its the health bar
-
-        pct /= 100.0f;
-        float preChangedPct = HealthBar.fillAmount;
-        float elapsed = 0f;
-        float amount = preChangedPct + pct;
-
-        while (elapsed < 0.5f)
+        if (damage)
         {
-            elapsed += Time.deltaTime;
-            HealthBar.fillAmount = Mathf.Lerp(preChangedPct, amount, elapsed / 0.5f);
-            yield return null;
+            ModifyHealth(-20);
+            damage = false;
         }
-        HealthBar.fillAmount = amount;
+
+        if (currentHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 
-    public void ChangeValue(float pct)
+    private void Start()
     {
-        StartCoroutine(changeToPct(pct));
+        ModifyHealth(0); //this just sets the value when first opened.
+    }
+
+    public void ModifyHealth(int amount)
+    {
+        if (amount < 0)
+            amount = Mathf.Max(amount, -currentHealth); // Ensure we don't go below 0
+        else
+            amount = Mathf.Min(amount, maxHealth - currentHealth); // Ensure we don't exceed maxHunger
+
+        currentHealth += amount;
+
+        // Ensure maxHunger stays within valid bounds
+        maxHealth = Mathf.Clamp(maxHealth, 0, 100);
+
+        // Calculate the current hunger percentage
+        float currentHungerPct = (float)currentHealth / (float)maxHealth;
+        onHealthPctChanged(currentHungerPct);
+
+        residentStats.Stats[0] += amount;
     }
 }
