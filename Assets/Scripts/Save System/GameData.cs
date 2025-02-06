@@ -147,6 +147,10 @@ public class GameData
     public float[] towerPosition;
     public float[] towerRotation;
     public string[] towerNames;
+
+    public float[] knightHutPosition;
+    public float[] knightHutRotation;
+    public string[] knightHutNames;
     //public string[] inventoryItemNamesChest;
     //public int[] inventoryItemAmountsChest;
 
@@ -435,12 +439,19 @@ public class GameData
 
         turnIntoNames(data.GetTavernNames(), ref tavernNames);
 
-        //tavern data
+        //tower data
         turnIntoPositions(data.GetTowerPosition(), ref towerPosition);
 
         turnIntoRotations(data.GetTowerRotation(), ref towerRotation);
 
         turnIntoNames(data.GetTowerNames(), ref towerNames);
+
+        //knight hut data
+        turnIntoPositions(data.GetKnightHutPosition(), ref knightHutPosition);
+
+        turnIntoRotations(data.GetKnightHutRotation(), ref knightHutRotation);
+
+        turnIntoNames(data.GetKnightHutNames(), ref knightHutNames);
 
         //door data
         turnIntoPositions(data.GetDoorPosition(), ref DoorPosition);

@@ -146,7 +146,7 @@ public class OpenMenus : MonoBehaviour
     }
 
     public void CloseAllMenus()
-    {
+    {  
         foreach (GameObject objects in allMenus)
         {
             objects.SetActive(false);

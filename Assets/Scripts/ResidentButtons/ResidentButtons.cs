@@ -47,6 +47,9 @@ public class ResidentButtons : MonoBehaviour
                 //transform.GetChild(2).gameObject.SetActive(true);
                 constant.text.text = "Thank you kindly";
 
+                //disables item held by player
+                constant.inventoryManager.ChangeSlotOnDrop(constant.resident.GetComponent<ResidentStats>().FavoriteItem);
+
                 if (!constant.buildMenuUpdater.AccessToLevel2Buildings)
                 {
                     constant.buildMenuUpdater.AccessToLevel1Buildings = false;

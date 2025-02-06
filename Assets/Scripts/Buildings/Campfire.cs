@@ -9,9 +9,13 @@ public class Campfire : MonoBehaviour
 
     private void OnDestroy()
     {
-        openMenus.CloseAllMenus();
-        openMenus.MainMenuClose();
-        openMenus.changePlayerState(false);
-        gameOverScreen.SetActive(true);
+        try
+        {
+            openMenus.CloseAllMenus();
+            openMenus.MainMenuClose();
+            openMenus.changePlayerState(false);
+            gameOverScreen.SetActive(true);
+        }
+        catch { };
     }
 }

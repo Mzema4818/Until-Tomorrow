@@ -60,6 +60,7 @@ public class BuildMenuUpdater : MonoBehaviour
         transform.GetChild(5).gameObject.SetActive(true); //wall
         transform.GetChild(6).gameObject.SetActive(true); //door
         transform.GetChild(10).gameObject.SetActive(true); //Tower
+        transform.GetChild(11).gameObject.SetActive(true); //Tower
     }
 
     private void DisableBuildings()

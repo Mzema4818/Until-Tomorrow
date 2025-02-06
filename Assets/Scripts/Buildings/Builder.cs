@@ -97,6 +97,11 @@ public class Builder : MonoBehaviour
         BuildBuilding(StageOneBuildings[10], new int[] { 10, 10 }, parent.GetChild(10), 0);
     }
 
+    public void BuildKnightHut()
+    {
+        BuildBuilding(StageOneBuildings[11], new int[] { 10, 10 }, parent.GetChild(11), 0);
+    }
+
     public void MoveBuilding()
     {
         if (buildingData != null)
@@ -185,6 +190,7 @@ public class Builder : MonoBehaviour
         else if (name.Contains("Chest")) transform = parent.GetChild(7);
         else if (name.Contains("Messhall")) transform = parent.GetChild(8);
         else if (name.Contains("Tavern")) transform = parent.GetChild(9);
+        else if (name.Contains("KnightHut")) transform = parent.GetChild(10);
 
         return transform;
     }

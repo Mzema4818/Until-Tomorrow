@@ -168,6 +168,10 @@ public class GetData : MonoBehaviour
     public string[] towerName;
     public Vector3[] towerPosition;
     public Quaternion[] towerRotation;
+
+    public string[] knightHutName;
+    public Vector3[] knightHutPosition;
+    public Quaternion[] knightHutRotation;
     //public Inventory[] inventoryChest;
     //public string[] inventoryItemNamesChest;
     //public int[] inventoryItemAmountsChest;
@@ -1229,6 +1233,22 @@ public class GetData : MonoBehaviour
         return GetNames(ref towerName, buildingsParent.transform.GetChild(10).gameObject);
     }
 
+
+    public Vector3[] GetKnightHutPosition()
+    {
+        return GetPositions(ref knightHutPosition, buildingsParent.transform.GetChild(11).gameObject);
+    }
+
+    public Quaternion[] GetKnightHutRotation()
+    {
+        return GetRotations(ref knightHutRotation, buildingsParent.transform.GetChild(11).gameObject);
+    }
+
+    public string[] GetKnightHutNames()
+    {
+        return GetNames(ref knightHutName, buildingsParent.transform.GetChild(11).gameObject);
+    }
+
     //Get hotbaritem Data
     public Vector3[] GetHotBarItemPosition()
     {
@@ -1765,6 +1785,10 @@ public class GetData : MonoBehaviour
         SetRotations(data.towerRotation, ref towerRotation);
         SetNames(data.towerNames, ref towerName);
 
+        SetPositions(data.knightHutPosition, ref knightHutPosition);
+        SetRotations(data.knightHutRotation, ref knightHutRotation);
+        SetNames(data.knightHutNames, ref knightHutName);
+
         SetPositions(data.DoorPosition, ref DoorPosition);
         SetRotations(data.DoorRotation, ref DoorRotation);
         SetNames(data.DoorNames, ref DoorName);
@@ -1800,6 +1824,7 @@ public class GetData : MonoBehaviour
         SpawnObjects(MesshallPosition, MesshallRotation, MesshallName, buildingsParent.transform.GetChild(8), "building");
         SpawnObjects(tavernPosition, tavernRotation, tavernName, buildingsParent.transform.GetChild(9), "building");
         SpawnObjects(towerPosition, towerRotation, towerName, buildingsParent.transform.GetChild(10), "building");
+        SpawnObjects(knightHutPosition, knightHutRotation, knightHutName, buildingsParent.transform.GetChild(11), "building");
 
         //residents
         SetPositions(data.ResidentPosition, ref ResidentPosition);
@@ -2602,6 +2627,10 @@ public class GetData : MonoBehaviour
         else if (name.Contains("Tower"))
         {
             return buildingPrefabs[10];
+        }
+        else if (name.Contains("KnightHut"))
+        {
+            return buildingPrefabs[11];
         }
         else 
         { 
