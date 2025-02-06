@@ -29,6 +29,7 @@ public class Crosshair : MonoBehaviour
     public GameObject ResidentTextChoices;
     public GameObject ChestInventory;
     public GameObject MarksObject;
+    public GameObject mainMenu;
     public bool canHit;
     public LayerMask IgnoreMe;
     public JobCamera jobCamera;
@@ -88,7 +89,7 @@ public class Crosshair : MonoBehaviour
 
     public void TouchingObjects()
     {
-        if(hit.distance <= distance && CheckIfAllTrue())
+        if(hit.distance <= distance && CheckIfAllTrue() && !mainMenu.activeSelf)
         {
             if (Input.GetMouseButtonDown(0))
             {
