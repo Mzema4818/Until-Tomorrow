@@ -6,15 +6,19 @@ public class Campfire : MonoBehaviour
 {
     public OpenMenus openMenus;
     public GameObject gameOverScreen;
+    public bool gameOver;
 
     private void OnDestroy()
     {
         try
         {
-            openMenus.CloseAllMenus();
-            openMenus.MainMenuClose();
-            openMenus.changePlayerState(false);
-            gameOverScreen.SetActive(true);
+            if (gameOver)
+            {
+                openMenus.CloseAllMenus();
+                openMenus.MainMenuClose();
+                openMenus.changePlayerState(false);
+                gameOverScreen.SetActive(true);
+            }
         }
         catch { };
     }

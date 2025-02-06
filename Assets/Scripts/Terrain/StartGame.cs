@@ -27,6 +27,7 @@ public class StartGame : MonoBehaviour
     public GameObject ToolBar;
     public GameObject TerrainObjects;
     public GameObject buildingsParent;
+    public GameObject residentParent;
     public InventoryManager inventory;
 
     public GameObject townHallParent;
@@ -224,9 +225,12 @@ public class StartGame : MonoBehaviour
         dayUpdater.text = "Day " + number;
     }
 
-    private void ClearGameObjects()
+    public void ClearGameObjects()
     {
-        for(int i = 0; i < TerrainObjects.transform.childCount - 2; i++)
+        TurnOnGameObjects[] turnOnGameObjects = residentParent.GetComponents<TurnOnGameObjects>();
+        foreach (TurnOnGameObjects component in turnOnGameObjects) Destroy(component);
+
+        for (int i = 0; i < TerrainObjects.transform.childCount - 2; i++)
         {
             foreach (Transform child in TerrainObjects.transform.GetChild(i))
             {
@@ -241,6 +245,14 @@ public class StartGame : MonoBehaviour
                 Destroy(child.gameObject);
             }
         }
+
+        //TurnOnGameObjects[] turnOnGameObjects = gameObject.GetComponents(typeof(TurnOnGameObjects));
+    }
+
+    public void WipeResidentParent()
+    {
+        TurnOnGameObjects[] turnOnGameObjects = residentParent.GetComponents<TurnOnGameObjects>();
+        foreach (TurnOnGameObjects component in turnOnGameObjects) Destroy(component);
     }
 
     private void StartMusic(bool start)

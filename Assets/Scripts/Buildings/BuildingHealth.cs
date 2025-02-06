@@ -13,6 +13,7 @@ public class BuildingHealth : MonoBehaviour
 
     public OpenMenus openMenus;
 
+    public bool campfire;
     public bool damage;
 
     private void Awake()
@@ -32,6 +33,8 @@ public class BuildingHealth : MonoBehaviour
         {
             openMenus.CloseBuildMenus();
             openMenus.CloseChestInventory();
+
+            if (campfire) GetComponent<Campfire>().gameOver = true;
 
             Destroy(gameObject);
         }

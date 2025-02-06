@@ -1813,9 +1813,12 @@ public class GetData : MonoBehaviour
         //inventoryItemNamesChest = data.inventoryItemNamesChest;
         //TurnStringArrayIntoDictonaries(ref invetoryItemsArrayChest, inventoryItemNamesChest, inventoryItemAmountsChest);
 
+        //ClearGameObjects();
         SpawnObjects(CampfirePosition, CampfireRotation, CampfireName, buildingsParent.transform.GetChild(0), "building");
         SpawnObjects(TentPosition, TentRotation, TentName, buildingsParent.transform.GetChild(1), "building");
+        //print("Before spawned " + buildingsParent.transform.GetChild(2).childCount);
         SpawnObjects(MinePosition, MineRotation, MineName, buildingsParent.transform.GetChild(2), "building");
+        //print("After spawned " + buildingsParent.transform.GetChild(2).childCount);
         SpawnObjects(LumbermillPosition, LumbermillRotation, LumbermillName, buildingsParent.transform.GetChild(3), "building");
         SpawnObjects(FarmPosition, FarmRotation, FarmName, buildingsParent.transform.GetChild(4), "building");
         SpawnObjects(WallPosition, WallRotation, WallName, buildingsParent.transform.GetChild(5), "building");;
@@ -1839,9 +1842,12 @@ public class GetData : MonoBehaviour
         ResidentJob = data.ResidentJob;
         SpawnObjects(ResidentPosition, ResidentRotation, ResidentName, ResidentParent.transform, "resident");
 
+        //Building inventories
         ReturnChestItems();
         ReturnMessHallItems();
+        //print("Before inventory " + buildingsParent.transform.GetChild(2).childCount);
         ReturnMineItems();
+        //print("After inventory " + buildingsParent.transform.GetChild(2).childCount);
         ReturnFarmItems();
         ReturnLumbermillItems();
         ReturnMessHallFarm();
@@ -2289,6 +2295,7 @@ public class GetData : MonoBehaviour
         int index = 0;
         int slot = 0;
 
+        //print(buildingsParent.transform.GetChild(2).transform.childCount);
         for (int i = 0; i < buildingsParent.transform.GetChild(2).transform.childCount; i++)
         {
             Mine mine = buildingsParent.transform.GetChild(2).GetChild(i).GetComponent<Mine>();
@@ -2584,58 +2591,36 @@ public class GetData : MonoBehaviour
 
     public GameObject CheckBuildingName(string name)
     {
-        if (name.Contains("Campfire"))
+        switch (name)
         {
-            return buildingPrefabs[0];
+            case string s when s.Contains("Campfire"):
+                return buildingPrefabs[0];
+            case string s when s.Contains("Tent"):
+                return buildingPrefabs[1];
+            case string s when s.Contains("Mine"):
+                return buildingPrefabs[2];
+            case string s when s.Contains("Lumbermill"):
+                return buildingPrefabs[3];
+            case string s when s.Contains("Farm"):
+                return buildingPrefabs[4];
+            case string s when s.Contains("Wall"):
+                return buildingPrefabs[5];
+            case string s when s.Contains("Door"):
+                return buildingPrefabs[6];
+            case string s when s.Contains("Chest"):
+                return buildingPrefabs[7];
+            case string s when s.Contains("Messhall"):
+                return buildingPrefabs[8];
+            case string s when s.Contains("Tavern"):
+                return buildingPrefabs[9];
+            case string s when s.Contains("Tower"):
+                return buildingPrefabs[10];
+            case string s when s.Contains("KnightHut"):
+                return buildingPrefabs[11];
+            default:
+                return null;
         }
-        else if (name.Contains("Tent"))
-        {
-            return buildingPrefabs[1];
-        }
-        else if (name.Contains("Mine"))
-        {
-            return buildingPrefabs[2];
-        }
-        else if (name.Contains("Lumbermill"))
-        {
-            return buildingPrefabs[3];
-        }
-        else if (name.Contains("Farm"))
-        {
-            return buildingPrefabs[4];
-        }
-        else if (name.Contains("Wall"))
-        {
-            return buildingPrefabs[5];
-        }
-        else if (name.Contains("Door"))
-        {
-            return buildingPrefabs[6];
-        }
-        else if (name.Contains("Chest"))
-        {
-            return buildingPrefabs[7];
-        }
-        else if (name.Contains("Messhall"))
-        {
-            return buildingPrefabs[8];
-        }
-        else if (name.Contains("Tavern"))
-        {
-            return buildingPrefabs[9];
-        }
-        else if (name.Contains("Tower"))
-        {
-            return buildingPrefabs[10];
-        }
-        else if (name.Contains("KnightHut"))
-        {
-            return buildingPrefabs[11];
-        }
-        else 
-        { 
-            return null;
-        }
+
     }
 
     private void AddItemToInventory(string[] itemNames, int[] amount)
@@ -2720,13 +2705,16 @@ public class GetData : MonoBehaviour
         }
     }
 
-    private void ClearGameObjects()
+    public void ClearGameObjects()
     {
+        //DestroyImmediate might not be the best fix, but its working for now
+        //Issue before, after i deleted all the objects with Destroy(), they still somehow remained for a little and it caused issues with building inventory
+
         for (int i = 0; i < TerrainObjects.transform.childCount - 2; i++)
         {
             foreach (Transform child in TerrainObjects.transform.GetChild(i))
             {
-                Destroy(child.gameObject);
+                DestroyImmediate(child.gameObject);
             }
         }
 
@@ -2734,7 +2722,7 @@ public class GetData : MonoBehaviour
         {
             foreach (Transform child in gameobject)
             {
-                Destroy(child.gameObject);
+                DestroyImmediate(child.gameObject);
             }
         }
     }
