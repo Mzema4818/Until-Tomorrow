@@ -1816,9 +1816,7 @@ public class GetData : MonoBehaviour
         //ClearGameObjects();
         SpawnObjects(CampfirePosition, CampfireRotation, CampfireName, buildingsParent.transform.GetChild(0), "building");
         SpawnObjects(TentPosition, TentRotation, TentName, buildingsParent.transform.GetChild(1), "building");
-        //print("Before spawned " + buildingsParent.transform.GetChild(2).childCount);
         SpawnObjects(MinePosition, MineRotation, MineName, buildingsParent.transform.GetChild(2), "building");
-        //print("After spawned " + buildingsParent.transform.GetChild(2).childCount);
         SpawnObjects(LumbermillPosition, LumbermillRotation, LumbermillName, buildingsParent.transform.GetChild(3), "building");
         SpawnObjects(FarmPosition, FarmRotation, FarmName, buildingsParent.transform.GetChild(4), "building");
         SpawnObjects(WallPosition, WallRotation, WallName, buildingsParent.transform.GetChild(5), "building");;
@@ -1845,9 +1843,7 @@ public class GetData : MonoBehaviour
         //Building inventories
         ReturnChestItems();
         ReturnMessHallItems();
-        //print("Before inventory " + buildingsParent.transform.GetChild(2).childCount);
         ReturnMineItems();
-        //print("After inventory " + buildingsParent.transform.GetChild(2).childCount);
         ReturnFarmItems();
         ReturnLumbermillItems();
         ReturnMessHallFarm();
@@ -2295,7 +2291,6 @@ public class GetData : MonoBehaviour
         int index = 0;
         int slot = 0;
 
-        //print(buildingsParent.transform.GetChild(2).transform.childCount);
         for (int i = 0; i < buildingsParent.transform.GetChild(2).transform.childCount; i++)
         {
             Mine mine = buildingsParent.transform.GetChild(2).GetChild(i).GetComponent<Mine>();
