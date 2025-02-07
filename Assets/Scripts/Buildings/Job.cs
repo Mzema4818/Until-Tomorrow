@@ -95,7 +95,8 @@ public class Job : MonoBehaviour
         }
         else if (JobType[5]) //knight
         {
-            resident.AddComponent<Knight>().location = jobResidentHas.gameObject;
+            resident.AddComponent<Knight>().time = time;
+            resident.GetComponent<Knight>().location = jobResidentHas.gameObject;
             statMultiplier += stats.Stats[3];
         }
 
