@@ -29,7 +29,7 @@ public class Job : MonoBehaviour
     //3 = chef
     //4 = archer
     //5 = knight
-    public bool[] JobType = new bool[6]; //5 jobs 
+    public bool[] JobType = new bool[6]; //6 jobs 
 
 
     private void Awake()
@@ -93,9 +93,9 @@ public class Job : MonoBehaviour
             resident.AddComponent<Archer>().location = jobResidentHas.gameObject;
             statMultiplier += stats.Stats[3];
         }
-        else if (JobType[5]) //archer
+        else if (JobType[5]) //knight
         {
-            //resident.AddComponent<Knight>().location = jobResidentHas.gameObject;
+            resident.AddComponent<Knight>().location = jobResidentHas.gameObject;
             statMultiplier += stats.Stats[3];
         }
 
@@ -130,6 +130,10 @@ public class Job : MonoBehaviour
         else if (JobType[4]) //archer
         {
             Destroy(resident.GetComponent<Archer>());
+        }
+        else if (JobType[5]) //knight
+        {
+            Destroy(resident.GetComponent<Knight>());
         }
 
         //resident.GetComponent<Hats>().RemoveHats();

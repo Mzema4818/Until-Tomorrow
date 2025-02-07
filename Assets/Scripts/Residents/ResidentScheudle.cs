@@ -231,6 +231,7 @@ public class ResidentScheudle : MonoBehaviour
         Destroy(transform.GetComponent<Miner>());
         Destroy(transform.GetComponent<Chef>());
         Destroy(transform.GetComponent<Archer>());
+        Destroy(transform.GetComponent<Knight>());
     }
 
     private void GoToWork(GameObject location, bool EnterTime)

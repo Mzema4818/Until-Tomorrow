@@ -547,4 +547,9 @@ public class InventoryManager : MonoBehaviour
         if (ListOfHeldItems[selectedItem].GetComponent<PlacingSeeds>() != null) ListOfHeldItems[selectedItem].GetComponent<PlacingSeeds>().itemIndex = selectedSlot;
         ListOfHeldItems[selectedItem].SetActive(true);
     }
+
+    public void MakeSureUserHasItem()
+    {
+        
+    }
 }

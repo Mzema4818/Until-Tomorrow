@@ -232,6 +232,12 @@ public class Crosshair : MonoBehaviour
                                 ArcherTower archerTower = parent.GetComponent<ArcherTower>();
                             }
 
+                            if (parent.GetComponent<KnightHut>() != null && !playerInteractions.assign)
+                            {
+                                toolBar.SetActive(true);
+                                KnightHut knightHut = parent.GetComponent<KnightHut>();
+                            }
+
                         }
                     }
 
