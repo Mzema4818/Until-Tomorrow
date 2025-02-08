@@ -23,6 +23,10 @@ public class Knight : MonoBehaviour
     private int TimeToWakeUp = -1;
     private TurnOnGameObjects turnOnGameObjects;
 
+    [Header("conditions")]
+    public bool attackEnemies;
+    public GameObject enemyToAttack;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -51,7 +55,26 @@ public class Knight : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (attackEnemies)
+        {
+            enemyToAttack = location.GetComponent<FieldOfView>().objectSeen.gameObject;
+            agent.SetDestination(enemyToAttack.transform.position); //only works with vector3.zero right now, think it has something to do with postion always changes
+            //print("current dest: " + agent.destination + " pos dest: " + pos);
+        }
+        else if (!attackEnemies && Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
+        {
+            gameObject.SetActive(false);
+        }
+
+        /*if (!attackEnemies && Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
+        {
+
+        }
+        else if(attackEnemies && location.GetComponent<FieldOfView>().canSeePlayer)
+        {
+            gameObject.SetActive(true);
+            agent.SetDestination(location.GetComponent<FieldOfView>().objectSeen.transform.position);
+        }*/
     }
 
     private void FindNext(int time, int[] TimesToNotFind)

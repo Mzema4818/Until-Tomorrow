@@ -255,6 +255,8 @@ public class ResidentScheudle : MonoBehaviour
                     GetComponent<Hats>().GetHat(job.name);
                 }
 
+                print("hi");
+
                 AtLocation = true;
                 agent.ResetPath();
             }
