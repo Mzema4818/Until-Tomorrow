@@ -43,8 +43,7 @@ public class KnightHut : MonoBehaviour
         foreach (GameObject resident in job.WorkersActive)
         {
             if (resident == null || !resident.activeSelf || !resident.GetComponent<ResidentScheudle>().AtLocation) continue;
-            resident.GetComponent<NavMeshAgent>().ResetPath();
-            resident.GetComponent<Knight>().enemyToAttack = fieldOfView.objectSeen;
+            //resident.GetComponent<NavMeshAgent>().ResetPath();
             resident.GetComponent<Knight>().attackEnemies = false;
         }
     }

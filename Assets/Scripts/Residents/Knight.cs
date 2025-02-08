@@ -25,11 +25,11 @@ public class Knight : MonoBehaviour
 
     [Header("conditions")]
     public bool attackEnemies;
-    public GameObject enemyToAttack;
 
     // Start is called before the first frame update
     void Start()
     {
+        //pos = new Vector3(216.800003f, 17.4599991f, -172.899994f);
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         knightHut = location.GetComponent<KnightHut>();
@@ -57,13 +57,16 @@ public class Knight : MonoBehaviour
     {
         if (attackEnemies)
         {
-            enemyToAttack = location.GetComponent<FieldOfView>().objectSeen.gameObject;
-            agent.SetDestination(enemyToAttack.transform.position); //only works with vector3.zero right now, think it has something to do with postion always changes
-            //print("current dest: " + agent.destination + " pos dest: " + pos);
+            //issue with the location might not be on the navmesh, need more testing 
+            agent.SetDestination(location.GetComponent<FieldOfView>().objectSeen.gameObject.transform.position);
         }
-        else if (!attackEnemies && Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
+        else
         {
-            gameObject.SetActive(false);
+            agent.SetDestination(location.transform.position);
+            if (Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         /*if (!attackEnemies && Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
