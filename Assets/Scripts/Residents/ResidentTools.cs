@@ -14,6 +14,7 @@ public class ResidentTools : MonoBehaviour
     //5 - spoon
     //6 - berry
     //7 - bow
+    //8 - sword
 
     private void Start()
     {

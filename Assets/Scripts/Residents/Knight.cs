@@ -48,7 +48,9 @@ public class Knight : MonoBehaviour
         residentTools = GetComponent<ResidentTools>();
 
         FindNext(time.WhatTimeIsIt(), new int[] { 0, 2 });
-        //AnimationEvents = residentTools.heldItems[8].GetComponent<AnimationEvents>();
+
+        residentTools.TurnOffAll();
+        residentTools.ChangeEnable(8, true);
 
         //locationEntered = transform.position;
         //agent.enabled = false;
@@ -128,6 +130,8 @@ public class Knight : MonoBehaviour
             animator.SetTrigger("Attack");
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;
+
+            //Add doing damage to enemies here
         }
     }
 

@@ -31,7 +31,7 @@ public class Archer : MonoBehaviour
         residentScheudle = transform.GetComponent<ResidentScheudle>();
         job = residentScheudle.job.GetComponent<Job>();
         residentTools = GetComponent<ResidentTools>();
-        AnimationEvents = residentTools.heldItems[7].GetComponent<AnimationEvents>();
+        residentTools.heldItems[8].SetActive(true);
 
         fieldOfView.enabled = true;
         locationEntered = transform.position;

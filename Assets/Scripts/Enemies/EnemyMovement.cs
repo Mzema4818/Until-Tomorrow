@@ -146,7 +146,7 @@ public class EnemyMovement : MonoBehaviour
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;
 
-            //Attacking objects that have health on themselfs
+            //Attacking objects that have health on themselves
             Health itselfHealth = attackingObject.GetComponent<Health>();
             if (itselfHealth != null)
             {
