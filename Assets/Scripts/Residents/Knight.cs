@@ -25,10 +25,20 @@ public class Knight : MonoBehaviour
 
     [Header("conditions")]
     public bool attackEnemies;
+    public GameObject enemy;
+    public bool enemyInAttackRange;
+    public int attackRange;
+
+    //Attacking
+    public float timeBetweenAttacks;
+    private bool alreadyAttacked;
 
     // Start is called before the first frame update
     void Start()
     {
+        attackRange = 3;
+        timeBetweenAttacks = 2;
+
         //pos = new Vector3(216.800003f, 17.4599991f, -172.899994f);
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -57,8 +67,12 @@ public class Knight : MonoBehaviour
     {
         if (attackEnemies)
         {
+            enemy = location.GetComponent<FieldOfView>().objectSeen.gameObject;
             //issue with the location might not be on the navmesh, need more testing 
-            agent.SetDestination(location.GetComponent<FieldOfView>().objectSeen.gameObject.transform.position);
+            agent.SetDestination(enemy.transform.position);
+
+            enemyInAttackRange = enemy != null && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange;
+            if (enemyInAttackRange) Attack();
         }
         else
         {
@@ -68,16 +82,6 @@ public class Knight : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
-
-        /*if (!attackEnemies && Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
-        {
-
-        }
-        else if(attackEnemies && location.GetComponent<FieldOfView>().canSeePlayer)
-        {
-            gameObject.SetActive(true);
-            agent.SetDestination(location.GetComponent<FieldOfView>().objectSeen.transform.position);
-        }*/
     }
 
     private void FindNext(int time, int[] TimesToNotFind)
@@ -115,5 +119,20 @@ public class Knight : MonoBehaviour
 
         residentScheudle.AtLocation = false;
         if (turnOnGameObjects != null) Destroy(turnOnGameObjects);
+    }
+
+    private void Attack()
+    {
+        if (!alreadyAttacked)
+        {
+            animator.SetTrigger("Attack");
+            Invoke(nameof(ResetAttack), timeBetweenAttacks);
+            alreadyAttacked = true;
+        }
+    }
+
+    private void ResetAttack()
+    {
+        alreadyAttacked = false;
     }
 }
