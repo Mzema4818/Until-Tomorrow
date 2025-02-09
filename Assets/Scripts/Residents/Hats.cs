@@ -28,16 +28,19 @@ public class Hats : MonoBehaviour
                 hats.transform.GetChild(2).gameObject.SetActive(true);
                 break;
             case "Mine":
-                hats.transform.GetChild(4).gameObject.SetActive(true);
+                hats.transform.GetChild(5).gameObject.SetActive(true);
                 break;
             case "Lumbermill":
-                hats.transform.GetChild(3).gameObject.SetActive(true);
+                hats.transform.GetChild(4).gameObject.SetActive(true);
                 break;
             case "Messhall":
                 hats.transform.GetChild(1).gameObject.SetActive(true);
                 break;
             case "Tower":
                 hats.transform.GetChild(0).gameObject.SetActive(true);
+                break;
+            case "KnightHut":
+                hats.transform.GetChild(3).gameObject.SetActive(true);
                 break;
         }
     }
