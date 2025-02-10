@@ -289,4 +289,41 @@ public class ResidentScheudle : MonoBehaviour
 
         return false;
     }
+
+    private GameObject[] ReorganizeArray()
+    {
+        //when deleting a resident from an array theres an empty space there which messes things up, this just gets rid of that space
+        Job jobComponet = job.GetComponent<Job>();
+        GameObject[] returnArray = new GameObject[jobComponet.MaxWorkers];
+
+        int index = 0;
+        for (int i = 0; i < returnArray.Length; i++)
+        {
+            if (jobComponet.WorkersActive[i] != null)
+            {
+                returnArray[index] = jobComponet.WorkersActive[i];
+                index++;
+            }
+        }
+
+        return returnArray;
+    }
+
+    private void OnDestroy()
+    {
+        if(job != null)
+        {
+            Job jobComponet = job.GetComponent<Job>();
+            for(int i = 0; i < jobComponet.WorkersActive.Length; i++)
+            {
+                if (gameObject == jobComponet.WorkersActive[i])
+                {
+                    jobComponet.WorkersActive[i] = null;
+                    jobComponet.Workers--;
+                }
+            }
+
+            jobComponet.WorkersActive = ReorganizeArray();
+        }
+    }
 }
