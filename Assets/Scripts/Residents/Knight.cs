@@ -31,13 +31,15 @@ public class Knight : MonoBehaviour
 
     //Attacking
     public float timeBetweenAttacks;
-    private bool alreadyAttacked;
+    public bool alreadyAttacked;
+    public int damage;
 
     // Start is called before the first frame update
     void Start()
     {
         attackRange = 3;
         timeBetweenAttacks = 2;
+        damage = 10;
 
         //pos = new Vector3(216.800003f, 17.4599991f, -172.899994f);
         animator = GetComponent<Animator>();
@@ -125,13 +127,21 @@ public class Knight : MonoBehaviour
 
     private void Attack()
     {
+        agent.SetDestination(transform.position);
+
         if (!alreadyAttacked)
         {
             animator.SetTrigger("Attack");
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;
 
-            //Add doing damage to enemies here
+            Health health = enemy.GetComponent<Health>();
+            if (health != null)
+            {
+                health.ModifyHealth(-damage);
+                if (health.currentHealth < 0) enemy = null;
+                return;
+            }
         }
     }
 

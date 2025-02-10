@@ -138,7 +138,7 @@ public class EnemyMovement : MonoBehaviour
     {
         agent.SetDestination(transform.position);
 
-        transform.LookAt(attackingObject);
+        //transform.LookAt(attackingObject);
 
         if (!alreadyAttacked)
         {
