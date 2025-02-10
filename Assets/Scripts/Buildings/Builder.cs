@@ -21,7 +21,10 @@ public class Builder : MonoBehaviour
     public bool isBuilding;
     public bool placed;
     public GameObject notEnough;
+    public GameObject notEnoughRepair;
+    public GameObject fullHeath;
     public SpawnEnemies spawnEnemies;
+    public InventoryManager inventoryManager;
 
     [Header("Hammer")]
     public GameObject hammer;
@@ -36,6 +39,21 @@ public class Builder : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip placingItem;
 
+    [Header("Building Costs")]
+    public BuildingHealth buildingHealth;
+    public int[] campfireCost;
+    public int[] tentCost;
+    public int[] mineCost;
+    public int[] lumberMillCost;
+    public int[] farmCost;
+    public int[] wallCost;
+    public int[] doorCost;
+    public int[] chestCost;
+    public int[] messhallCost;
+    public int[] tavernCost;
+    public int[] towerCost;
+    public int[] knightHutCost;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,62 +62,62 @@ public class Builder : MonoBehaviour
 
     public void BuildCampfire()
     {
-        BuildBuilding(StageOneBuildings[0], new int[] { 10, 10 }, parent.GetChild(0), 0); //First child in "Buildings" is the campfire parent
+        BuildBuilding(StageOneBuildings[0], campfireCost, parent.GetChild(0), 0); //First child in "Buildings" is the campfire parent
     }
 
     public void BuildTent()
     {
-        BuildBuilding(StageOneBuildings[1], new int[] { 10, 10 }, parent.GetChild(1), 0); //second child in "Buildings" is the tent parent... and so on 
+        BuildBuilding(StageOneBuildings[1], tentCost, parent.GetChild(1), 0); //second child in "Buildings" is the tent parent... and so on 
     }
 
     public void BuildMine()
     {
-        BuildBuilding(StageOneBuildings[2], new int[] { 10, 10 }, parent.GetChild(2), 0);
+        BuildBuilding(StageOneBuildings[2], mineCost, parent.GetChild(2), 0);
     }
 
     public void BuildLumbermill()
     {
-        BuildBuilding(StageOneBuildings[3], new int[] { 10, 10 }, parent.GetChild(3), 0);
+        BuildBuilding(StageOneBuildings[3], lumberMillCost, parent.GetChild(3), 0);
     }
 
     public void BuildFarm()
     {
-        BuildBuilding(StageOneBuildings[4], new int[] { 10, 10 }, parent.GetChild(4), 0);
+        BuildBuilding(StageOneBuildings[4], farmCost, parent.GetChild(4), 0);
     }
 
     public void BuildWall()
     {
-        BuildBuilding(StageOneBuildings[5], new int[] { 10, 10 }, parent.GetChild(5), 0);
+        BuildBuilding(StageOneBuildings[5], wallCost, parent.GetChild(5), 0);
     }
 
     public void BuildDoor()
     {
-        BuildBuilding(StageOneBuildings[6], new int[] { 10, 10 }, parent.GetChild(6), 0);
+        BuildBuilding(StageOneBuildings[6], doorCost, parent.GetChild(6), 0);
     }
 
     public void BuildChest()
     {
-        BuildBuilding(StageOneBuildings[7], new int[] { 10, 10 }, parent.GetChild(7), 0);
+        BuildBuilding(StageOneBuildings[7], chestCost, parent.GetChild(7), 0);
     }
 
     public void BuildMesshall()
     {
-        BuildBuilding(StageOneBuildings[8], new int[] { 10, 10 }, parent.GetChild(8), 0);
+        BuildBuilding(StageOneBuildings[8], messhallCost, parent.GetChild(8), 0);
     }
 
     public void BuildTavern()
     {
-        BuildBuilding(StageOneBuildings[9], new int[] { 10, 10 }, parent.GetChild(9), 0);
+        BuildBuilding(StageOneBuildings[9], tavernCost, parent.GetChild(9), 0);
     }
 
     public void BuildTower()
     {
-        BuildBuilding(StageOneBuildings[10], new int[] { 10, 10 }, parent.GetChild(10), 0);
+        BuildBuilding(StageOneBuildings[10], tavernCost, parent.GetChild(10), 0);
     }
 
     public void BuildKnightHut()
     {
-        BuildBuilding(StageOneBuildings[11], new int[] { 10, 10 }, parent.GetChild(11), 0);
+        BuildBuilding(StageOneBuildings[11], knightHutCost, parent.GetChild(11), 0);
     }
 
     public void MoveBuilding()
@@ -107,6 +125,33 @@ public class Builder : MonoBehaviour
         if (buildingData != null)
         {
             AddBuildingScripts(buildingData, true, CheckParentName(buildingData.transform.name));
+        }
+    }
+
+    public void RepairBuilding()
+    {
+        int[] amounts = CheckRepairCost(buildingHealth.name);
+
+        if(buildingHealth.currentHealth != buildingHealth.maxHealth)
+        {
+            if (inventory.GetAmountByName(Item.ItemType.wood) >= amounts[0] / 3 &&
+           inventory.GetAmountByName(Item.ItemType.rock) >= amounts[1] / 3)
+            {
+                if (inventoryManager != null)
+                {
+                    RemoveItem(Item.ItemType.wood, amounts[0] / 3);
+                    RemoveItem(Item.ItemType.rock, amounts[1] / 3);
+                    buildingHealth.ModifyHealth(30);
+                }
+            }
+            else
+            {
+                notEnoughRepair.SetActive(true);
+            }
+        }
+        else
+        {
+            fullHeath.SetActive(true);
         }
     }
 
@@ -190,16 +235,62 @@ public class Builder : MonoBehaviour
         else if (name.Contains("Chest")) transform = parent.GetChild(7);
         else if (name.Contains("Messhall")) transform = parent.GetChild(8);
         else if (name.Contains("Tavern")) transform = parent.GetChild(9);
-        else if (name.Contains("KnightHut")) transform = parent.GetChild(10);
+        else if (name.Contains("Tower")) transform = parent.GetChild(10);
+        else if (name.Contains("KnightHut")) transform = parent.GetChild(11);
 
         return transform;
     }
 
-    private void RemoveItems(Item.ItemType item, int length)
+    private int[] CheckRepairCost(string buildingName)
     {
-        for(int i = 0; i < length; i++)
+        string lowerName = buildingName.ToLower();
+        return lowerName switch
         {
-            inventory.RemoveItem(item);
+            string name when name.Contains("campfire") => campfireCost,
+            string name when name.Contains("tent") => tentCost,
+            string name when name.Contains("mine") => mineCost,
+            string name when name.Contains("lumbermill") => lumberMillCost,
+            string name when name.Contains("farm") => farmCost,
+            string name when name.Contains("wall") => wallCost,
+            string name when name.Contains("door") => doorCost,
+            string name when name.Contains("chest") => chestCost,
+            string name when name.Contains("messhall") => messhallCost,
+            string name when name.Contains("tavern") => tavernCost,
+            string name when name.Contains("tower") => towerCost,
+            string name when name.Contains("knighthut") => knightHutCost,
+            _ => null,
+        };
+    }
+
+    public string RepairCostText(string name)
+    {
+        int[] amounts = CheckRepairCost(name);
+        string build = "";
+
+        for(int i = 0; i < amounts.Length; i++)
+        {
+            if (amounts[i] == 0) continue;
+            build += OrderOfMaterials(i) + ": " + amounts[i] + "\n";
+        }
+
+        return build;
+    }
+
+    private string OrderOfMaterials(int num)
+    {
+        switch (num)
+        {
+            case 0: return "Wood";
+            case 1: return "Rock";
+            default: return "";
+        }
+    }
+
+    private void RemoveItem(Item.ItemType item, int cost)
+    {
+        for (int i = 0; i < cost; i++)
+        {
+            inventoryManager.RemoveItem(item);
         }
     }
 

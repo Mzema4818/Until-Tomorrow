@@ -58,12 +58,14 @@ public class Crosshair : MonoBehaviour
     [Header("Job Stuff")]
     public BuildMenuUpdater buildMenuUpdater;
     public TextMeshProUGUI Announcement;
+
     [Header("Sounds")]
     public AudioSource pickup;
 
     [Header("Building Health")]
     public BuildingHealth buildingHealth;
     public HealthBar healthBar;
+    public TextMeshProUGUI repairCosts;
 
     // Start is called before the first frame update
     void Start()
@@ -102,6 +104,8 @@ public class Crosshair : MonoBehaviour
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
                         buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
+                        builder.buildingHealth = buildingHealth;
+                        repairCosts.text = builder.RepairCostText(parent.name);
                         healthBar.buildingHealth = buildingHealth;
                         healthBar.SetHealth();
                         buildingHealth.ModifyHealth(0);
