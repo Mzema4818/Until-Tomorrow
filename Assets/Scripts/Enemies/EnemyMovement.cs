@@ -138,10 +138,12 @@ public class EnemyMovement : MonoBehaviour
     {
         agent.SetDestination(transform.position);
 
-        //transform.LookAt(attackingObject);
 
         if (!alreadyAttacked)
         {
+            //might need to change lookAt
+            transform.LookAt(attackingObject);
+
             animator.SetTrigger("Attack");
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
             alreadyAttacked = true;

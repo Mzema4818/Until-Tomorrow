@@ -11,7 +11,6 @@ public class Knight : MonoBehaviour
     public Animator animator;
     public NavMeshAgent agent;
     public ResidentTools residentTools;
-    public FieldOfView fieldOfView;
     public Job job;
     public LightingManager time;
 
@@ -71,12 +70,20 @@ public class Knight : MonoBehaviour
     {
         if (attackEnemies)
         {
-            enemy = location.GetComponent<FieldOfView>().objectSeen.gameObject;
-            //issue with the location might not be on the navmesh, need more testing 
-            agent.SetDestination(enemy.transform.position);
+            FieldOfView fov = location.GetComponent<FieldOfView>();
+            if (fov.objectSeen != null) // Check if an enemy is detected
+            {
+                enemy = fov.objectSeen.gameObject;
 
-            enemyInAttackRange = enemy != null && Vector3.Distance(transform.position, enemy.transform.position) <= attackRange;
-            if (enemyInAttackRange) Attack();
+                if (enemy != null) // Ensure enemy is still valid
+                {
+                    // Issue with the location might not be on the navmesh, need more testing
+                    agent.SetDestination(enemy.transform.position);
+
+                    enemyInAttackRange = Vector3.Distance(transform.position, enemy.transform.position) <= attackRange;
+                    if (enemyInAttackRange) Attack();
+                }
+            }
         }
         else
         {
@@ -86,6 +93,7 @@ public class Knight : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+
     }
 
     private void FindNext(int time, int[] TimesToNotFind)
@@ -122,6 +130,8 @@ public class Knight : MonoBehaviour
         catch { };
 
         residentScheudle.AtLocation = false;
+        residentTools.TurnOffAll();
+
         if (turnOnGameObjects != null) Destroy(turnOnGameObjects);
     }
 
