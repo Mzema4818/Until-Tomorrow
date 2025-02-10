@@ -270,7 +270,7 @@ public class Builder : MonoBehaviour
         for(int i = 0; i < amounts.Length; i++)
         {
             if (amounts[i] == 0) continue;
-            build += OrderOfMaterials(i) + ": " + amounts[i] + "\n";
+            build += OrderOfMaterials(i) + ": " + amounts[i] / 3 + "\n";
         }
 
         return build;
