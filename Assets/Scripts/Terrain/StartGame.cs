@@ -70,6 +70,7 @@ public class StartGame : MonoBehaviour
 
     public void EndGame()
     {
+        Time.timeScale = 1;
         player.transform.position = new Vector3(0, 200, 0); //to turn off ocean sounds if you are close
         mainMenuMusic.Play();
         StartMusic(false);

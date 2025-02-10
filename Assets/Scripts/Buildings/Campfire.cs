@@ -18,6 +18,7 @@ public class Campfire : MonoBehaviour
                 openMenus.MainMenuClose();
                 openMenus.changePlayerState(false);
                 gameOverScreen.SetActive(true);
+                Time.timeScale = 0;
             }
         }
         catch { };
