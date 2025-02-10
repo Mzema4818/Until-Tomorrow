@@ -2747,6 +2747,7 @@ public class GetData : MonoBehaviour
         if (name.Contains("Farm")) num = 4;
         if (name.Contains("Messhall")) num = 8;
         if (name.Contains("Tower")) num = 10;
+        if (name.Contains("KnightHut")) num = 11;
 
         if (num == -1) return returnData;
 
