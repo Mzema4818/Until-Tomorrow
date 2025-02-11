@@ -70,4 +70,12 @@ public class BuildMenuUpdater : MonoBehaviour
             transform.GetChild(i).gameObject.SetActive(false);
         }
     }
+
+    public void WipeAccess()
+    {
+        AccessToLevel0Buildings = true;
+        AccessToLevel1Buildings = false;
+        AccessToLevel2Buildings = false;
+        AccessToLevel3Buildings = false;
+    }
 }

@@ -84,6 +84,7 @@ public class StartGame : MonoBehaviour
         lightingManager.numberOfDays = 0;
         lightingManager.countDaysStart = false;
         lightingManager.ResetSchedule();
+        buildMenuUpdater.WipeAccess();
 
         inventory.WipeInventory();
         inventory.StartOnItem();
@@ -115,7 +116,7 @@ public class StartGame : MonoBehaviour
         collectableRandomizer.Randomize();
         collectableRandomizer2.Randomize();
         DayStuff(0);
-        buildMenuUpdater.AccessToLevel0Buildings = true;
+        buildMenuUpdater.WipeAccess();
         Cursor.lockState = CursorLockMode.Locked;
         Time.timeScale = 1;
         getData.SaveData();

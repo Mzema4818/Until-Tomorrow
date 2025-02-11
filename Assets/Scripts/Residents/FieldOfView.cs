@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class FieldOfView : MonoBehaviour
 {
@@ -38,11 +39,14 @@ public class FieldOfView : MonoBehaviour
     private void FieldOfViewCheck()
     {
         rangeChecks = Physics.OverlapSphere(transform.position, radius, targetMask);
+        rangeChecks = rangeChecks
+            .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
+            .ToArray();
 
         if (rangeChecks.Length != 0)
         {
             objectSeen = rangeChecks[0].gameObject;
-            if (objectSeen == null) objectSeen = null;
+            if (objectSeen == null) objectSeen = null; //does checks for when object becomes "missing"
             Transform target = rangeChecks[0].transform;
             Vector3 directionToTarget = (target.position - transform.position).normalized;
 
