@@ -39,6 +39,7 @@ public class EnemyMovement : MonoBehaviour
 
         if (fieldOfView.canSeePlayer)
         {
+            //enemy attacks object until either its dead, or the objects dead
             if (attackingObject == null) { attackingObject = null; try { attackingObject = fieldOfView.objectSeen.transform; } catch { }; }
             else
             {
