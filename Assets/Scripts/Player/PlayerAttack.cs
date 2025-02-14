@@ -14,6 +14,7 @@ public class PlayerAttack : MonoBehaviour
     public float attackSpeed = 1f;
     public int attackDamage = 1;
     public LayerMask idealHit;
+    public LayerMask treeHit;
 
     public AudioSource audioSource;
     public GameObject hitEffect;
@@ -94,7 +95,7 @@ public class PlayerAttack : MonoBehaviour
         {
             HitTarget(hit.point, hit.transform.parent.GetComponent<ParticleHolder>());
 
-            StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
+            if(hit.transform.gameObject.layer == treeHit) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
 
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
