@@ -9,6 +9,8 @@ public class Tent : MonoBehaviour
     public int Residents;
     public GameObject[] ResidentsActive;
     public LightingManager time;
+    public GameObject heartParticles;
+    public Transform tempParent;
 
     public Vector3 originalPosition;
 
@@ -82,7 +84,13 @@ public class Tent : MonoBehaviour
             Sleeping sleeping = resident.GetComponent<Sleeping>();
 
             //if the resident is sleeping and has a health bar, heal health
-            if (sleeping != null && residentHealth != null) residentHealth.ModifyHealth(10);
+            if (sleeping != null && residentHealth != null && residentHealth.currentHealth != residentHealth.maxHealth)
+            {
+                residentHealth.ModifyHealth(10);
+                GameObject heart = Instantiate(heartParticles, transform.position, heartParticles.transform.rotation);
+                heart.transform.parent = tempParent;
+                Destroy(heart, 5);
+            }
         }
     }
 
