@@ -87,6 +87,8 @@ public class Tent : MonoBehaviour
             if (sleeping != null && residentHealth != null && residentHealth.currentHealth != residentHealth.maxHealth)
             {
                 residentHealth.ModifyHealth(10);
+
+                //adding heart particles
                 GameObject heart = Instantiate(heartParticles, transform.position, heartParticles.transform.rotation);
                 heart.transform.parent = tempParent;
                 Destroy(heart, 5);
