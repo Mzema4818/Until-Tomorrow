@@ -163,7 +163,7 @@ public class PlayerAttack : MonoBehaviour
 
         GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
         GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
-        Destroy(GO, 20);
+        //Destroy(GO, 20);
     }
 
     public void ChangeAnimationState(string newState)
