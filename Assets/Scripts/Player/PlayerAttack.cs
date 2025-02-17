@@ -158,7 +158,7 @@ public class PlayerAttack : MonoBehaviour
     void HitTarget(Vector3 pos, ParticleHolder particleHolder)
     {
         audioSource.pitch = 1;
-        audioSource.PlayOneShot(hitSound);
+        //audioSource.PlayOneShot(hitSound);
         Instantiate(particleHolder.ParticleHit, pos, Quaternion.identity);
 
         GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
