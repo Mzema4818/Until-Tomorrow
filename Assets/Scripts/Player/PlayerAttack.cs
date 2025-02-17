@@ -157,13 +157,13 @@ public class PlayerAttack : MonoBehaviour
 
     void HitTarget(Vector3 pos, ParticleHolder particleHolder)
     {
-        //audioSource.pitch = 1;
-        //audioSource.PlayOneShot(hitSound);
-        //Instantiate(particleHolder.ParticleHit, pos, Quaternion.identity);
+        audioSource.pitch = 1;
+        audioSource.PlayOneShot(hitSound);
+        Instantiate(particleHolder.ParticleHit, pos, Quaternion.identity);
 
-        //GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
-        //GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
-        //Destroy(GO, 20);
+        GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
+        GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
+        Destroy(GO, 20);
     }
 
     public void ChangeAnimationState(string newState)
