@@ -159,10 +159,10 @@ public class PlayerAttack : MonoBehaviour
     {
         //audioSource.pitch = 1;
         //audioSource.PlayOneShot(hitSound);
-        Instantiate(particleHolder.ParticleHit, pos, Quaternion.identity);
+        //Instantiate(particleHolder.ParticleHit, pos, Quaternion.identity);
 
-        GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
-        GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
+        //GameObject GO = Instantiate(hitEffect, pos, Quaternion.identity);
+        //GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
         //Destroy(GO, 20);
     }
 
