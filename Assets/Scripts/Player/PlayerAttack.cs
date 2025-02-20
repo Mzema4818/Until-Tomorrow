@@ -110,8 +110,8 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator ScaleTreeEffect(Vector3 originalScale, GameObject hit)
     {
-        float scaleUpFactor = 0.95f; // Scale factor when the tree grows
-        float scaleDuration = 0.1f; // Duration of the scale effect
+        float scaleUpFactor = 0.95f; //Scale factor when the tree grows
+        float scaleDuration = 0.1f; //Duration of the scale effect
 
         Vector3 targetScale = originalScale * scaleUpFactor;
         float timeElapsed = 0f;
@@ -119,33 +119,33 @@ public class PlayerAttack : MonoBehaviour
         // Smoothly scale up
         while (timeElapsed < scaleDuration)
         {
-            // Check if the object is destroyed
-            if (hit == null) yield break; // Exit the coroutine if the object is destroyed
+            //Check if the object is destroyed
+            if (hit == null) yield break; //Exit the coroutine if the object is destroyed
 
             hit.transform.localScale = Vector3.Lerp(originalScale, targetScale, timeElapsed / scaleDuration);
             timeElapsed += Time.deltaTime;
-            yield return null; // Wait until next frame
+            yield return null; //Wait until next frame
         }
 
-        // Ensure the final scale is set exactly
+        //Ensure the final scale is set exactly
         if (hit != null) hit.transform.localScale = targetScale;
 
         // Wait for the scale-up effect to finish before returning to original size
         yield return new WaitForSeconds(0.1f);
 
-        // Smoothly scale back to the original size
+        //Smoothly scale back to the original size
         timeElapsed = 0f;
         while (timeElapsed < scaleDuration)
         {
-            // Check if the object is destroyed
-            if (hit == null) yield break; // Exit the coroutine if the object is destroyed
+            //Check if the object is destroyed
+            if (hit == null) yield break; //Exit the coroutine if the object is destroyed
 
             hit.transform.localScale = Vector3.Lerp(targetScale, originalScale, timeElapsed / scaleDuration);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Ensure the scale is exactly the original size
+        //Ensure the scale is exactly the original size
         if (hit != null) hit.transform.localScale = originalScale;
     }
 
