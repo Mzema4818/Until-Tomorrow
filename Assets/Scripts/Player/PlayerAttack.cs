@@ -93,7 +93,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, idealHit))
         {
-            HitTarget(hit.point, hit.transform.parent.GetComponent<ParticleHolder>());
+            //HitTarget(hit.point, hit.transform.parent.GetComponent<ParticleHolder>());
 
             if(hit.transform.gameObject.layer == treeHit) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
 
@@ -165,6 +165,8 @@ public class PlayerAttack : MonoBehaviour
         //GO.GetComponentInChildren<TextMeshProUGUI>().text = attackDamage.ToString();
         //Destroy(GO, 20);
     }
+
+    
 
     public void ChangeAnimationState(string newState)
     {
