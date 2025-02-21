@@ -94,7 +94,8 @@ public class PlayerAttack : MonoBehaviour
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, idealHit))
         {
             //HitTarget(hit.point, hit.transform.parent.GetComponent<ParticleHolder>());
-            ParticleHit(hit.transform.parent.GetComponent<ParticleHolder>());
+            ParticleHolder particle = hit.transform.parent.GetComponent<ParticleHolder>();
+            if(particle != null) ParticleHit(hit.transform.parent.GetComponent<ParticleHolder>());
 
             if (hit.transform.gameObject.layer == treeHit) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
 
