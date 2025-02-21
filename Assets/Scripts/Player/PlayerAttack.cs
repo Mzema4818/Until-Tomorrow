@@ -94,8 +94,9 @@ public class PlayerAttack : MonoBehaviour
         if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, attackDistance, idealHit))
         {
             //HitTarget(hit.point, hit.transform.parent.GetComponent<ParticleHolder>());
+            ParticleHit(hit.transform.parent.GetComponent<ParticleHolder>());
 
-            if(hit.transform.gameObject.layer == treeHit) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
+            if (hit.transform.gameObject.layer == treeHit) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
 
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
@@ -166,7 +167,35 @@ public class PlayerAttack : MonoBehaviour
         //Destroy(GO, 20);
     }
 
-    
+    public void ParticleHit(ParticleHolder particleHolder)
+    {
+        // Get the center of the screen
+        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
+
+        // Cast a ray from the camera through the screen center
+        Ray ray = cam.ScreenPointToRay(screenCenter);
+        RaycastHit hit;
+
+        // Perform the raycast
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Get the hit position and normal
+            Vector3 hitPosition = hit.point;
+            Vector3 hitNormal = hit.normal;
+
+            // Instantiate the particle effect at the hit position
+            GameObject hitEffect = Instantiate(particleHolder.ParticleHit, hitPosition, Quaternion.identity);
+
+            // Align the particle effect with the surface normal
+            hitEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
+
+            // Optionally add a slight offset so particles aren't inside the object
+            hitEffect.transform.position += hitNormal * 0.01f;
+        }
+    }
+
+
+
 
     public void ChangeAnimationState(string newState)
     {
