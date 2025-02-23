@@ -67,7 +67,7 @@ public class Crosshair : MonoBehaviour
     public HealthBar healthBar;
     public TextMeshProUGUI repairCosts;
 
-    // Start is called before the first frame update
+    //Start is called before the first frame update
     void Start()
     {
         for (int i = 0; i < canvasItems.Length; i++)
@@ -80,7 +80,7 @@ public class Crosshair : MonoBehaviour
         canvasObjectsActive = new bool[canvasObjects.Count];
     }
 
-    // Update is called once per frame
+    //Update is called once per frame
     void Update()
     {
         if (Physics.Raycast(transform.position, transform.forward, out hit, distance * 2, ~IgnoreMe))
