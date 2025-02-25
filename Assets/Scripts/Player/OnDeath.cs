@@ -110,7 +110,7 @@ public class OnDeath : MonoBehaviour
         breath.ModifyBreath(breath.maxBreath);
         //playerHealth.isAlive = true;
 
-        // mainCamera.SetActive(true);
+        //mainCamera.SetActive(true);
         deathCamera.SetActive(false);
 
         setRigidbodyState(true);
@@ -119,7 +119,7 @@ public class OnDeath : MonoBehaviour
         deathMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         playerController.shouldMove = true;
-        // HeldItems.SetActive(true);
+        //HeldItems.SetActive(true);
 
         //Arms stuff
         for (int i = 1; i < HeldItems.childCount; i++)
