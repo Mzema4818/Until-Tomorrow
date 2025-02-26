@@ -170,27 +170,27 @@ public class PlayerAttack : MonoBehaviour
 
     public void ParticleHit(ParticleHolder particleHolder)
     {
-        // Get the center of the screen
+        //Get the center of the screen
         Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
 
-        // Cast a ray from the camera through the screen center
+        //Cast a ray from the camera through the screen center
         Ray ray = cam.ScreenPointToRay(screenCenter);
         RaycastHit hit;
 
-        // Perform the raycast
+        //Perform the raycast
         if (Physics.Raycast(ray, out hit))
         {
-            // Get the hit position and normal
+            //Get the hit position and normal
             Vector3 hitPosition = hit.point;
             Vector3 hitNormal = hit.normal;
 
-            // Instantiate the particle effect at the hit position
+            //Instantiate the particle effect at the hit position
             GameObject hitEffect = Instantiate(particleHolder.ParticleHit, hitPosition, Quaternion.identity);
 
-            // Align the particle effect with the surface normal
+            //Align the particle effect with the surface normal
             hitEffect.transform.rotation = Quaternion.LookRotation(hitNormal);
 
-            // Optionally add a slight offset so particles aren't inside the object
+            //Optionally add a slight offset so particles aren't inside the object
             hitEffect.transform.position += hitNormal * 0.01f;
         }
     }
