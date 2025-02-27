@@ -157,6 +157,5 @@ public class OnDeath : MonoBehaviour
         //Inventory DeathInventory = deathObject.GetComponent<DeathCollider>().inventory;
 
         //Inventory.TransferItems(Inventory, DeathInventory);
-
     }
 }
