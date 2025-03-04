@@ -17,7 +17,7 @@ public class UnderWater : MonoBehaviour
         underWaterColor = new Color(0.22f, 0.65f, 0.77f, 0.5f);
     }
 
-    // Update is called once per frame
+    //Update is called once per frame
     void Update()
     {
         if((transform.position.y < waterLevel) != isUnderwater)
