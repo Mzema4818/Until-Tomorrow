@@ -41,57 +41,77 @@ public class OnHover : MonoBehaviour
         {
             foreach (var go in raycastResults)
             {
-                if(go.gameObject.name == "Campfire")
+                switch (go.gameObject.name)
                 {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A nice campfire to keep you warm";
-                    Cost.text = "10 stone, 10 wood";
-                }
-                if (go.gameObject.name == "Tent")
-                {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A warm tent to keep you safe from the elements";
-                    Cost.text = "4 stone, 15 wood";
-                }
-                if (go.gameObject.name == "Mine")
-                {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A small mine to start collecting stone";
-                    Cost.text = "15 stone, 15 wood";
-                }
-                if (go.gameObject.name == "Lumbermill")
-                {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A small lumbermill to start collecting wood";
-                    Cost.text = "15 stone, 15 wood";
-                }
-                if (go.gameObject.name == "Farm")
-                {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A small Farm to start collecting food";
-                    Cost.text = "10 stone, 10 wood";
-                }
-                if (go.gameObject.name == "Wall")
-                {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A weak wall to keep out some of the elements";
-                    Cost.text = "15 stone, 15 wood";
-                }
-                if (go.gameObject.name == "Door")
-                {
-                    Name.text = go.gameObject.name;
-                    Description.text = "A door to let you enter your settlement";
-                    Cost.text = "15 stone, 15 wood";
-                }
-                if (go.gameObject.name == "Opening Letter")
-                {
-                    DescriptionCollection.text = go.gameObject.name;
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        collectionMenu.SetActive(false);
-                        collectionObjectsMenu.SetActive(true);
-                        collectionObjects[0].SetActive(true);
-                    }
+                    case "Campfire":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A nice campfire to keep you warm";
+                        Cost.text = "10 stone, 10 wood";
+                        break;
+                    case "Tent":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A warm tent to keep you safe from the elements";
+                        Cost.text = "4 stone, 15 wood";
+                        break;
+                    case "Mine":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A small mine to start collecting stone";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Lumbermill":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A small lumbermill to start collecting wood";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Farm":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A small Farm to start collecting food";
+                        Cost.text = "10 stone, 10 wood";
+                        break;
+                    case "Wall":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A weak wall to keep out some of the elements";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Door":
+                        Name.text = go.gameObject.name;
+                        Description.text = "A door to let you enter your settlement";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Chest":
+                        Name.text = go.gameObject.name;
+                        Description.text = "To hold your spare items";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Messhall":
+                        Name.text = go.gameObject.name;
+                        Description.text = "People gotta eat";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Tavern":
+                        Name.text = go.gameObject.name;
+                        Description.text = "Gotta have a way to make food";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Tower":
+                        Name.text = go.gameObject.name;
+                        Description.text = "The finest of snipers";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "KnightHut":
+                        Name.text = go.gameObject.name;
+                        Description.text = "The finest of knights";
+                        Cost.text = "15 stone, 15 wood";
+                        break;
+                    case "Opening Letter":
+                        DescriptionCollection.text = go.gameObject.name;
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            collectionMenu.SetActive(false);
+                            collectionObjectsMenu.SetActive(true);
+                            collectionObjects[0].SetActive(true);
+                        }
+                        break;
                 }
             }
         }
