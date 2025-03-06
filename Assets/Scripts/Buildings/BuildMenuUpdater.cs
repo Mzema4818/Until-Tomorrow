@@ -60,12 +60,12 @@ public class BuildMenuUpdater : MonoBehaviour
         transform.GetChild(5).gameObject.SetActive(true); //wall
         transform.GetChild(6).gameObject.SetActive(true); //door
         transform.GetChild(10).gameObject.SetActive(true); //Tower
-        transform.GetChild(11).gameObject.SetActive(true); //Tower
+        transform.GetChild(11).gameObject.SetActive(true); //Knighthut
     }
 
     private void DisableBuildings()
     {
-        for(int i = 0; i < transform.childCount - 4; i++) //-4 because first 4 are descriptions
+        for(int i = 0; i < transform.childCount; i++) 
         {
             transform.GetChild(i).gameObject.SetActive(false);
         }
