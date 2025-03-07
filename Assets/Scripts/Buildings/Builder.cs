@@ -25,6 +25,7 @@ public class Builder : MonoBehaviour
     public GameObject fullHeath;
     public SpawnEnemies spawnEnemies;
     public InventoryManager inventoryManager;
+    public Book book;
 
     [Header("Hammer")]
     public GameObject hammer;
@@ -169,6 +170,7 @@ public class Builder : MonoBehaviour
         if (inventory.GetAmountByName(Item.ItemType.wood) >= amounts[0] &&
            inventory.GetAmountByName(Item.ItemType.rock) >= amounts[1])
         {
+            book.GoBackToPageOne();
             GameObject building = Instantiate(buildingPrefab, player.transform.position, player.transform.rotation);
             buildingData = building;
             AddBuildingScripts(building, parent, offset, amounts);

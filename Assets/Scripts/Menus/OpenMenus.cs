@@ -27,6 +27,7 @@ public class OpenMenus : MonoBehaviour
     public Builder builder;
     public InventoryManager inventoryManager;
     public PlayerAttack playerAttack;
+    public Book book;
 
     [Header("Tool Scripts")]
     public Tool axe;
@@ -105,6 +106,7 @@ public class OpenMenus : MonoBehaviour
                     }
                     else
                     {
+                        book.GoBackToPageOne();
                         menu.SetActive(false);
                         changePlayerState(true);
                         playerAttack.shouldAttack = !playerAttack.shouldAttack;

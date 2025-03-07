@@ -6,6 +6,9 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Collections.Generic;
+using TMPro;
+
 public enum FlipMode
 {
     RightToLeft,
@@ -13,20 +16,28 @@ public enum FlipMode
 }
 [ExecuteInEditMode]
 public class Book : MonoBehaviour {
+    [Header("Builder Stuff")]
     public GameObject text;
+    public Transform costChecker;
+    public Builder builder;
+    public Transform coverPage;
+    public List<int> pageToBuilding;
+    public Texture2D[] images;
 
+    [Header("Script stuff")]
     public Canvas canvas;
     [SerializeField]
     RectTransform BookPanel;
     public Sprite background;
-    public Sprite[] bookPages;
+    public List<Sprite> bookPages;
+    public Sprite[] bookStyle;
     public bool interactable=true;
     public bool enableShadowEffect=true;
     //represent the index of the sprite shown in the right page
     public int currentPage = 0;
     public int TotalPageCount
     {
-        get { return bookPages.Length; }
+        get { return bookPages.Count; }
     }
     public Vector3 EndBottomLeft
     {
@@ -53,6 +64,8 @@ public class Book : MonoBehaviour {
     public Image RightNext;
     public UnityEvent OnFlip;
     float radius1, radius2;
+
+    public bool test;
     //Spine Bottom
     Vector3 sb;
     //Spine Top
@@ -143,6 +156,12 @@ public class Book : MonoBehaviour {
         if (pageDragging && interactable)
         {
             UpdateBook();
+        }
+
+        if (test)
+        {
+            RemovePages();
+            test = false;
         }
     }
     public void UpdateBook()
@@ -278,9 +297,12 @@ public class Book : MonoBehaviour {
     }
     public void DragRightPageToPoint(Vector3 point)
     {
-        if (currentPage >= bookPages.Length) return;
+        if (currentPage >= bookPages.Count) return;
         pageDragging = true;
+
         text.SetActive(false);
+        coverPage.gameObject.SetActive(false);
+
         mode = FlipMode.RightToLeft;
         f = point;
 
@@ -292,15 +314,15 @@ public class Book : MonoBehaviour {
         Left.rectTransform.pivot = new Vector2(0, 0);
         Left.transform.position = RightNext.transform.position;
         Left.transform.eulerAngles = new Vector3(0, 0, 0);
-        Left.sprite = (currentPage < bookPages.Length) ? bookPages[currentPage] : background;
+        Left.sprite = (currentPage < bookPages.Count) ? bookPages[currentPage] : background;
         Left.transform.SetAsFirstSibling();
         
         Right.gameObject.SetActive(true);
         Right.transform.position = RightNext.transform.position;
         Right.transform.eulerAngles = new Vector3(0, 0, 0);
-        Right.sprite = (currentPage < bookPages.Length - 1) ? bookPages[currentPage + 1] : background;
+        Right.sprite = (currentPage < bookPages.Count - 1) ? bookPages[currentPage + 1] : background;
 
-        RightNext.sprite = (currentPage < bookPages.Length - 2) ? bookPages[currentPage + 2] : background;
+        RightNext.sprite = (currentPage < bookPages.Count - 2) ? bookPages[currentPage + 2] : background;
 
         LeftNext.transform.SetAsFirstSibling();
         if (enableShadowEffect) Shadow.gameObject.SetActive(true);
@@ -316,7 +338,10 @@ public class Book : MonoBehaviour {
     {
         if (currentPage <= 0) return;
         pageDragging = true;
+
         text.SetActive(false);
+        coverPage.gameObject.SetActive(false);
+
         mode = FlipMode.LeftToRight;
         f = point;
 
@@ -356,8 +381,6 @@ public class Book : MonoBehaviour {
     {
         if (pageDragging)
         {
-            TurnOnButtons(currentPage);
-
             pageDragging = false;
             float distanceToLeft = Vector2.Distance(c, ebl);
             float distanceToRight = Vector2.Distance(c, ebr);
@@ -372,8 +395,8 @@ public class Book : MonoBehaviour {
     Coroutine currentCoroutine;
     void UpdateSprites()
     {
-        LeftNext.sprite= (currentPage > 0 && currentPage <= bookPages.Length) ? bookPages[currentPage-1] : background;
-        RightNext.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage] : background;
+        LeftNext.sprite= (currentPage > 0 && currentPage <= bookPages.Count) ? bookPages[currentPage-1] : background;
+        RightNext.sprite=(currentPage>=0 &&currentPage<bookPages.Count) ? bookPages[currentPage] : background;
     }
     public void TweenForward()
     {
@@ -400,6 +423,9 @@ public class Book : MonoBehaviour {
         ShadowLTR.gameObject.SetActive(false);
         if (OnFlip != null)
             OnFlip.Invoke();
+
+        if (currentPage == 2) coverPage.gameObject.SetActive(true);
+        else ChangeText(currentPage);
     }
     public void TweenBack()
     {
@@ -452,8 +478,144 @@ public class Book : MonoBehaviour {
             onFinish();
     }
 
-    public void TurnOnButtons(int page)
+    public void ChangeText(int page)
     {
+        TextMeshProUGUI Name = text.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI Description = text.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        RawImage image = text.transform.GetChild(3).GetComponent<RawImage>();
+        Button button = text.transform.GetChild(4).GetComponent<Button>();
+
+        button.onClick.RemoveAllListeners();
+
+        coverPage.gameObject.SetActive(false);
         text.SetActive(true);
+
+        //page / 2 - 2 because page number is a multiple of 2 always, and then we -2 because we start at page 2
+        string childName = coverPage.GetChild(pageToBuilding[page / 2 - 2]).name;
+        Name.text = childName;
+
+        switch (childName)
+        {
+            case "Campfire":
+                Description.text = "A nice campfire to keep you warm";
+                ChangeCosts(builder.campfireCost);
+                image.texture = images[0];
+                button.onClick.AddListener(builder.BuildCampfire);
+                break;
+            case "Tent":
+                Description.text = "A warm tent to keep you safe from the elements";
+                ChangeCosts(builder.tentCost);
+                image.texture = images[1];
+                button.onClick.AddListener(builder.BuildTent);
+                break;
+            case "Mine":
+                Description.text = "A small mine to start collecting stone";
+                ChangeCosts(builder.mineCost);
+                image.texture = images[2];
+                button.onClick.AddListener(builder.BuildMine);
+                break;
+            case "Lumbermill":
+                Description.text = "A small lumbermill to start collecting wood";
+                ChangeCosts(builder.lumberMillCost);
+                image.texture = images[3];
+                button.onClick.AddListener(builder.BuildLumbermill);
+                break;
+            case "Farm":
+                Description.text = "A small Farm to start collecting food";
+                ChangeCosts(builder.farmCost);
+                image.texture = images[4];
+                button.onClick.AddListener(builder.BuildFarm);
+                break;
+            case "Wall":
+                Description.text = "A weak wall to keep out some of the elements";
+                ChangeCosts(builder.wallCost);
+                image.texture = images[5];
+                button.onClick.AddListener(builder.BuildWall);
+                break;
+            case "Door":
+                Description.text = "A door to let you enter your settlement";
+                ChangeCosts(builder.doorCost);
+                image.texture = images[6];
+                button.onClick.AddListener(builder.BuildDoor);
+                break;
+            case "Chest":
+                Description.text = "To hold your spare items";
+                ChangeCosts(builder.chestCost);
+                image.texture = images[7];
+                button.onClick.AddListener(builder.BuildChest);
+                break;
+            case "Messhall":
+                Description.text = "People gotta eat";
+                ChangeCosts(builder.messhallCost);
+                image.texture = images[8];
+                button.onClick.AddListener(builder.BuildMesshall);
+                break;
+            case "Tavern":
+                Description.text = "Gotta have a way to make food";
+                ChangeCosts(builder.tavernCost);
+                image.texture = images[9];
+                button.onClick.AddListener(builder.BuildTavern);
+                break;
+            case "Tower":
+                Description.text = "The finest of snipers";
+                ChangeCosts(builder.towerCost);
+                image.texture = images[10];
+                button.onClick.AddListener(builder.BuildTower);
+                break;
+            case "KnightHut":
+                Description.text = "The finest of knights";
+                ChangeCosts(builder.knightHutCost);
+                image.texture = images[11];
+                button.onClick.AddListener(builder.BuildKnightHut);
+                break;
+        }
+        //text.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = currentPage.ToString();
+        //text.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "A nice campfire to keep you warm";
+        //ChangeCosts(builder.campfireCost);
+    }
+
+    private void ChangeCosts(int[] cost)
+    {
+        for (int i = 0; i < cost.Length; i++)
+        {
+            GameObject child = costChecker.GetChild(i).gameObject;
+            if (cost[i] == 0) child.SetActive(false);
+            else child.SetActive(true);
+
+            GameObject text = child.transform.GetChild(0).GetChild(0).gameObject;
+            text.GetComponent<TextMeshProUGUI>().text = cost[i].ToString();
+        }
+    }
+
+    private void RemoveCosts()
+    {
+        for (int i = 0; i < costChecker.childCount; i++)
+        {
+            costChecker.GetChild(i).gameObject.SetActive(false);
+        }
+    }
+
+    public void AddPage(int num)
+    {
+        bookPages.Add(bookStyle[0]);
+        bookPages.Add(bookStyle[1]);
+        pageToBuilding.Add(num);
+    }
+
+    public void RemovePages()
+    {
+        bookPages.Clear();
+        pageToBuilding.Clear();
+        bookPages.Add(bookStyle[0]);
+        bookPages.Add(bookStyle[1]);
+        bookPages.Add(bookStyle[0]);
+        bookPages.Add(bookStyle[1]);
+    }
+
+    public void GoBackToPageOne()
+    {
+        currentPage = 2;
+        coverPage.gameObject.SetActive(true);
+        text.SetActive(false);
     }
 }
