@@ -482,7 +482,7 @@ public class Book : MonoBehaviour {
     {
         TextMeshProUGUI Name = text.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI Description = text.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        RawImage image = text.transform.GetChild(3).GetComponent<RawImage>();
+        RawImage image = text.transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
         Button button = text.transform.GetChild(4).GetComponent<Button>();
 
         button.onClick.RemoveAllListeners();
@@ -491,7 +491,7 @@ public class Book : MonoBehaviour {
         text.SetActive(true);
 
         //page / 2 - 2 because page number is a multiple of 2 always, and then we -2 because we start at page 2
-        string childName = coverPage.GetChild(pageToBuilding[page / 2 - 2]).name;
+        string childName = coverPage.GetChild(1).GetChild(pageToBuilding[page / 2 - 2]).name;
         Name.text = childName;
 
         switch (childName)

@@ -8,11 +8,6 @@ public class BuildMenuFirstPage : MonoBehaviour
 {
     public GridLayoutGroup gridLayout;
 
-    private void Awake()
-    {
-        gridLayout = GetComponent<GridLayoutGroup>();
-    }
-
     private void OnEnable()
     {
         RenameGridChildren();

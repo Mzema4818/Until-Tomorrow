@@ -81,14 +81,14 @@ public class BuildMenuUpdater : MonoBehaviour
     {
         for(int i = 0; i < transform.childCount; i++) 
         {
-            transform.GetChild(i).gameObject.SetActive(false);
+            transform.GetChild(1).GetChild(i).gameObject.SetActive(false);
         }
     }
 
     private void TurnOnBuildings(int num)
     {
         book.AddPage(num);
-        transform.GetChild(num).gameObject.SetActive(true);
+        transform.GetChild(1).GetChild(num).gameObject.SetActive(true);
     }
 
     public void WipeAccess()
