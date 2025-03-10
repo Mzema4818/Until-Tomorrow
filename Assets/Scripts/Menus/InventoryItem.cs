@@ -39,6 +39,8 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             ItemWorld.DropItem(player, item, dropableParent);
             count--;
+            //if user is holding an item that shouldnt exist anymore, remove it from hand
+            if (count == 0 && transform.parent.GetSiblingIndex() == inventoryManager.selectedSlot) inventoryManager.ListOfHeldItems[inventoryManager.ReturnNumByItem(item.itemType)].SetActive(false);
             RefreshCount();
         }
     }

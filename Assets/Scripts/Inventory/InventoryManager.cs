@@ -277,7 +277,7 @@ public class InventoryManager : MonoBehaviour
         }*/
     }
 
-    private int ReturnNumByItem(Item.ItemType item)
+    public int ReturnNumByItem(Item.ItemType item)
     {
         switch (item)
         {
@@ -546,10 +546,5 @@ public class InventoryManager : MonoBehaviour
         if (ListOfHeldItems[selectedItem].GetComponent<Food>() != null) ListOfHeldItems[selectedItem].GetComponent<Food>().itemIndex = selectedSlot;
         if (ListOfHeldItems[selectedItem].GetComponent<PlacingSeeds>() != null) ListOfHeldItems[selectedItem].GetComponent<PlacingSeeds>().itemIndex = selectedSlot;
         ListOfHeldItems[selectedItem].SetActive(true);
-    }
-
-    public void MakeSureUserHasItem()
-    {
-        
     }
 }
