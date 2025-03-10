@@ -6,6 +6,7 @@ public class BuildMenuUpdater : MonoBehaviour
 {
     public GetData getdata;
     public Book book;
+    public BuildMenuFirstPage buildMenuFirstPage;
     private int num;
 
     public bool AccessToLevel0Buildings;
@@ -28,6 +29,7 @@ public class BuildMenuUpdater : MonoBehaviour
         if (AccessToLevel1Buildings) Level1Access();
         if (AccessToLevel2Buildings) Level2Access();
         if (AccessToLevel3Buildings) Level3Access();
+        buildMenuFirstPage.RenameGridChildren();
     }
 
     private void OnDisable()

@@ -8,12 +8,7 @@ public class BuildMenuFirstPage : MonoBehaviour
 {
     public GridLayoutGroup gridLayout;
 
-    private void OnEnable()
-    {
-        RenameGridChildren();
-    }
-
-    void RenameGridChildren()
+    public void RenameGridChildren()
     {
         int index = 1; // Start numbering from 1
 
