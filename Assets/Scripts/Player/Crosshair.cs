@@ -412,6 +412,7 @@ public class Crosshair : MonoBehaviour
                     //Open Chest
                     if (parent.GetComponent<Chest>() != null)
                     {
+                        print("opened");
                         openMenus.changePlayerState(false);
                         inventoryObject.SetActive(true);
                         toolBar.SetActive(true);

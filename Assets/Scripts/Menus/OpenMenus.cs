@@ -51,8 +51,10 @@ public class OpenMenus : MonoBehaviour
     {
         if (!deathMenu.activeSelf && !gameOverScreen.activeSelf)
         {
+            CloseMenu(KeyCode.F);
+
             KeyPressed(KeyCode.Escape, PauseMenu, false);
-            KeyPressed(KeyCode.E, Inventory, false);
+            KeyPressed(KeyCode.Tab, Inventory, false);
             KeyPressed(KeyCode.B, BuildMenu, true);
             KeyPressed(KeyCode.U, CollectionMenu, false);
         }
@@ -120,6 +122,32 @@ public class OpenMenus : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void CloseMenu(KeyCode keycode)
+    {
+        WhatInventory whatInventory = ChestInventory.GetComponent<WhatInventory>();
+
+        if (Input.GetKeyDown(keycode) && whatInventory.inventoryOpen1 != null)
+        {
+            print(whatInventory.inventoryOpen1);
+        }
+
+        /*WhatInventory whatInventory = ChestInventory.GetComponent<WhatInventory>();
+
+        if (Input.GetKeyDown(keycode))
+        {
+            if(whatInventory.inventoryOpen1 != null)
+            {
+                print("closed");
+                CloseChestInventory();
+                Inventory.SetActive(false);
+                changePlayerState(true);
+                ChestInventory.SetActive(false);
+                playerAttack.shouldAttack = !playerAttack.shouldAttack;
+                return;
+            }
+        }*/
     }
 
     public bool CheckIfMenusAreClosed()
