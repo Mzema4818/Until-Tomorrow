@@ -49,12 +49,16 @@ public class Crosshair : MonoBehaviour
 
     public GameObject[] canvasItems;
     private List<GameObject> canvasObjects = new List<GameObject>();
-    public bool[] canvasObjectsActive;
+    private bool[] canvasObjectsActive;
 
     public InventoryManager inventoryManager;
     public GameObject inventoryObject;
     public GameObject toolBar;
     public bool chestOpen;
+    public bool messHallOpen;
+    public bool farmOpen;
+    public bool mineOpen;
+    public bool lumberMillOpen;
 
     public PlayerInteractions playerInteractions;
 
@@ -101,20 +105,12 @@ public class Crosshair : MonoBehaviour
             {
                 if(hit.collider.transform.parent != null)
                 {
-                    MarksObject.SetActive(false);
                     Transform parent = hit.collider.transform.parent;
 
                     //opening buildings
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
-                        buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
-                        builder.buildingHealth = buildingHealth;
-                        repairCosts.text = builder.RepairCostText(parent.name);
-                        healthBar.buildingHealth = buildingHealth;
-                        healthBar.SetHealth();
-                        buildingHealth.ModifyHealth(0);
-
-
+                        //If hammer is active
                         if (hammer.activeSelf)
                         {
                             builder.buildingData = parent.gameObject;
@@ -139,15 +135,14 @@ public class Crosshair : MonoBehaviour
                                 Tent tent = parent.GetComponent<Tent>();
                                 for (int i = 0; i < tent.Residents; i++)
                                 {
+                                    //print(tent.ResidentsActive[i].name);
                                     ResidentNames.text += tent.ResidentsActive[i].name + "\n";
                                 }
                             }
 
-                            //OpenJob
+                            //Open Job
                             if (parent.GetComponent<Job>() != null)
                             {
-                                //BasicBuildingSelect();
-
                                 //Destroy all children
                                 foreach (Transform child in JobNamesBar.transform)
                                 {
@@ -168,73 +163,32 @@ public class Crosshair : MonoBehaviour
                                     worker.transform.GetChild(0).GetComponent<JobOptions>().num = i;
                                 }
 
-                                storage.gameObject.SetActive(true);
-                                storage.GetComponent<AutoUpdate>().storage = hit.collider.transform.parent.gameObject;
-                            }
-
-                            //Open Door
-                            if (parent.GetComponent<IsADoor>() != null)
-                            {
-                                Animator animator = parent.GetComponent<Animator>();
-                                IsADoor door = parent.GetComponent<IsADoor>();
-
-                                door.open = !door.open;
-                                animator.SetTrigger(door.open ? "Open Door" : "Close Door");
-                            }
-
-                            //Open mine
-                            if (parent.GetComponent<Mine>() != null)
-                            {
-                                toolBar.SetActive(true);
-                                Mine mine = parent.GetComponent<Mine>();
-                                ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = mine.inventory;
-                                mine.inventory.SetActive(true);
-                            }
-
-                            //Open lumbermill
-                            if (parent.GetComponent<Lumbermill>() != null)
-                            {
-                                toolBar.SetActive(true);
-                                Lumbermill lumbermill = parent.GetComponent<Lumbermill>();
-                                ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = lumbermill.inventory;
-                                lumbermill.inventory.SetActive(true);
-                            }
-
-                            //Open farm
-                            if (parent.GetComponent<Farm>() != null && !playerInteractions.assign)
-                            {
-                                toolBar.SetActive(true);
-                                Farm farm = parent.GetComponent<Farm>();
-                                ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = farm.inventory;
-                                farm.inventory.SetActive(true);
+                                //storage.gameObject.SetActive(true);
+                                //storage.GetComponent<AutoUpdate>().storage = hit.collider.transform.parent.gameObject;
                             }
 
                             //Open messhall
                             if (parent.GetComponent<Messhall>() != null)
                             {
-                                MarksObject.SetActive(true);
-                                toolBar.SetActive(true);
                                 Messhall messhall = parent.GetComponent<Messhall>();
                                 if (messhall.farm != null) MarksObject.transform.GetChild(1).GetComponent<RawImage>().texture = MarksObject.GetComponent<Marks>().checkMark;
                                 else MarksObject.transform.GetChild(1).GetComponent<RawImage>().texture = MarksObject.GetComponent<Marks>().xMark;
-                                ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = messhall.rawFood;
-                                ChestInventory.GetComponent<WhatInventory>().inventoryOpen2 = messhall.cookedFood;
-                                messhall.rawFood.SetActive(true);
-                                messhall.cookedFood.SetActive(true);
+                                MarksObject.SetActive(true);
                             }
 
-                            //Open Archertower
+                            /* Open Archertower
                             if (parent.GetComponent<ArcherTower>() != null && !playerInteractions.assign)
                             {
                                 toolBar.SetActive(true);
                                 ArcherTower archerTower = parent.GetComponent<ArcherTower>();
                             }
 
+                            //Open knighthut
                             if (parent.GetComponent<KnightHut>() != null && !playerInteractions.assign)
                             {
                                 toolBar.SetActive(true);
                                 KnightHut knightHut = parent.GetComponent<KnightHut>();
-                            }
+                            }*/
 
                         }
                     }
@@ -424,27 +378,106 @@ public class Crosshair : MonoBehaviour
                 if (hit.collider.transform.parent != null || hit.collider.transform != null)
                 {
                     Transform parent = hit.collider.transform.parent;
+
+                    //Open chest
                     if(parent.GetComponent<Chest>() != null && !chestOpen)
                     {
-                        chestOpen = true;
-                        openMenus.changePlayerState(false);
-                        inventoryObject.SetActive(true);
-                        toolBar.SetActive(true);
-                        ChestInventory.SetActive(true);
+                        BasicOpenMenu(ref chestOpen);
+
                         ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = parent.GetComponent<Chest>().inventory;
                         parent.GetComponent<Chest>().inventory.SetActive(true);
                     }
                     else if (chestOpen)
                     {
-                        openMenus.CloseChestInventory();
-                        openMenus.Inventory.SetActive(false);
-                        openMenus.changePlayerState(true);
-                        openMenus.ChestInventory.SetActive(false);
-                        openMenus.playerAttack.shouldAttack = !openMenus.playerAttack.shouldAttack;
+                        BasicCloseMenu(ref chestOpen);
+                    }
+
+                    //Open messhall
+                    if (parent.GetComponent<Messhall>() != null && !messHallOpen)
+                    {
+                        BasicOpenMenu(ref messHallOpen);
+
+                        Messhall messhall = parent.GetComponent<Messhall>();
+                        ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = messhall.rawFood;
+                        ChestInventory.GetComponent<WhatInventory>().inventoryOpen2 = messhall.cookedFood;
+                        messhall.rawFood.SetActive(true);
+                        messhall.cookedFood.SetActive(true);
+                    }
+                    else if (messHallOpen)
+                    {
+                        BasicCloseMenu(ref messHallOpen);
+                    }
+
+                    //Open farm
+                    if (parent.GetComponent<Farm>() != null && !playerInteractions.assign && !farmOpen)
+                    {
+                        BasicOpenMenu(ref farmOpen);
+
+                        Farm farm = parent.GetComponent<Farm>();
+                        ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = farm.inventory;
+                        farm.inventory.SetActive(true);
+                    }
+                    else if (farmOpen)
+                    {
+                        BasicCloseMenu(ref farmOpen);
+                    }
+
+                    //Open mine
+                    if (parent.GetComponent<Mine>() != null && !mineOpen)
+                    {
+                        BasicOpenMenu(ref mineOpen);
+                        Mine mine = parent.GetComponent<Mine>();
+                        ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = mine.inventory;
+                        mine.inventory.SetActive(true);
+                    }
+                    else if (mineOpen)
+                    {
+                        BasicCloseMenu(ref mineOpen);
+                    }
+
+                    //Open lumbermill
+                    if (parent.GetComponent<Lumbermill>() != null && !lumberMillOpen)
+                    {
+                        BasicOpenMenu(ref lumberMillOpen);
+                        Lumbermill lumbermill = parent.GetComponent<Lumbermill>();
+                        ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = lumbermill.inventory;
+                        lumbermill.inventory.SetActive(true);
+                    }
+                    else if (lumberMillOpen)
+                    {
+                        BasicCloseMenu(ref lumberMillOpen);
+                    }
+
+                    //Open Door
+                    if (parent.GetComponent<IsADoor>() != null)
+                    {
+                        Animator animator = parent.GetComponent<Animator>();
+                        IsADoor door = parent.GetComponent<IsADoor>();
+
+                        door.open = !door.open;
+                        animator.SetTrigger(door.open ? "Open Door" : "Close Door");
                     }
                 }
             }
         }
+    }
+
+    private void BasicOpenMenu(ref bool change)
+    {
+        change = true;
+        openMenus.changePlayerState(false);
+        inventoryObject.SetActive(true);
+        toolBar.SetActive(true);
+        ChestInventory.SetActive(true);
+    }
+
+    private void BasicCloseMenu(ref bool change)
+    {
+        change = false;
+        openMenus.CloseChestInventory();
+        openMenus.Inventory.SetActive(false);
+        openMenus.changePlayerState(true);
+        openMenus.ChestInventory.SetActive(false);
     }
 
     private bool CheckIfAllTrue()
@@ -488,6 +521,13 @@ public class Crosshair : MonoBehaviour
 
     private void BasicBuildingSelect(string name)
     {
+        buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
+        builder.buildingHealth = buildingHealth;
+        repairCosts.text = builder.RepairCostText(name);
+        healthBar.buildingHealth = buildingHealth;
+        healthBar.SetHealth();
+        buildingHealth.ModifyHealth(0);
+
         menuNames[0].SetActive(true);
         menuStats.SetActive(true);
         openMenus.changePlayerState(false);
@@ -498,6 +538,7 @@ public class Crosshair : MonoBehaviour
         ResidentNamesBar.gameObject.SetActive(false);
         JobNamesBar.gameObject.SetActive(false);
         storage.gameObject.SetActive(false);
+        MarksObject.SetActive(false);
     }
 
     private void ChangeCosts(int[] cost)

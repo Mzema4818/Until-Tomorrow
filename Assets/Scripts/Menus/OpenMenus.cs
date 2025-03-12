@@ -201,7 +201,6 @@ public class OpenMenus : MonoBehaviour
 
     public void CloseChestInventory()
     {
-        crosshair.chestOpen = false;
         WhatInventory inventory = ChestInventory.GetComponent<WhatInventory>();
         if (inventory.inventoryOpen1 != null)
         {
@@ -267,6 +266,7 @@ public class OpenMenus : MonoBehaviour
         //sword.shouldSwing = state;
         CharacterStuff.SetActive(state);
         ToolBar.SetActive(state);
+        playerAttack.shouldAttack = state;
 
         if (state)
         {
