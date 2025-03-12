@@ -49,11 +49,12 @@ public class Crosshair : MonoBehaviour
 
     public GameObject[] canvasItems;
     private List<GameObject> canvasObjects = new List<GameObject>();
-    private bool[] canvasObjectsActive;
+    public bool[] canvasObjectsActive;
 
     public InventoryManager inventoryManager;
     public GameObject inventoryObject;
     public GameObject toolBar;
+    public bool chestOpen;
 
     public PlayerInteractions playerInteractions;
 
@@ -88,6 +89,7 @@ public class Crosshair : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out hit, distance * 2, ~IgnoreMe))
         {
             TouchingObjects();
+            OpeningMenus();
         }
     }
 
@@ -408,17 +410,37 @@ public class Crosshair : MonoBehaviour
                         parent.GetComponent<Gravestone>().ReturnInventory();
                         Destroy(hit.collider.transform.parent.gameObject);
                     }
+                }
+            }
+        }
+    }
 
-                    //Open Chest
-                    if (parent.GetComponent<Chest>() != null)
+    public void OpeningMenus()
+    {
+        if (hit.distance <= distance && (CheckIfAllTrue() || openMenus.ChestInventory.activeSelf) && !mainMenu.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (hit.collider.transform.parent != null || hit.collider.transform != null)
+                {
+                    Transform parent = hit.collider.transform.parent;
+                    if(parent.GetComponent<Chest>() != null && !chestOpen)
                     {
-                        print("opened");
+                        chestOpen = true;
                         openMenus.changePlayerState(false);
                         inventoryObject.SetActive(true);
                         toolBar.SetActive(true);
                         ChestInventory.SetActive(true);
                         ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = parent.GetComponent<Chest>().inventory;
                         parent.GetComponent<Chest>().inventory.SetActive(true);
+                    }
+                    else if (chestOpen)
+                    {
+                        openMenus.CloseChestInventory();
+                        openMenus.Inventory.SetActive(false);
+                        openMenus.changePlayerState(true);
+                        openMenus.ChestInventory.SetActive(false);
+                        openMenus.playerAttack.shouldAttack = !openMenus.playerAttack.shouldAttack;
                     }
                 }
             }

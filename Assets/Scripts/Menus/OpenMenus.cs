@@ -28,6 +28,7 @@ public class OpenMenus : MonoBehaviour
     public InventoryManager inventoryManager;
     public PlayerAttack playerAttack;
     public Book book;
+    public Crosshair crosshair;
 
     [Header("Tool Scripts")]
     public Tool axe;
@@ -51,7 +52,7 @@ public class OpenMenus : MonoBehaviour
     {
         if (!deathMenu.activeSelf && !gameOverScreen.activeSelf)
         {
-            CloseMenu(KeyCode.F);
+            //CloseMenu(KeyCode.F);
 
             KeyPressed(KeyCode.Escape, PauseMenu, false);
             KeyPressed(KeyCode.Tab, Inventory, false);
@@ -200,6 +201,7 @@ public class OpenMenus : MonoBehaviour
 
     public void CloseChestInventory()
     {
+        crosshair.chestOpen = false;
         WhatInventory inventory = ChestInventory.GetComponent<WhatInventory>();
         if (inventory.inventoryOpen1 != null)
         {
