@@ -103,7 +103,7 @@ public class Crosshair : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if(hit.collider.transform.parent != null)
+                if(hit.collider.transform.parent != null && playerInteractions.residentTalkingTo == null)
                 {
                     Transform parent = hit.collider.transform.parent;
 
@@ -277,7 +277,7 @@ public class Crosshair : MonoBehaviour
                         hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
                         playerInteractions.residentTalkingTo = hit.collider.gameObject;
 
-                        //stops having 2 residents following you at once, after you tell one to follow you, if one is folllowing you, stop that first
+                        //stops having 2 residents following you at once, after you tell one to follow you, if one is following you, stop that first
                         if (playerInteractions.resident != null)
                         {
                             playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
@@ -291,7 +291,9 @@ public class Crosshair : MonoBehaviour
                         }
 
                         GameObject textBox = hit.collider.GetComponent<ResidentStats>().textBox;
-                        if (textBox.activeSelf)
+                        if (!textBox.activeSelf) textBox.SetActive(true);
+                        
+                        /*if (textBox.activeSelf)
                         {
                             //textBox.SetActive(false);
                             //textBox.SetActive(true);
@@ -300,7 +302,7 @@ public class Crosshair : MonoBehaviour
                         //ResidentTextChoices.GetComponent<TextBoxChoices>().ResidentTalkingTo = hit.collider.gameObject;
                         //jobCamera.ResidentTalkingTo = hit.collider.gameObject;
                         //ResidentTextBox.GetComponent<TextBox>().ResidentTalkingTo = hit.collider.gameObject;
-                        //ResidentTextBox.SetActive(true);
+                        //ResidentTextBox.SetActive(true);*/
                     }
                 }
             }
@@ -371,7 +373,7 @@ public class Crosshair : MonoBehaviour
 
     public void OpeningMenus()
     {
-        if (hit.distance <= distance && (CheckIfAllTrue() || openMenus.ChestInventory.activeSelf) && !mainMenu.activeSelf)
+        if (hit.distance <= distance && (CheckIfAllTrue() || openMenus.ChestInventory.activeSelf) && !mainMenu.activeSelf && playerInteractions.residentTalkingTo == null)
         {
             if (Input.GetKeyDown(KeyCode.F))
             {
