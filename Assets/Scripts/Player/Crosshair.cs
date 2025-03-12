@@ -112,7 +112,6 @@ public class Crosshair : MonoBehaviour
                         healthBar.SetHealth();
                         buildingHealth.ModifyHealth(0);
 
-                        BasicBuildingSelect(parent.name.Split('_')[0]);
 
                         if (hammer.activeSelf)
                         {
@@ -127,16 +126,7 @@ public class Crosshair : MonoBehaviour
                         }
                         else
                         {
-                            //Open Chest
-                            if (parent.GetComponent<Chest>() != null)
-                            {
-                                openMenus.changePlayerState(false);
-                                inventoryObject.SetActive(true);
-                                toolBar.SetActive(true);
-                                ChestInventory.SetActive(true);
-                                ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = parent.GetComponent<Chest>().inventory;
-                                parent.GetComponent<Chest>().inventory.SetActive(true);
-                            }
+                            BasicBuildingSelect(parent.name.Split('_')[0]);
 
                             //Open Tent
                             if (parent.GetComponent<Tent>() != null)
@@ -370,7 +360,7 @@ public class Crosshair : MonoBehaviour
                     if (parent.GetComponent<PickUp>() != null) pickUp = parent.GetComponent<PickUp>();
                     else if (GameObject.GetComponent<PickUp>() != null) pickUp = GameObject.GetComponent<PickUp>();
 
-
+                    //Pickupables 
                     if (pickUp != null)
                     {
                         if (pickUp.name.Contains("mushroom"))
@@ -412,10 +402,22 @@ public class Crosshair : MonoBehaviour
                         pickup.Play();
                     }
 
+                    //Open gravestone
                     if (parent.GetComponent<Gravestone>() != null)
                     {
                         parent.GetComponent<Gravestone>().ReturnInventory();
                         Destroy(hit.collider.transform.parent.gameObject);
+                    }
+
+                    //Open Chest
+                    if (parent.GetComponent<Chest>() != null)
+                    {
+                        openMenus.changePlayerState(false);
+                        inventoryObject.SetActive(true);
+                        toolBar.SetActive(true);
+                        ChestInventory.SetActive(true);
+                        ChestInventory.GetComponent<WhatInventory>().inventoryOpen1 = parent.GetComponent<Chest>().inventory;
+                        parent.GetComponent<Chest>().inventory.SetActive(true);
                     }
                 }
             }
