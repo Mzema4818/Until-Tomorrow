@@ -17,6 +17,7 @@ public class Crosshair : MonoBehaviour
     public GameObject menuStats;
     public GameObject builderHealth;
     public GameObject[] menuNames;
+    public GameObject[] menuObjects;
     public OpenMenus openMenus;
     public GameObject hammer;
     public GameObject axe;
@@ -33,6 +34,7 @@ public class Crosshair : MonoBehaviour
     public bool canHit;
     public LayerMask IgnoreMe;
     public JobCamera jobCamera;
+    public Book book;
 
     public TextMeshProUGUI ResidentNames;
     public TextMeshProUGUI ResidentNamesBar;
@@ -110,7 +112,7 @@ public class Crosshair : MonoBehaviour
                         healthBar.SetHealth();
                         buildingHealth.ModifyHealth(0);
 
-                        BasicBuildingSelect();
+                        BasicBuildingSelect(parent.name.Split('_')[0]);
 
                         if (hammer.activeSelf)
                         {
@@ -459,14 +461,97 @@ public class Crosshair : MonoBehaviour
         }
     }
 
-    private void BasicBuildingSelect()
+    private void BasicBuildingSelect(string name)
     {
         menuNames[0].SetActive(true);
         menuStats.SetActive(true);
         openMenus.changePlayerState(false);
+        menuObjects[1].GetComponent<TextMeshProUGUI>().text = name; //name of building
+        menuObjects[2].GetComponent<RawImage>().texture = NameToImage(name); //image of building
+        ChangeCosts(GetCosts(name));
 
         ResidentNamesBar.gameObject.SetActive(false);
         JobNamesBar.gameObject.SetActive(false);
         storage.gameObject.SetActive(false);
+    }
+
+    private void ChangeCosts(int[] cost)
+    {
+        for (int i = 0; i < cost.Length; i++)
+        {
+            GameObject child = menuObjects[0].transform.GetChild(i).gameObject; //cost checker
+            if (cost[i] == 0) child.SetActive(false);
+            else child.SetActive(true);
+
+            GameObject text = child.transform.GetChild(0).GetChild(0).gameObject;
+            text.GetComponent<TextMeshProUGUI>().text = (cost[i] / 3).ToString();
+        }
+    }
+
+    private int[] GetCosts(string name)
+    {
+        switch (name)
+        {
+            case "Campfire":
+                return builder.campfireCost;
+            case "Tent":
+                return builder.tentCost;
+            case "Mine":
+                return builder.mineCost;
+            case "Lumbermill":
+                return builder.lumberMillCost;
+            case "Farm":
+                return builder.farmCost;
+            case "Wall":
+                return builder.wallCost;
+            case "Door":
+                return builder.doorCost;
+            case "Chest":
+                return builder.chestCost;
+            case "Messhall":
+                return builder.messhallCost;
+            case "Tavern":
+                return builder.tavernCost;
+            case "Tower":
+                return builder.towerCost;
+            case "KnightHut":
+                return builder.knightHutCost;
+        }
+
+        return null;
+    }
+
+    private Texture NameToImage(string name)
+    {
+        switch (name)
+        {
+            case "Campfire":
+                return book.images[0];
+            case "Tent":
+                return book.images[1];
+            case "Mine":
+                return book.images[2];
+            case "Lumbermill":
+                return book.images[3];
+            case "Farm":
+                return book.images[4];
+            case "Wall":
+                return book.images[5];
+            case "Door":
+                return book.images[6];
+            case "Chest":
+                return book.images[7];
+            case "Messhall":
+                return book.images[8];
+            case "Tavern":
+                return book.images[9];
+            case "Tower":
+                return book.images[10];
+            case "KnightHut":
+                return book.images[11];
+        }
+
+        return null;
+
     }
 }
