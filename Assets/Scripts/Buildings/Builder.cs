@@ -55,7 +55,6 @@ public class Builder : MonoBehaviour
     public int[] towerCost;
     public int[] knightHutCost;
 
-    //Start is called before the first frame update
     void Start()
     {
         placed = false;
