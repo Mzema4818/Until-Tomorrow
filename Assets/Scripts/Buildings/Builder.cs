@@ -173,7 +173,6 @@ public class Builder : MonoBehaviour
             GameObject building = Instantiate(buildingPrefab, player.transform.position, player.transform.rotation);
             buildingData = building;
             AddBuildingScripts(building, parent, offset, amounts);
-            //audioSource.PlayOneShot(placingItem);
         }
         else
         {
