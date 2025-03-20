@@ -10,6 +10,5 @@ public class TreeChopping : MonoBehaviour, IHitable
     {
         Instantiate(treeChopped, transform.position, transform.rotation);
         Destroy(gameObject);
-
     }
 }
