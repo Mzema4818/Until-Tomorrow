@@ -11,7 +11,6 @@ public class PickUpPopUpAdvanced : MonoBehaviour
 
     public bool shouldBeOn;
 
-    // Start is called before the first frame update
     private void Awake()
     {
         //canvas = gameObject;
@@ -20,7 +19,6 @@ public class PickUpPopUpAdvanced : MonoBehaviour
         canvas.SetActive(false);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (shouldBeOn)
