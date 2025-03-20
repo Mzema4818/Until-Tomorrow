@@ -119,7 +119,6 @@ public class OpenMenus : MonoBehaviour
                 if (menu == Inventory)
                 {
                     ToolBar.SetActive(true);
-                    //inventoryManager.TurnOffItem();
                 }
             }
         }
