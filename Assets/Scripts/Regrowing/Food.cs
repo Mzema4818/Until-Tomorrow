@@ -15,14 +15,12 @@ public class Food : MonoBehaviour
     private void Awake()
     {
         hunger = transform.root.GetComponent<Hunger>();
-
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0) && openMenus.CheckIfMenusAreClosed() && openMenus.CheckIfOtherMenusAreClosed())
         {
-            //print(itemIndex);
             Eat();
         }
     }
