@@ -24,15 +24,4 @@ public class DeathCollider : MonoBehaviour
             test = false;
         }
     }
-
-    /*private void OnTriggerEnter(Collider other)
-    {
-        if(other.name == "Main Character")
-        {
-            Inventory playerInventory = other.GetComponent<PlayInventory>().ReturnInventory();
-
-            inventory.TransferItems(inventory, playerInventory);
-            Destroy(gameObject);
-        }
-    }*/
 }
