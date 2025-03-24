@@ -20,6 +20,7 @@ Shader "Custom/GeometryGrass"
 		_AmbientStrength("Ambient Strength",  Range(0,1)) = 0.5
 		_MinDist("Min Distance", Float) = 40
 		_MaxDist("Max Distance", Float) = 60
+		_Position("Position Object", Vector) = (0,0,0,0)
 	}
 
 		// The HLSL code block. Unity SRP uses the HLSL language.
@@ -94,6 +95,7 @@ Shader "Custom/GeometryGrass"
 	float _MinDist, _MaxDist;
 
 	uniform float3 _PositionMoving;
+	vector _Position;
 
 	v2g vert(Attributes v)
 	{
@@ -241,8 +243,13 @@ Shader "Custom/GeometryGrass"
 				// first grass (0) segment does not get displaced by interactivity
 				float3 newPos = i == 0 ? v0 : v0 + ((float3(sphereDisp.x, sphereDisp.y, sphereDisp.z) + wind1) * t);
 
+				//Where grass is actually made
 				// every segment adds 2 new triangles
-				if (newPos.y >= 0.35 && newPos.y <= 8.0) {
+				// Define a minimum distance threshold to avoid spawning near _Position
+				float minDistance = 5.0; // Adjust this as neede
+				//float4 _Position; // _Position as a Vector4 to match Unity property system
+
+				if (newPos.y >= 0.35 && newPos.y <= 8.0 && distance(newPos.xz, _Position.xz) > minDistance) {
 					triStream.Append(GrassVertex(newPos, segmentWidth, segmentHeight, offset, segmentForward, float2(0, t), transformMatrix, faceNormal, color));
 					triStream.Append(GrassVertex(newPos, -segmentWidth, segmentHeight, offset, segmentForward, float2(1, t), transformMatrix, faceNormal, color));
 				}
