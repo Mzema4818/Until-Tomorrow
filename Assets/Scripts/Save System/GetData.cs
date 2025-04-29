@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class GetData : MonoBehaviour
@@ -191,6 +192,7 @@ public class GetData : MonoBehaviour
 
     [Header("Settings Data")]
     public MouseLook mouseLook;
+    public AudioMixer audioMixer;
 
     [Header("Collectable Data")]
     public GameObject collectableMenu;
@@ -296,6 +298,13 @@ public class GetData : MonoBehaviour
     public float GetSensitivity()
     {
         return playerController.sensitivity;
+    }
+
+    public float GetVolume()
+    {
+        float volume;
+        audioMixer.GetFloat("volume", out volume);
+        return volume;
     }
 
     //Get Player Data
@@ -1613,6 +1622,7 @@ public class GetData : MonoBehaviour
 
         //Settings
         playerController.sensitivity = data.sensitivity;
+        audioMixer.SetFloat("volume", data.volume);
 
         //Inventory Data
         inventoryItemAmounts = data.playerInventoryAmount;

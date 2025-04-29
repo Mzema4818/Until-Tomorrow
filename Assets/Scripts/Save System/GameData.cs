@@ -188,7 +188,9 @@ public class GameData
     public float timeOfDay;
     public int numberOfDays;
 
+    //Settings
     public float sensitivity;
+    public float volume;
 
     //hotbaritem
     public bool[] HotBarItemActive;
@@ -540,6 +542,7 @@ public class GameData
         numberOfDays = data.GetNumberOfDays();
         timeOfDay = data.GetTimeOfDay();
         sensitivity = data.GetSensitivity();
+        volume = data.GetVolume();
 
         //gravestones
         //TurnItemTypeIntoStringsArray(data.GraveStoneData(), ref inventoryItemNamesGraveStone, ref inventoryItemAmountsGraveStone);
