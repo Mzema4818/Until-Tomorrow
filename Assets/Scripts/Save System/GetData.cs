@@ -111,6 +111,7 @@ public class GetData : MonoBehaviour
     [Header("Building Data")]
     public GameObject buildingsParent;
     public GameObject[] buildingPrefabs;
+    public ProximityShader proximityShader;
 
     public string[] CampfireName;
     public Vector3[] CampfirePosition;
@@ -2175,6 +2176,7 @@ public class GetData : MonoBehaviour
                     newElement.transform.GetChild(i).GetComponent<MeshCollider>().enabled = true;
                 }
                 newElement.GetComponent<BoxCollider>().enabled = false;
+                proximityShader.AddBuilding(newElement);
                 //Tent Stuff
                 /*if(newElement.GetComponent<Tent>() != null)
                 {

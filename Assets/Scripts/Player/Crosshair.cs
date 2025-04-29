@@ -270,12 +270,14 @@ public class Crosshair : MonoBehaviour
                         //Turn off all menus of the resident, if you are were just talking to one
                         if (playerInteractions.residentTalkingTo != null)
                         {
-                            playerInteractions.residentTalkingTo.GetComponent<ResidentStats>().textBox.SetActive(false);
-                            playerInteractions.residentTalkingTo.GetComponent<ResidentStats>().schedule.SetActive(false);
+                            ResidentStats resident = playerInteractions.residentTalkingTo.GetComponent<ResidentStats>();
+                            resident.textBox.SetActive(false);
+                            resident.schedule.SetActive(false);
+                            resident.StatObject.SetActive(false);
                             //playerInteractions.residentTalkingTo.GetComponent<StatBar>().starbar.transform.parent.gameObject.SetActive(false);
                         }
-                        hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
                         playerInteractions.residentTalkingTo = hit.collider.gameObject;
+                        hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
 
                         //stops having 2 residents following you at once, after you tell one to follow you, if one is following you, stop that first
                         if (playerInteractions.resident != null)

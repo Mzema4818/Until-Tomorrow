@@ -10,6 +10,7 @@ public class GroundPlacementController : MonoBehaviour
     public SpawnEnemies spawnEnemies;
     public TextMeshProUGUI Announcement;
     public BuildMenuUpdater buildMenuUpdater;
+    public ProximityShader proximityShader;
     [SerializeField]
     public GameObject placeableObjectPrefab;
 
@@ -127,6 +128,7 @@ public class GroundPlacementController : MonoBehaviour
 
             audioSource.PlayOneShot(placingItem);
 
+            proximityShader.AddBuilding(gameObject);
             Destroy(this);
         }
     }

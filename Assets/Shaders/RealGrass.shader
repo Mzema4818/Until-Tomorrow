@@ -275,13 +275,27 @@ Shader "Custom/GeometryGrass"
 
 		HLSLPROGRAM
 
-	float4 _TopColor;
-	float4 _BottomColor;
-	float _AmbientStrength;
+    	float4 _TopColor;
+    	float4 _BottomColor;
+    	float _AmbientStrength;
+    	float4 _ProximityPos[128]; //support up to 128 proximity points
+    	int _ProximityPosCount;
+    	float _ProximityMaxDist[128]; //support up to 128 proximity distances
 
 	// The fragment shader definition.            
 	half4 frag(g2f i) : SV_Target
 	{
+	//This for loop removes proximity stuff
+    for (int p = 0; p < _ProximityPosCount; ++p)
+    {
+        float3 distanceToProximity = i.worldPos.xyz - _ProximityPos[p].xyz;
+        float proximityDist = length(distanceToProximity);
+        
+        if (proximityDist <= _ProximityMaxDist[p]) {
+            discard;
+        }
+    }
+
 		float4 shadowCoord = TransformWorldToShadowCoord(i.worldPos);
 	#if _MAIN_LIGHT_SHADOWS_CASCADE || _MAIN_LIGHT_SHADOWS
 	Light mainLight = GetMainLight(shadowCoord);

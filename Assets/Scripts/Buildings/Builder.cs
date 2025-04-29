@@ -25,6 +25,7 @@ public class Builder : MonoBehaviour
     public GameObject fullHeath;
     public SpawnEnemies spawnEnemies;
     public InventoryManager inventoryManager;
+    public ProximityShader proximityShader;
     public Book book;
 
     [Header("Hammer")]
@@ -125,6 +126,7 @@ public class Builder : MonoBehaviour
         if (buildingData != null)
         {
             AddBuildingScripts(buildingData, true, CheckParentName(buildingData.transform.name));
+            proximityShader.RemoveBuilding(buildingData);
         }
     }
 
@@ -196,6 +198,7 @@ public class Builder : MonoBehaviour
         building.GetComponent<GroundPlacementController>().spawnEnemies = spawnEnemies;
         building.GetComponent<GroundPlacementController>().audioSource = audioSource;
         building.GetComponent<GroundPlacementController>().placingItem = placingItem;
+        building.GetComponent<GroundPlacementController>().proximityShader = proximityShader;
         building.GetComponent<NavMeshObstacle>().enabled = false;
         building.AddComponent<ColorChange>();
         isBuilding = true;
@@ -217,6 +220,7 @@ public class Builder : MonoBehaviour
         building.AddComponent<ColorChange>();
         building.GetComponent<GroundPlacementController>().audioSource = audioSource;
         building.GetComponent<GroundPlacementController>().placingItem = placingItem;
+        building.GetComponent<GroundPlacementController>().proximityShader = proximityShader;
         isBuilding = true;
         openMenus.TurnOffMenus();
     }
