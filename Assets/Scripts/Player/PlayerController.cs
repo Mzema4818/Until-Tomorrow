@@ -44,6 +44,10 @@ public class PlayerController : MonoBehaviour
     public float crouchHeight = 0.5f;  // Height when crouched
     public float standingHeight;
 
+    [SerializeField] private float crouchDuration = 0.2f;  // Duration of the crouch/stand transition
+
+    private Coroutine crouchRoutine;
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -150,19 +154,39 @@ public class PlayerController : MonoBehaviour
 
     void ToggleCrouch()
     {
-        if (isCrouching)
+        if (crouchRoutine != null)
+            StopCoroutine(crouchRoutine);
+
+        float targetHeight = isCrouching ? standingHeight : crouchHeight;
+        Vector3 targetCamPos = isCrouching
+            ? new Vector3(0, 0, 0)
+            : new Vector3(0, crouchHeight / 2f, 0);
+
+        crouchRoutine = StartCoroutine(SmoothCrouch(targetHeight, targetCamPos));
+        isCrouching = !isCrouching;
+    }
+
+    IEnumerator SmoothCrouch(float targetHeight, Vector3 targetCamPos)
+    {
+        float timeElapsed = 0f;
+        float startHeight = controller.height;
+        float startCenterY = controller.center.y;
+        Vector3 startCamPos = cam.transform.localPosition;
+        float targetCenterY = targetHeight / 2f;
+
+        while (timeElapsed < crouchDuration)
         {
-            // Stand up
-            controller.height = standingHeight;
-            cam.transform.localPosition = new Vector3(0, standingHeight / 2, 0);
-        }
-        else
-        {
-            // Crouch
-            controller.height = crouchHeight;
-            cam.transform.localPosition = new Vector3(0, crouchHeight / 2, 0);
+            float t = timeElapsed / crouchDuration;
+            controller.height = Mathf.Lerp(startHeight, targetHeight, t);
+            controller.center = new Vector3(0, Mathf.Lerp(startCenterY, targetCenterY, t), 0);
+            cam.transform.localPosition = Vector3.Lerp(startCamPos, targetCamPos, t);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
         }
 
-        isCrouching = !isCrouching;
+        controller.height = targetHeight;
+        controller.center = new Vector3(0, targetCenterY, 0);
+        cam.transform.localPosition = targetCamPos;
     }
 }
