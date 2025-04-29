@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SliderValues : MonoBehaviour
 {
-    [Header("Slider Data")]
+    /*[Header("Slider Data")]
     public Slider sensitivitySlider;
     public TextMeshProUGUI sensitivityValue;
 
@@ -23,5 +23,5 @@ public class SliderValues : MonoBehaviour
     {
         sensitivityValue.text = sensitivitySlider.value.ToString();
         playerController.sensitivity = sensitivitySlider.value;
-    }
+    }*/
 }
