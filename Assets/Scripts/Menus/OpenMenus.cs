@@ -16,6 +16,7 @@ public class OpenMenus : MonoBehaviour
     public GameObject ChestInventory;
     public GameObject deathMenu;
     public GameObject gameOverScreen;
+    public GameObject settingsMenu;
 
     [Header("Other Menus")]
     public GameObject ResidentMenus;
@@ -74,6 +75,7 @@ public class OpenMenus : MonoBehaviour
             {
                 CloseAllMenus();
                 CloseAllOtherMenus();
+                settingsMenu.SetActive(false);
 
                 if (!Camera.activeSelf) Camera.SetActive(true);
                 if (builder.isBuilding) hammer.SetActive(false);
@@ -113,6 +115,8 @@ public class OpenMenus : MonoBehaviour
                         book.GoBackToPageOne();
                         menu.SetActive(false);
                         changePlayerState(true);
+                        //print(settingsMenu.activeSelf);
+                        //settingsMenu.SetActive(false);
                         //playerAttack.shouldAttack = !playerAttack.shouldAttack;
                     }
                 }
