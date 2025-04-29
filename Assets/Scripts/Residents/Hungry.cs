@@ -1,11 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using static Item;
-using static UnityEditor.FilePathAttribute;
 
 public class Hungry : MonoBehaviour
 {

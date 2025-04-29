@@ -47,4 +47,9 @@ public class SettingsMenu : MonoBehaviour
         audioMixer.GetFloat("volume", out volumeOutput);
         volumeValue.text = (volumeOutput + 80).ToString();
     }
+
+    public void SetFullScreen(bool isFullScreen)
+    {
+        Screen.fullScreen = isFullScreen;
+    }
 }

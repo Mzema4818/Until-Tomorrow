@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using static Item;
-using static UnityEditor.FilePathAttribute;
 
 public class ResidentScheudle : MonoBehaviour
 {
