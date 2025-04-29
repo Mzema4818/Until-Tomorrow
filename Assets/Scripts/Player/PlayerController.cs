@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Camera")]
     public Camera cam;
+    public Transform cameraHolder;
     public float sensitivity;
 
     float xRotation = 0f;
@@ -56,8 +57,8 @@ public class PlayerController : MonoBehaviour
         AssignInputs();
 
         // Set initial camera height
-        controller.height = cam.transform.parent.localPosition.y;
-        standingHeight = cam.transform.parent.localPosition.y;
+        standingHeight = cameraHolder.localPosition.y;
+        controller.height = standingHeight;
         //cam.transform.localPosition = new Vector3(0, standingHeight / 2, 0);
     }
 
@@ -159,8 +160,8 @@ public class PlayerController : MonoBehaviour
 
         float targetHeight = isCrouching ? standingHeight : crouchHeight;
         Vector3 targetCamPos = isCrouching
-            ? new Vector3(0, 0, 0)
-            : new Vector3(0, crouchHeight / 2f, 0);
+            ? new Vector3(0, standingHeight, 0)
+            : new Vector3(0, crouchHeight, 0); // Adjust based on how low you want to crouch
 
         crouchRoutine = StartCoroutine(SmoothCrouch(targetHeight, targetCamPos));
         isCrouching = !isCrouching;
@@ -171,7 +172,7 @@ public class PlayerController : MonoBehaviour
         float timeElapsed = 0f;
         float startHeight = controller.height;
         float startCenterY = controller.center.y;
-        Vector3 startCamPos = cam.transform.localPosition;
+        Vector3 startCamPos = cameraHolder.localPosition;
         float targetCenterY = targetHeight / 2f;
 
         while (timeElapsed < crouchDuration)
@@ -179,7 +180,7 @@ public class PlayerController : MonoBehaviour
             float t = timeElapsed / crouchDuration;
             controller.height = Mathf.Lerp(startHeight, targetHeight, t);
             controller.center = new Vector3(0, Mathf.Lerp(startCenterY, targetCenterY, t), 0);
-            cam.transform.localPosition = Vector3.Lerp(startCamPos, targetCamPos, t);
+            cameraHolder.localPosition = Vector3.Lerp(startCamPos, targetCamPos, t);
 
             timeElapsed += Time.deltaTime;
             yield return null;
@@ -187,6 +188,6 @@ public class PlayerController : MonoBehaviour
 
         controller.height = targetHeight;
         controller.center = new Vector3(0, targetCenterY, 0);
-        cam.transform.localPosition = targetCamPos;
+        cameraHolder.localPosition = targetCamPos;
     }
 }
