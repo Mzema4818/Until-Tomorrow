@@ -80,7 +80,7 @@ public class OpenMenus : MonoBehaviour
 
                 menu.SetActive(true);
                 changePlayerState(false);
-                playerAttack.shouldAttack = !playerAttack.shouldAttack;
+                //playerAttack.shouldAttack = false;
                 return;
             }
 
@@ -100,19 +100,20 @@ public class OpenMenus : MonoBehaviour
 
                 if (!NeedHammer || HammerOn)
                 {
-                    if(builder.isBuilding){ builder.DestroyBuilding(); builder.isBuilding = false;}
+                    //playerAttack.shouldAttack = true;
+                    if (builder.isBuilding){ builder.DestroyBuilding(); builder.isBuilding = false;}
                     if (!menu.activeSelf)
                     {
                         menu.SetActive(true);
                         changePlayerState(false);
-                        playerAttack.shouldAttack = !playerAttack.shouldAttack;
+                        //playerAttack.shouldAttack = !playerAttack.shouldAttack;
                     }
                     else
                     {
                         book.GoBackToPageOne();
                         menu.SetActive(false);
                         changePlayerState(true);
-                        playerAttack.shouldAttack = !playerAttack.shouldAttack;
+                        //playerAttack.shouldAttack = !playerAttack.shouldAttack;
                     }
                 }
 
