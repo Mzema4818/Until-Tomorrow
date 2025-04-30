@@ -33,7 +33,7 @@ public class SettingsMenu : MonoBehaviour
 
         //Volume Set
         audioMixer.GetFloat("volume", out volumeOutput);
-        volumeValue.text = (volumeOutput + 80).ToString();
+        volumeValue.text = (volumeOutput + 80).ToString() + "%";
         volumeSlider.value = volumeOutput;
     }
 
@@ -66,7 +66,7 @@ public class SettingsMenu : MonoBehaviour
     {
         audioMixer.SetFloat("volume", volume);
         audioMixer.GetFloat("volume", out volumeOutput);
-        volumeValue.text = (volumeOutput + 80).ToString();
+        volumeValue.text = (volumeOutput + 80).ToString() + "%";
     }
 
     public void SetFullScreen(bool isFullScreen)

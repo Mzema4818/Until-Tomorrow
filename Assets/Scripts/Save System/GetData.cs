@@ -10,6 +10,7 @@ public class GetData : MonoBehaviour
 {
     [Header("Save Game")]
     public TextMeshProUGUI notifiation;
+    public GameObject noData;
 
     [Header("Terrain Data")]
     public NoiseData noiseData;
@@ -1574,7 +1575,13 @@ public class GetData : MonoBehaviour
         GameData data = SaveSystem.LoadData();
 
         //Terrain Data
-        seed = data.seed;
+        try
+        {
+            seed = data.seed;
+        }
+        catch {
+            noData.SetActive(true);
+        };
         noiseData.seed = seed;
 
         //Player Data
