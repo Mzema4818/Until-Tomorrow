@@ -102,7 +102,7 @@ public class PlayerAttack : MonoBehaviour
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
 
-            audioSource.PlayOneShot(hit.transform.parent.GetComponent<ParticleHolder>().sound);
+            try { audioSource.PlayOneShot(hit.transform.parent.GetComponent<ParticleHolder>().sound); } catch { };
         }
         else if(canAttack)
         {

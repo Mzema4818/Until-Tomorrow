@@ -51,9 +51,11 @@ public class PickUpPopUpAdvanced : MonoBehaviour
     {
         try
         {
-            canvas.transform.LookAt(Camera.main.transform);
+            Vector3 cameraPosition = Camera.main.transform.position;
+            Vector3 lookAtPosition = new Vector3(cameraPosition.x, canvas.transform.position.y, cameraPosition.z);
+            canvas.transform.LookAt(lookAtPosition);
         }
-        catch { };
+        catch { }
         //transform.parent.transform.Rotate(0, 180, 0);
     }
 
