@@ -8,6 +8,8 @@ public class Builder : MonoBehaviour
 {
     public TextMeshProUGUI Announcement;
     public BuildMenuUpdater buildMenuUpdater;
+    public Color[] colors;
+
     [Header("Building Prefabs")]
     public GameObject[] StageOneBuildings;
     public Transform parent;
@@ -200,7 +202,7 @@ public class Builder : MonoBehaviour
         building.GetComponent<GroundPlacementController>().placingItem = placingItem;
         building.GetComponent<GroundPlacementController>().proximityShader = proximityShader;
         building.GetComponent<NavMeshObstacle>().enabled = false;
-        building.AddComponent<ColorChange>();
+        building.AddComponent<ColorChange>().touchingColors = colors;
         isBuilding = true;
         openMenus.TurnOffMenus();
     }
@@ -217,7 +219,7 @@ public class Builder : MonoBehaviour
         building.GetComponent<GroundPlacementController>().builder = this;
         building.GetComponent<GroundPlacementController>().moving = moving;
         building.GetComponent<NavMeshObstacle>().enabled = false;
-        building.AddComponent<ColorChange>();
+        building.AddComponent<ColorChange>().touchingColors = colors;
         building.GetComponent<GroundPlacementController>().audioSource = audioSource;
         building.GetComponent<GroundPlacementController>().placingItem = placingItem;
         building.GetComponent<GroundPlacementController>().proximityShader = proximityShader;

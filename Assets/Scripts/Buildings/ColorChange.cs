@@ -5,6 +5,7 @@ using UnityEngine;
 public class ColorChange : MonoBehaviour
 {
     public Color[] rend;
+    public Color[] touchingColors;
     public bool touching;
 
     private float x, y, z;
@@ -39,7 +40,7 @@ public class ColorChange : MonoBehaviour
             Renderer renderer = transform.GetChild(i).GetComponent<Renderer>();
             if (renderer != null)
             {
-                transform.GetChild(i).GetComponent<Renderer>().material.color = Color.green;
+                transform.GetChild(i).GetComponent<Renderer>().material.color = touchingColors[1];
                 touching = false;
             }
         }
@@ -49,7 +50,7 @@ public class ColorChange : MonoBehaviour
     {
         if (other.transform.name != "Terrain")
         {
-            ChangeColor(Color.red);
+            ChangeColor(touchingColors[0]);
             touching = true;
         }
     }
@@ -62,7 +63,7 @@ public class ColorChange : MonoBehaviour
 
         if (other.transform.name != "Terrain")
         {
-            ChangeColor(Color.green);
+            ChangeColor(touchingColors[1]);
             touching = false;
         }
     }

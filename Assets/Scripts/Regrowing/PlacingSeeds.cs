@@ -17,6 +17,7 @@ public class PlacingSeeds : MonoBehaviour
 
     [Header("Information")]
     public ForestGenerator forestGenerator;
+    public Color[] colors;
     public bool tree;
     public bool berry;
 
@@ -45,7 +46,7 @@ public class PlacingSeeds : MonoBehaviour
         currentObject.GetComponent<GroundPlacementControllerNonBuilder>().berry = berry;
         currentObject.GetComponent<PickUpPopUp>().enabled = false;
 
-        currentObject.AddComponent<ColorChange>();
+        currentObject.AddComponent<ColorChange>().touchingColors = colors;
     }
 
     private string FixName(string name)

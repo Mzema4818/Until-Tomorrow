@@ -20,7 +20,7 @@ public class StatBar : MonoBehaviour
     {
         int Index = 3; //this is where the strength stat starts (first stat besides health and food and stuff)
 
-        for(int i = 0; i < statBar.transform.childCount - 5; i++) //strength is the first actual stat, the last children are stuff we dont change
+        for(int i = 1; i < statBar.transform.childCount - 5; i++) //strength is the first actual stat, the last children are stuff we dont change
         {
             statBar.transform.GetChild(i).GetChild(0).GetComponent<Image>().fillAmount = (residentStats.Stats[Index] * 5) / 100.0f; //this is because stats have a max of 20.  So we make it out of 100 first then we divide it by 100 to get a decimal
             Index++;

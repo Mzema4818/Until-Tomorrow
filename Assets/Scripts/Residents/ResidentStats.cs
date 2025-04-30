@@ -8,6 +8,7 @@ public class ResidentStats : MonoBehaviour
     public Resident resident;
     public int[] Stats;
     public bool joinedTown;
+    public Color color;
     public Item.ItemType FavoriteItem;
     public GameObject textBox;
     public GameObject schedule;
@@ -39,7 +40,7 @@ public class ResidentStats : MonoBehaviour
 
         if (joinedTown)
         {
-            namebar.color = Color.green;
+            namebar.color = color;
         }
     }
 

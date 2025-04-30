@@ -265,7 +265,7 @@ public class Crosshair : MonoBehaviour
                         pickup.Play();
                     }
 
-                    if (gameObject.GetComponent<ResidentStats>() != null && playerInteractions.residentTalkingTo != hit.collider.gameObject)
+                    if (gameObject.GetComponent<ResidentStats>() != null)
                     {
                         //Turn off all menus of the resident, if you are were just talking to one
                         if (playerInteractions.residentTalkingTo != null)

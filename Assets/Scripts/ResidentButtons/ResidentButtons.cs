@@ -41,7 +41,7 @@ public class ResidentButtons : MonoBehaviour
                 //inventory.RemoveItem(new Item { itemType = ResidentTalkingTo.GetComponent<ResidentStats>().FavoriteItem, amount = amount, index = inventory.GetLastLocationOfItem(ResidentTalkingTo.GetComponent<ResidentStats>().FavoriteItem) });
                 constant.inventoryManager.RemoveItem(constant.resident.GetComponent<ResidentStats>().FavoriteItem);
                 constant.resident.GetComponent<ResidentStats>().joinedTown = true;
-                constant.resident.GetComponent<ResidentStats>().namebar.color = Color.green;
+                constant.resident.GetComponent<ResidentStats>().namebar.color = constant.resident.GetComponent<ResidentStats>().color;
                 constant.GiveItemButton.SetActive(false);
                 //transform.GetChild(1).gameObject.SetActive(false);
                 //transform.GetChild(2).gameObject.SetActive(true);

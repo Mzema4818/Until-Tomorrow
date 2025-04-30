@@ -47,7 +47,7 @@ public class TextBoxChoices : MonoBehaviour
             //inventory.RemoveItem(new Item { itemType = ResidentTalkingTo.GetComponent<ResidentStats>().FavoriteItem, amount = amount, index = inventory.GetLastLocationOfItem(ResidentTalkingTo.GetComponent<ResidentStats>().FavoriteItem) });
             inventoryManager.RemoveItem(ResidentTalkingTo.GetComponent<ResidentStats>().FavoriteItem);
             ResidentTalkingTo.GetComponent<ResidentStats>().joinedTown = true;
-            ResidentTalkingTo.GetComponent<ResidentStats>().namebar.color = Color.green;
+            ResidentTalkingTo.GetComponent<ResidentStats>().namebar.color = ResidentTalkingTo.GetComponent<ResidentStats>().color;
             transform.GetChild(1).gameObject.SetActive(false);
             transform.GetChild(2).gameObject.SetActive(true);
             TextBox.text = "Thank you kindly";
