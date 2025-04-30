@@ -19,6 +19,7 @@ public class StartGame : MonoBehaviour
     public LightingManager lightingManager;
     public CollectableRandomizer collectableRandomizer;
     public CollectableRandomizer collectableRandomizer2;
+    //If says NavMeshSurface is an error but don't worry about it, no issues so far
     public NavMeshSurface navMeshSurface;
     public Builder builder;
     public TextBoxChoices choices;

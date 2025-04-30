@@ -15,12 +15,15 @@ public class SettingsMenu : MonoBehaviour
     public TextMeshProUGUI sensitivityValue;
     public TextMeshProUGUI volumeValue;
 
-    [Header("Sliders")]
+    [Header("Bars")]
     public Slider sensitivitySlider;
     public Slider volumeSlider;
+    public TMP_Dropdown resolutionDropdown;
 
     [Header("Others")]
+    public GameObject fps;
     private float volumeOutput;
+    private Resolution[] resolutions;
 
     private void Awake()
     {
@@ -34,7 +37,25 @@ public class SettingsMenu : MonoBehaviour
         volumeSlider.value = volumeOutput;
     }
 
-    // Start is called before the first frame update
+    private void Start()
+    {
+        resolutions = Screen.resolutions;
+        resolutionDropdown.ClearOptions();
+
+        List<string> options = new List<string>();
+
+        int currentResolutionIndex = 0;
+        for(int i = 0; i < resolutions.Length; i++)
+        {
+            options.Add(resolutions[i].width + " x " + resolutions[i].height);
+            if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height) currentResolutionIndex = i;
+        }
+
+        resolutionDropdown.AddOptions(options);
+        resolutionDropdown.value = currentResolutionIndex;
+        resolutionDropdown.RefreshShownValue();
+    }
+
     public void SetSensitivity(float sensitivity)
     {
         playerController.sensitivity = sensitivity;
@@ -51,5 +72,16 @@ public class SettingsMenu : MonoBehaviour
     public void SetFullScreen(bool isFullScreen)
     {
         Screen.fullScreen = isFullScreen;
+    }
+
+    public void SetFPS(bool showFPS)
+    {
+        fps.SetActive(showFPS);
+    }
+
+    public void SetResolution(int resolutionIndex)
+    {
+        Resolution resolution = resolutions[resolutionIndex];
+        Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
     }
 }
