@@ -53,4 +53,9 @@ public class PickUpPopUp : MonoBehaviour
             //print("hi");
         }
     }
+
+    private void OnDisable()
+    {
+        canvas.SetActive(false);
+    }
 }

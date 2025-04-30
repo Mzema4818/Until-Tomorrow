@@ -123,6 +123,7 @@ public class GroundPlacementController : MonoBehaviour
                 RemoveItem(Item.ItemType.rock, Cost[1]);
             }
 
+            if (currentPlaceableObject.GetComponent<PickUpPopUp>() != null) currentPlaceableObject.GetComponent<PickUpPopUp>().enabled = true;
             currentPlaceableObject = null;
             builder.isBuilding = false;
 

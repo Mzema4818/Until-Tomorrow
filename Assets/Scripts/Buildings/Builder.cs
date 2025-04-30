@@ -127,6 +127,7 @@ public class Builder : MonoBehaviour
     {
         if (buildingData != null)
         {
+            if (buildingData.GetComponent<PickUpPopUp>() != null) buildingData.GetComponent<PickUpPopUp>().enabled = false;
             AddBuildingScripts(buildingData, true, CheckParentName(buildingData.transform.name));
             proximityShader.RemoveBuilding(buildingData);
         }
