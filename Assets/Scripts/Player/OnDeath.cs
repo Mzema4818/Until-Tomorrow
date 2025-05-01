@@ -64,9 +64,19 @@ public class OnDeath : MonoBehaviour
         openMenus.CloseAllMenus();
         openMenus.CloseAllOtherMenus();
 
+        transform.parent.GetComponent<CharacterController>().enabled = false;
+        transform.parent.GetComponent<BoxCollider>().enabled = false;
         //health.ModifyHealth(-health.maxHealth);
         //hunger.ModifyHunger(-hunger.maxHunger);
         //breath.ModifyBreath(-breath.maxBreath);
+
+        for (int i = 0; i < canvas.transform.childCount; i++)
+        {
+            if (canvas.transform.GetChild(i).transform.name == "Character Stuff")
+            {
+                canvas.transform.GetChild(i).gameObject.SetActive(false);
+            }
+        }
 
         openMenus.ToolBar.SetActive(false);
         deathMenu.SetActive(true);
@@ -115,6 +125,9 @@ public class OnDeath : MonoBehaviour
 
         setRigidbodyState(true);
         setColliderState(false);
+
+        transform.parent.GetComponent<CharacterController>().enabled = true;
+        transform.parent.GetComponent<BoxCollider>().enabled = true;
 
         deathMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
