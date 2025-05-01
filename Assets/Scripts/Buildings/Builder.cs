@@ -188,6 +188,8 @@ public class Builder : MonoBehaviour
 
     private void AddBuildingScripts(GameObject building, Transform parent, float offset, int[] cost)
     {
+        if(building.GetComponent<IsABuilding>().canvas != null) building.GetComponent<IsABuilding>().canvas.SetActive(false);
+        building.GetComponent<IsABuilding>().actions.SetActive(false);
         building.AddComponent<GroundPlacementController>();
         building.GetComponent<GroundPlacementController>().offset = offset;
         building.GetComponent<GroundPlacementController>().Announcement = Announcement;
@@ -211,6 +213,8 @@ public class Builder : MonoBehaviour
 
     private void AddBuildingScripts(GameObject building, bool moving, Transform parent)
     {
+        if (building.GetComponent<IsABuilding>().canvas != null) building.GetComponent<IsABuilding>().canvas.SetActive(false);
+        building.GetComponent<IsABuilding>().actions.SetActive(false);
         building.AddComponent<GroundPlacementController>();
         building.GetComponent<GroundPlacementController>().Announcement = Announcement;
         building.GetComponent<GroundPlacementController>().buildMenuUpdater = buildMenuUpdater;

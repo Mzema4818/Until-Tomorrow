@@ -562,7 +562,7 @@ public class Book : MonoBehaviour {
                 image.texture = images[10];
                 button.onClick.AddListener(builder.BuildTower);
                 break;
-            case "KnightHut":
+            case "Knighthut":
                 Description.text = "The finest of knights";
                 ChangeCosts(builder.knightHutCost);
                 image.texture = images[11];

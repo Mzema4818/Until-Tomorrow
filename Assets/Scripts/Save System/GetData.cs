@@ -2186,6 +2186,9 @@ public class GetData : MonoBehaviour
                 newElement.name = names[i];
                 newElement.transform.parent = parent;
 
+                PickUpPopUp pickUpPopUp = newElement.GetComponent<PickUpPopUp>();
+                if (pickUpPopUp != null) pickUpPopUp.enabled = true;
+
                 Destroy(newElement.GetComponent<Rigidbody>());
                 for (int i2 = 0; i2 < newElement.transform.childCount; i2++)
                 {
