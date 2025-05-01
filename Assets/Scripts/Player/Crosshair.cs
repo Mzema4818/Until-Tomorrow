@@ -110,11 +110,29 @@ public class Crosshair : MonoBehaviour
                     //opening buildings
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
+                        IsABuilding isABuilding = parent.GetComponent<IsABuilding>();
+
+                        //If there's already a building open, close its actions
+                        if (builder.buildingData != null && builder.buildingData != parent.gameObject)
+                        {
+                            IsABuilding previousBuilding = builder.buildingData.GetComponent<IsABuilding>();
+                            if (previousBuilding != null) previousBuilding.actions.SetActive(false);
+                        }
+
+                        //If we're clicking the same building again, toggle it off
+                        if (builder.buildingData == parent.gameObject && isABuilding.actions.activeSelf)
+                        {
+                            isABuilding.actions.SetActive(false);
+                            builder.buildingData = null;
+                            return;
+                        }
+
+                        //Set the new building and activate
                         builder.buildingData = parent.gameObject;
                         buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
                         builder.buildingHealth = buildingHealth;
 
-                        parent.GetComponent<IsABuilding>().actions.SetActive(!parent.GetComponent<IsABuilding>().actions.activeSelf);
+                        isABuilding.actions.SetActive(true);
 
 
                         //If hammer is active
