@@ -123,38 +123,45 @@ public class GetData : MonoBehaviour
     public string[] TentName;
     public Vector3[] TentPosition;
     public Quaternion[] TentRotation;
+    public int[] TentHealth;
 
     public string[] MineName;
     public Vector3[] MinePosition;
     public Quaternion[] MineRotation;
     public string[] MineItems;
     public int[] MineAmounts;
+    public int[] MineHealth;
 
     public string[] LumbermillName;
     public Vector3[] LumbermillPosition;
     public Quaternion[] LumbermillRotation;
     public string[] LumbermillItems;
     public int[] LumbermillAmounts;
+    public int[] LumbermillHealth;
 
     public string[] FarmName;
     public Vector3[] FarmPosition;
     public Quaternion[] FarmRotation;
     public string[] FarmItems;
     public int[] FarmAmounts;
+    public int[] FarmHealth;
 
     public string[] WallName;
     public Vector3[] WallPosition;
     public Quaternion[] WallRotation;
+    public int[] WallHealth;
 
     public string[] DoorName;
     public Vector3[] DoorPosition;
     public Quaternion[] DoorRotation;
+    public int[] DoorHealth;
 
     public string[] ChestName;
     public Vector3[] ChestPosition;
     public Quaternion[] ChestRotation;
     public string[] ChestItems;
     public int[] ChestAmounts;
+    public int[] ChestHealth;
 
     public string[] MesshallName;
     public Vector3[] MesshallPosition;
@@ -164,18 +171,22 @@ public class GetData : MonoBehaviour
     public string[] MesshallItemsCooked;
     public int[] MesshallAmountsCooked;
     public string[] MesshallFarm;
+    public int[] MesshallHealth;
 
     public string[] tavernName;
     public Vector3[] tavernPosition;
     public Quaternion[] tavernRotation;
+    public int[] tavernHealth;
 
     public string[] towerName;
     public Vector3[] towerPosition;
     public Quaternion[] towerRotation;
+    public int[] towerHealth;
 
     public string[] knightHutName;
     public Vector3[] knightHutPosition;
     public Quaternion[] knightHutRotation;
+    public int[] knightHutHealth;
     //public Inventory[] inventoryChest;
     //public string[] inventoryItemNamesChest;
     //public int[] inventoryItemAmountsChest;

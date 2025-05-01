@@ -99,38 +99,45 @@ public class GameData
     public float[] TentPosition;
     public float[] TentRotation;
     public string[] TentNames;
+    public int[] TentHealth;
 
     public float[] MinePosition;
     public float[] MineRotation;
     public string[] MineNames;
     public string[] MineItems;
     public int[] MineAmounts;
+    public int[] MineHealth;
 
     public float[] LumbermillPosition;
     public float[] LumbermillRotation;
     public string[] LumbermillNames;
     public string[] LumbermillItems;
     public int[] LumbermillAmounts;
+    public int[] LumbermillHealth;
 
     public float[] FarmPosition;
     public float[] FarmRotation;
     public string[] FarmNames;
     public string[] FarmItems;
     public int[] FarmAmounts;
+    public int[] FarmHealth;
 
     public float[] WallPosition;
     public float[] WallRotation;
     public string[] WallNames;
+    public int[] WallHealth;
 
     public float[] DoorPosition;
     public float[] DoorRotation;
     public string[] DoorNames;
+    public int[] DoorHealth;
 
     public float[] ChestPosition;
     public float[] ChestRotation;
     public string[] ChestNames;
     public string[] ChestItems;
     public int[] ChestAmounts;
+    public int[] ChestHealth;
 
     public float[] MesshallPosition;
     public float[] MesshallRotation;
@@ -140,18 +147,22 @@ public class GameData
     public string[] MesshallItemsCooked;
     public int[] MesshallAmountsCooked;
     public string[] MesshallFarm;
+    public int[] MesshallHealth;
 
     public float[] tavernPosition;
     public float[] tavernRotation;
     public string[] tavernNames;
+    public int[] tavernHealth;
 
     public float[] towerPosition;
     public float[] towerRotation;
     public string[] towerNames;
+    public int[] towerHealth;
 
     public float[] knightHutPosition;
     public float[] knightHutRotation;
     public string[] knightHutNames;
+    public int[] knightHutHealth;
     //public string[] inventoryItemNamesChest;
     //public int[] inventoryItemAmountsChest;
 
