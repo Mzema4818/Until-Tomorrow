@@ -118,6 +118,7 @@ public class GetData : MonoBehaviour
     public string[] CampfireName;
     public Vector3[] CampfirePosition;
     public Quaternion[] CampfireRotation;
+    public int[] CampfireHealth;
 
     public string[] TentName;
     public Vector3[] TentPosition;
@@ -814,6 +815,11 @@ public class GetData : MonoBehaviour
         return GetNames(ref CampfireName, buildingsParent.transform.GetChild(0).gameObject);
     }
 
+    public int[] GetCampFireHealth()
+    {
+        return GetHealth(ref CampfireHealth, buildingsParent.transform.GetChild(0).gameObject);
+    }
+
     //Get tent Data
     public Vector3[] GetTentPosition()
     {
@@ -1331,6 +1337,18 @@ public class GetData : MonoBehaviour
         return rotations;
     }
 
+    public int[] GetHealth(ref int[] healths, GameObject parent)
+    {
+        healths = new int[parent.transform.childCount];
+
+        for (int i = 0; i < healths.Length; i++)
+        {
+            healths[i] = parent.transform.GetChild(i).GetComponent<BuildingHealth>().currentHealth;
+        }
+
+        return healths;
+    }
+
     public string[] GetNames(ref string[] names, GameObject parent)
     {
         names = new string[parent.transform.childCount];
@@ -1768,6 +1786,7 @@ public class GetData : MonoBehaviour
         SetPositions(data.CampfirePosition, ref CampfirePosition);
         SetRotations(data.CampfireRotation, ref CampfireRotation);
         SetNames(data.CampfireNames, ref CampfireName);
+        SetHealth(data.CampfireHealth, ref CampfireHealth);
 
         SetPositions(data.TentPosition, ref TentPosition);
         SetRotations(data.TentRotation, ref TentRotation);
@@ -1832,7 +1851,7 @@ public class GetData : MonoBehaviour
         //TurnStringArrayIntoDictonaries(ref invetoryItemsArrayChest, inventoryItemNamesChest, inventoryItemAmountsChest);
 
         //ClearGameObjects();
-        SpawnObjects(CampfirePosition, CampfireRotation, CampfireName, buildingsParent.transform.GetChild(0), "building");
+        SpawnBuildings(CampfirePosition, CampfireRotation, CampfireName, CampfireHealth, buildingsParent.transform.GetChild(0));
         SpawnObjects(TentPosition, TentRotation, TentName, buildingsParent.transform.GetChild(1), "building");
         SpawnObjects(MinePosition, MineRotation, MineName, buildingsParent.transform.GetChild(2), "building");
         SpawnObjects(LumbermillPosition, LumbermillRotation, LumbermillName, buildingsParent.transform.GetChild(3), "building");
@@ -1904,6 +1923,16 @@ public class GetData : MonoBehaviour
         for(int i = 0; i < SetNames.Length; i++)
         {
             SetNames[i] = getNames[i];
+        }
+    }
+
+    public void SetHealth(int[] getHealth, ref int[] SetHealth)
+    {
+        SetHealth = new int[getHealth.Length];
+
+        for (int i = 0; i < SetHealth.Length; i++)
+        {
+            SetHealth[i] = getHealth[i];
         }
     }
 
@@ -2133,7 +2162,7 @@ public class GetData : MonoBehaviour
                 newElement.GetComponent<ResidentStats>().StatObject.transform.GetChild(0).GetComponentsInChildren<HealthBar>()[0].SetHeathResident();
                 newElement.GetComponent<ResidentHealth>().ModifyHealth(0); //updates healthbar
 
-                newElement.GetComponent<ResidentHunger>().currentHunger = ResidentStats[i][1]; //sets health to health
+                newElement.GetComponent<ResidentHunger>().currentHunger = ResidentStats[i][1]; //sets food to food
                 newElement.GetComponent<ResidentStats>().StatObject.transform.GetChild(0).GetComponentsInChildren<HungerBar>()[0].SetHungerResident();
                 newElement.GetComponent<ResidentHunger>().ModifyHunger(0); //updates healthbar
 
@@ -2222,6 +2251,30 @@ public class GetData : MonoBehaviour
                 //if (newElement.name.Contains("Lumbermill")) newElement.GetComponent<Lumbermill>().Drops = LumbermillResources[i];
                 //if (newElement.name.Contains("Farm")) newElement.GetComponent<Farm>().Drops = FarmResources[i];
             }
+        }
+    }
+
+    public void SpawnBuildings(Vector3[] positions, Quaternion[] rotations, string[] names, int[] health,Transform parent)
+    {
+        for (int i = 0; i < positions.Length; i++)
+        {
+            GameObject newElement = Instantiate(CheckBuildingName(names[i]), positions[i], rotations[i]);
+            newElement.name = names[i];
+            newElement.transform.parent = parent;
+
+            newElement.GetComponent<BuildingHealth>().currentHealth = health[i];
+
+            PickUpPopUp pickUpPopUp = newElement.GetComponent<PickUpPopUp>();
+            if (pickUpPopUp != null) pickUpPopUp.enabled = true;
+
+            Destroy(newElement.GetComponent<Rigidbody>());
+            for (int i2 = 0; i2 < newElement.transform.childCount; i2++)
+            {
+                newElement.transform.GetChild(i).gameObject.GetComponent<MeshCollider>().convex = true;
+                newElement.transform.GetChild(i).GetComponent<MeshCollider>().enabled = true;
+            }
+            newElement.GetComponent<BoxCollider>().enabled = false;
+            proximityShader.AddBuilding(newElement);
         }
     }
 

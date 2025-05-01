@@ -94,6 +94,7 @@ public class GameData
     public float[] CampfirePosition;
     public float[] CampfireRotation;
     public string[] CampfireNames;
+    public int[] CampfireHealth;
 
     public float[] TentPosition;
     public float[] TentRotation;
@@ -387,6 +388,8 @@ public class GameData
 
         turnIntoNames(data.GetCampfireNames(), ref CampfireNames);
 
+        turnIntoHealth(data.GetCampFireHealth(), ref CampfireHealth);
+
         //tent data
         turnIntoPositions(data.GetTentPosition(), ref TentPosition);
 
@@ -585,6 +588,16 @@ public class GameData
         dataCreated = new string[function.Length];
 
         for(int i = 0; i < dataCreated.Length; i++)
+        {
+            dataCreated[i] = function[i];
+        }
+    }
+
+    private void turnIntoHealth(int[] function, ref int[] dataCreated)
+    {
+        dataCreated = new int[function.Length];
+
+        for (int i = 0; i < dataCreated.Length; i++)
         {
             dataCreated[i] = function[i];
         }
