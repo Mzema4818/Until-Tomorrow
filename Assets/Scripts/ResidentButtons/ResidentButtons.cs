@@ -13,6 +13,7 @@ public class ResidentButtons : MonoBehaviour
     public bool GiveJob;
     public bool ChangeSchedule;
     public bool Assign;
+    public bool Goodbye;
 
     private ResidentButtonConstants constant;
 
@@ -97,6 +98,10 @@ public class ResidentButtons : MonoBehaviour
 
             constant.resident.GetComponent<ResidentScheudle>().followPlayer = true;
             constant.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = false;
+        }
+        else if (Goodbye)
+        {
+            constant.actions.SetActive(false);
         }
     }
 

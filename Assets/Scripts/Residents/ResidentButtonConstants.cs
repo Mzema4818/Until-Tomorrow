@@ -18,6 +18,7 @@ public class ResidentButtonConstants : MonoBehaviour
     public GameObject jobBoard;
     public GameObject Jobs;
     public GameObject buildings;
+    public GameObject actions;
 
     [Header("Buttons")]
     public GameObject GiveItemButton;
