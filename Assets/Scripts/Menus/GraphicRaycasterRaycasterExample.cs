@@ -44,10 +44,12 @@ public class GraphicRaycasterRaycasterExample : MonoBehaviour
                 if (result.gameObject.GetComponent<ResidentButtons>() != null)
                 {
                     result.gameObject.GetComponent<ResidentButtons>().ButtonClick();
-                    //result.gameObject.GetComponent<RawImage>().raycastTarget = false;
                 }else if(result.gameObject.GetComponent<ChangeButtonColor>() != null)
                 {
                     result.gameObject.GetComponent<ChangeButtonColor>().ChangeColor();
+                }else if (result.gameObject.GetComponent<BuildingButtons>() != null)
+                {
+                    result.gameObject.GetComponent<BuildingButtons>().ButtonClick();
                 }
             }
         }

@@ -110,8 +110,15 @@ public class Crosshair : MonoBehaviour
                     //opening buildings
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
+                        builder.buildingData = parent.gameObject;
+                        buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
+                        builder.buildingHealth = buildingHealth;
+
+                        parent.GetComponent<IsABuilding>().actions.SetActive(!parent.GetComponent<IsABuilding>().actions.activeSelf);
+
+
                         //If hammer is active
-                        if (hammer.activeSelf)
+                        /*if (hammer.activeSelf)
                         {
                             builder.buildingData = parent.gameObject;
                             menuNames[0].SetActive(true);
@@ -175,68 +182,7 @@ public class Crosshair : MonoBehaviour
                                 else MarksObject.transform.GetChild(1).GetComponent<RawImage>().texture = MarksObject.GetComponent<Marks>().xMark;
                                 MarksObject.SetActive(true);
                             }
-
-                            /* Open Archertower
-                            if (parent.GetComponent<ArcherTower>() != null && !playerInteractions.assign)
-                            {
-                                toolBar.SetActive(true);
-                                ArcherTower archerTower = parent.GetComponent<ArcherTower>();
-                            }
-
-                            //Open knighthut
-                            if (parent.GetComponent<KnightHut>() != null && !playerInteractions.assign)
-                            {
-                                toolBar.SetActive(true);
-                                KnightHut knightHut = parent.GetComponent<KnightHut>();
-                            }*/
-
-                        }
-                    }
-
-                    if (parent.GetComponent<Farm>() && playerInteractions.assign)
-                    {
-                        Messhall messhall = playerInteractions.resident.GetComponent<ResidentScheudle>().job.GetComponent<Messhall>();
-                        messhall.farm = parent.gameObject;
-
-                        playerInteractions.residentText.text = "Okay perfect I will collect food from here now";
-                        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
-                        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-
-                        playerInteractions.resident = null;
-                        playerInteractions.residentText = null;
-                        playerInteractions.assign = false;
-                        playerInteractions.resident = null;
-                    }
-
-                    if (parent.GetComponent<Job>() && playerInteractions.residentFollowing)
-                    {
-                        Job job = parent.GetComponent<Job>();
-
-                        //Check if mine was selected
-                        if (job != null && (job.Workers < job.MaxWorkers))
-                        {
-                            SelectButton(playerInteractions.resident, parent.gameObject);
-                            job.Workers++;
-                            job.WorkersActive[job.Workers - 1] = playerInteractions.resident;
-
-                            playerInteractions.residentText.text = "Thanks! I will work here from now on.";
-                            playerInteractions.resident.GetComponent<StatBar>().UpdateJob();
-                        }
-                        else
-                        {
-                            playerInteractions.residentText.text = "this job is full, I can't work here";
-                        }
-
-                        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
-                        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-
-                        playerInteractions.residentFollowing = false;
-                        playerInteractions.resident = null;
-                        playerInteractions.residentText = null;
+                        }*/
                     }
                 }
                 
@@ -305,6 +251,59 @@ public class Crosshair : MonoBehaviour
                         //jobCamera.ResidentTalkingTo = hit.collider.gameObject;
                         //ResidentTextBox.GetComponent<TextBox>().ResidentTalkingTo = hit.collider.gameObject;
                         //ResidentTextBox.SetActive(true);*/
+                    }
+                }
+
+                if(hit.collider.transform.parent != null && playerInteractions.residentTalkingTo != null)
+                {
+                    Transform parent = hit.collider.transform.parent;
+
+                    if (parent.GetComponent<Farm>() && playerInteractions.assign)
+                    {
+                        Messhall messhall = playerInteractions.resident.GetComponent<ResidentScheudle>().job.GetComponent<Messhall>();
+                        messhall.farm = parent.gameObject;
+
+                        playerInteractions.residentText.text = "Okay perfect I will collect food from here now";
+                        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+                        playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
+                        playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
+                        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+
+                        playerInteractions.resident = null;
+                        playerInteractions.residentText = null;
+                        playerInteractions.assign = false;
+                        playerInteractions.resident = null;
+                    }
+
+                    if (parent.GetComponent<Job>() && playerInteractions.residentFollowing)
+                    {
+                        print("hi");
+                        Job job = parent.GetComponent<Job>();
+
+                        //Check if mine was selected
+                        if (job != null && (job.Workers < job.MaxWorkers))
+                        {
+                            SelectButton(playerInteractions.resident, parent.gameObject);
+                            job.Workers++;
+                            job.WorkersActive[job.Workers - 1] = playerInteractions.resident;
+
+                            playerInteractions.residentText.text = "Thanks! I will work here from now on.";
+                            playerInteractions.resident.GetComponent<StatBar>().UpdateJob();
+                            parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidents();
+                        }
+                        else
+                        {
+                            playerInteractions.residentText.text = "this job is full, I can't work here";
+                        }
+
+                        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+                        playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
+                        playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
+                        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+
+                        playerInteractions.residentFollowing = false;
+                        playerInteractions.resident = null;
+                        playerInteractions.residentText = null;
                     }
                 }
             }

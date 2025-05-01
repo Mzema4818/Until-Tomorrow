@@ -128,6 +128,7 @@ public class Builder : MonoBehaviour
         if (buildingData != null)
         {
             if (buildingData.GetComponent<PickUpPopUp>() != null) buildingData.GetComponent<PickUpPopUp>().enabled = false;
+            if (buildingData.GetComponent<IsABuilding>() != null) buildingData.GetComponent<IsABuilding>().actions.SetActive(false);
             AddBuildingScripts(buildingData, true, CheckParentName(buildingData.transform.name));
             proximityShader.RemoveBuilding(buildingData);
         }
@@ -248,7 +249,7 @@ public class Builder : MonoBehaviour
         return transform;
     }
 
-    private int[] CheckRepairCost(string buildingName)
+    public int[] CheckRepairCost(string buildingName)
     {
         string lowerName = buildingName.ToLower();
         return lowerName switch

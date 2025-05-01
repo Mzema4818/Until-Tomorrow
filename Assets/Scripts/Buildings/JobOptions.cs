@@ -7,11 +7,12 @@ public class JobOptions : MonoBehaviour
 {
     public GameObject workersDisplay;
     public GameObject resident;
-    public int num; 
+    //public int num; 
 
-    public void Fire()
+    public void Fire(Job job, int num)
     {
-        Job job = resident.GetComponent<ResidentScheudle>().job.GetComponent<Job>();
+        resident = job.WorkersActive[num];
+        //Job job = resident.GetComponent<ResidentScheudle>().job.GetComponent<Job>();
         //Messhall messhall = resident.GetComponent<ResidentScheudle>().job.GetComponent<Messhall>();
 
         job.RemoveJob(num);
@@ -53,8 +54,8 @@ public class JobOptions : MonoBehaviour
 
     private void ReorganizeText()
     {
-        workersDisplay.transform.GetChild(num).GetComponent<TextMeshProUGUI>().text = ""; //gets the text and makes it nothing
-        Destroy(workersDisplay.transform.GetChild(num).GetChild(0).gameObject); //gets the "fire" button of the bar and destroys it
+        //workersDisplay.transform.GetChild(num).GetComponent<TextMeshProUGUI>().text = ""; //gets the text and makes it nothing
+        //Destroy(workersDisplay.transform.GetChild(num).GetChild(0).gameObject); //gets the "fire" button of the bar and destroys it
         
     }
 
