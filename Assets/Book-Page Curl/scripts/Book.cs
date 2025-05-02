@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using TMPro;
+using System;
 
 public enum FlipMode
 {
@@ -33,8 +34,16 @@ public class Book : MonoBehaviour {
     public Sprite[] bookStyle;
     public bool interactable=true;
     public bool enableShadowEffect=true;
+
+    private TextMeshProUGUI Name;
+    private TextMeshProUGUI Description;
+    private RawImage image;
+    private Button button;
+
+
     //represent the index of the sprite shown in the right page
     public int currentPage = 0;
+
     public int TotalPageCount
     {
         get { return bookPages.Count; }
@@ -108,6 +117,11 @@ public class Book : MonoBehaviour {
 
         ShadowLTR.rectTransform.sizeDelta = new Vector2(pageWidth, shadowPageHeight);
         ShadowLTR.rectTransform.pivot = new Vector2(0, (pageWidth / 2) / shadowPageHeight);
+
+        Name = text.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        Description = text.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        image = text.transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
+        button = text.transform.GetChild(4).GetComponent<Button>();
 
     }
 
@@ -480,11 +494,6 @@ public class Book : MonoBehaviour {
 
     public void ChangeText(int page)
     {
-        TextMeshProUGUI Name = text.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI Description = text.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        RawImage image = text.transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
-        Button button = text.transform.GetChild(4).GetComponent<Button>();
-
         button.onClick.RemoveAllListeners();
 
         coverPage.gameObject.SetActive(false);
@@ -497,81 +506,51 @@ public class Book : MonoBehaviour {
         switch (childName)
         {
             case "Campfire":
-                Description.text = "A nice campfire to keep you warm";
-                ChangeCosts(builder.campfireCost);
-                image.texture = images[0];
-                button.onClick.AddListener(builder.BuildCampfire);
+                PageType("A nice campfire to keep you warm", builder.campfireCost, 0, builder.BuildCampfire);
                 break;
             case "Tent":
-                Description.text = "A warm tent to keep you safe from the elements";
-                ChangeCosts(builder.tentCost);
-                image.texture = images[1];
-                button.onClick.AddListener(builder.BuildTent);
+                PageType("A warm tent to keep you safe from the elements", builder.tentCost, 1, builder.BuildTent);
                 break;
             case "Mine":
-                Description.text = "A small mine to start collecting stone";
-                ChangeCosts(builder.mineCost);
-                image.texture = images[2];
-                button.onClick.AddListener(builder.BuildMine);
+                PageType("A small mine to start collecting stone", builder.mineCost, 2, builder.BuildMine);
                 break;
             case "Lumbermill":
-                Description.text = "A small lumbermill to start collecting wood";
-                ChangeCosts(builder.lumberMillCost);
-                image.texture = images[3];
-                button.onClick.AddListener(builder.BuildLumbermill);
+                PageType("A small lumbermill to start collecting wood", builder.lumberMillCost, 3, builder.BuildLumbermill);
                 break;
             case "Farm":
-                Description.text = "A small Farm to start collecting food";
-                ChangeCosts(builder.farmCost);
-                image.texture = images[4];
-                button.onClick.AddListener(builder.BuildFarm);
+                PageType("A small Farm to start collecting food", builder.farmCost, 4, builder.BuildFarm);
                 break;
             case "Wall":
-                Description.text = "A weak wall to keep out some of the elements";
-                ChangeCosts(builder.wallCost);
-                image.texture = images[5];
-                button.onClick.AddListener(builder.BuildWall);
+                PageType("A weak wall to keep out some of the elements", builder.wallCost, 5, builder.BuildWall);
                 break;
             case "Door":
-                Description.text = "A door to let you enter your settlement";
-                ChangeCosts(builder.doorCost);
-                image.texture = images[6];
-                button.onClick.AddListener(builder.BuildDoor);
+                PageType("A door to let you enter your settlement", builder.doorCost, 6, builder.BuildDoor);
                 break;
             case "Chest":
-                Description.text = "To hold your spare items";
-                ChangeCosts(builder.chestCost);
-                image.texture = images[7];
-                button.onClick.AddListener(builder.BuildChest);
+                PageType("To hold your spare items", builder.chestCost, 7, builder.BuildChest);
                 break;
             case "Messhall":
-                Description.text = "People gotta eat";
-                ChangeCosts(builder.messhallCost);
-                image.texture = images[8];
-                button.onClick.AddListener(builder.BuildMesshall);
+                PageType("People gotta eat", builder.messhallCost, 8, builder.BuildMesshall);
                 break;
             case "Tavern":
-                Description.text = "Gotta have a way to make food";
-                ChangeCosts(builder.tavernCost);
-                image.texture = images[9];
-                button.onClick.AddListener(builder.BuildTavern);
+                PageType("Gotta have a way to make food", builder.tavernCost, 9, builder.BuildTavern);
                 break;
             case "Tower":
-                Description.text = "The finest of snipers";
-                ChangeCosts(builder.towerCost);
-                image.texture = images[10];
-                button.onClick.AddListener(builder.BuildTower);
+                PageType("The finest of snipers", builder.towerCost, 10, builder.BuildTower);
                 break;
             case "Knighthut":
-                Description.text = "The finest of knights";
-                ChangeCosts(builder.knightHutCost);
-                image.texture = images[11];
-                button.onClick.AddListener(builder.BuildKnightHut);
+                PageType("The finest of knights", builder.knightHutCost, 11, builder.BuildKnightHut);
                 break;
         }
-        //text.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = currentPage.ToString();
-        //text.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "A nice campfire to keep you warm";
-        //ChangeCosts(builder.campfireCost);
+
+    }
+
+    private void PageType(string description, int[] cost, int imageNum, UnityAction callback)
+    {
+        Description.text = description;
+        ChangeCosts(cost);
+        image.texture = images[imageNum];
+        button.onClick.AddListener(callback);
     }
 
     private void ChangeCosts(int[] cost)
