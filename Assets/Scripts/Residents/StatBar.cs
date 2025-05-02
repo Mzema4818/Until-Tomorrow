@@ -10,6 +10,7 @@ public class StatBar : MonoBehaviour
     public ResidentStats residentStats;
     public GameObject statBar;
     public GameObject jobName;
+    public GameObject homeName;
 
     private void Start()
     {
@@ -27,6 +28,7 @@ public class StatBar : MonoBehaviour
         }
 
         UpdateJob();
+        UpdateHome();
     }
 
     public void UpdateJob()
@@ -38,5 +40,12 @@ public class StatBar : MonoBehaviour
             text.text = "Job: " + name.Substring(0, name.IndexOf("_"));
         }
         else { text.text = "Job: None"; }
+    }
+
+    public void UpdateHome()
+    {
+        TextMeshProUGUI text = homeName.GetComponent<TextMeshProUGUI>();
+        if (transform.GetComponent<ResidentScheudle>().home != null) text.text = "Home: Yes";
+        else text.text = "Home: No";
     }
 }

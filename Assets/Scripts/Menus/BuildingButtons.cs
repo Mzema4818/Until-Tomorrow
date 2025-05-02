@@ -12,6 +12,7 @@ public class BuildingButtons : MonoBehaviour
     public bool Move;
     public bool destroy;
     public bool fire;
+    public bool remove;
 
     public void ButtonClick()
     {
@@ -31,6 +32,11 @@ public class BuildingButtons : MonoBehaviour
         {
            transform.root.GetComponent<JobOptions>().Fire(builder.buildingData.GetComponent<Job>(), transform.parent.GetSiblingIndex());
            Destroy(transform.parent.gameObject);
+        }
+        else if (remove)
+        {
+            transform.parent.parent.parent.parent.parent.parent.GetComponent<Tent>().RemoveResident(transform.parent.GetSiblingIndex());
+            Destroy(transform.parent.gameObject);
         }
     }
 }

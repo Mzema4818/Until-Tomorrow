@@ -28,6 +28,14 @@ public class BuildingMenuUpdater : MonoBehaviour
         //Check if there are residents
         if (transform.parent.GetComponent<Job>() == null) residentsBar.SetActive(false);
         else ChangeResidents();
+
+        //Check if there are residents
+        if (transform.parent.GetComponent<Tent>() != null)
+        {
+            residentsBar.SetActive(true);
+            ChangeResidentsTent();
+        }
+
     }
 
     private void OnEnable()
@@ -37,6 +45,8 @@ public class BuildingMenuUpdater : MonoBehaviour
 
     public void ChangeResidents()
     {
+        foreach (Transform child in residentsBar.transform.GetChild(0)) Destroy(child.gameObject);
+
         Job job = transform.parent.GetComponent<Job>();
         for (int i = 0; i < job.WorkersActive.Length; i++)
         {
@@ -44,6 +54,21 @@ public class BuildingMenuUpdater : MonoBehaviour
             {
                 GameObject prefab = Instantiate(namesPrefab, residentsBar.transform.GetChild(0));
                 prefab.GetComponent<TextMeshProUGUI>().text = job.WorkersActive[i].name;
+            }
+        }
+    }
+
+    public void ChangeResidentsTent()
+    {
+        foreach (Transform child in residentsBar.transform.GetChild(0)) Destroy(child.gameObject);
+
+        Tent tent = transform.parent.GetComponent<Tent>();
+        for (int i = 0; i < tent.ResidentsActive.Length; i++)
+        {
+            if (tent.ResidentsActive[i] != null)
+            {
+                GameObject prefab = Instantiate(namesPrefab, residentsBar.transform.GetChild(0));
+                prefab.GetComponent<TextMeshProUGUI>().text = tent.ResidentsActive[i].name;
             }
         }
     }

@@ -14,6 +14,7 @@ public class ResidentButtons : MonoBehaviour
     public bool ChangeSchedule;
     public bool Assign;
     public bool Goodbye;
+    public bool GiveHome;
 
     private ResidentButtonConstants constant;
 
@@ -67,9 +68,10 @@ public class ResidentButtons : MonoBehaviour
         else if (GiveJob)
         {
             constant.GiveJobButton.SetActive(false);
+            constant.GiveHomeButton.SetActive(false);
             constant.resident.GetComponent<NavMeshAgent>().stoppingDistance = 5;
             constant.resident.GetComponent<BoxCollider>().enabled = false;
-            constant.text.text = "Okay following you!";
+            constant.text.text = "Okay following you, tell me where to work!";
 
             constant.player.GetComponent<PlayerInteractions>().residentFollowing = true;
             constant.player.GetComponent<PlayerInteractions>().resident = constant.resident;
@@ -102,6 +104,21 @@ public class ResidentButtons : MonoBehaviour
         else if (Goodbye)
         {
             constant.actions.SetActive(false);
+        }
+        else if (GiveHome)
+        {
+            constant.GiveJobButton.SetActive(false);
+            constant.GiveHomeButton.SetActive(false);
+            constant.resident.GetComponent<NavMeshAgent>().stoppingDistance = 5;
+            constant.resident.GetComponent<BoxCollider>().enabled = false;
+            constant.text.text = "Okay following you, tell me where to sleep!";
+
+            constant.player.GetComponent<PlayerInteractions>().residentFollowing = true;
+            constant.player.GetComponent<PlayerInteractions>().resident = constant.resident;
+            constant.player.GetComponent<PlayerInteractions>().residentText = constant.text;
+
+            constant.resident.GetComponent<ResidentScheudle>().followPlayerHome = true;
+            constant.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = false;
         }
     }
 

@@ -21,6 +21,7 @@ public class ResidentChoices : MonoBehaviour
     public GameObject joinTownButton;
     public GameObject giveItemButton;
     public GameObject JoinJobButton;
+    public GameObject JoinHomeButton;
     public GameObject AssignButton;
 
     private void Awake()
@@ -83,6 +84,7 @@ public class ResidentChoices : MonoBehaviour
 
                 text.text = "What can I do for you boss?";
                 CheckIfHasJob();
+                CheckIfHasHome();
             }
         }
     }
@@ -97,6 +99,11 @@ public class ResidentChoices : MonoBehaviour
     {
         if (residentScheudle.job == null) JoinJobButton.SetActive(true);
         else text.text = "The " + GetJobName(residentScheudle.job.ToString()) + " has been running nicely lately";
+    }
+
+    private void CheckIfHasHome()
+    {
+        if (residentScheudle.home == null) JoinHomeButton.SetActive(true);
     }
 
 

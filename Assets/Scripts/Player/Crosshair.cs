@@ -293,35 +293,67 @@ public class Crosshair : MonoBehaviour
                         playerInteractions.resident = null;
                     }
 
-                    if (parent.GetComponent<Job>() && playerInteractions.residentFollowing)
+                    if (playerInteractions.residentFollowing)
                     {
-                        print("hi");
-                        Job job = parent.GetComponent<Job>();
-
-                        //Check if mine was selected
-                        if (job != null && (job.Workers < job.MaxWorkers))
+                        if (playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer)
                         {
-                            SelectButton(playerInteractions.resident, parent.gameObject);
-                            job.Workers++;
-                            job.WorkersActive[job.Workers - 1] = playerInteractions.resident;
+                            Job job = parent.GetComponent<Job>();
 
-                            playerInteractions.residentText.text = "Thanks! I will work here from now on.";
-                            playerInteractions.resident.GetComponent<StatBar>().UpdateJob();
-                            parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidents();
+                            //Check if job was selected
+                            if (job != null && (job.Workers < job.MaxWorkers))
+                            {
+                                SelectButton(playerInteractions.resident, parent.gameObject);
+                                job.Workers++;
+                                job.WorkersActive[job.Workers - 1] = playerInteractions.resident;
+
+                                playerInteractions.residentText.text = "Thanks! I will work here from now on.";
+                                playerInteractions.resident.GetComponent<StatBar>().UpdateJob();
+                                parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidents();
+                            }
+                            else
+                            {
+                                playerInteractions.residentText.text = "this job is full, I can't work here";
+                            }
+
+                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
+                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
+                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+
+                            playerInteractions.residentFollowing = false;
+                            playerInteractions.resident = null;
+                            playerInteractions.residentText = null;
                         }
-                        else
+                        else if (playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayerHome)
                         {
-                            playerInteractions.residentText.text = "this job is full, I can't work here";
+                            print("selected home");
+                            Tent tent = parent.GetComponent<Tent>();
+
+                            //Check if job was selected
+                            if (tent != null && (tent.Residents < tent.MaxResidents))
+                            {
+                                tent.Residents++;
+                                tent.ResidentsActive[tent.Residents - 1] = playerInteractions.resident;
+                                playerInteractions.resident.GetComponent<ResidentScheudle>().home = parent.gameObject;
+
+                                playerInteractions.residentText.text = "Thanks! I will sleep here from now on.";
+                                playerInteractions.resident.GetComponent<StatBar>().UpdateHome();
+                                parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidentsTent();
+                            }
+                            else
+                            {
+                                playerInteractions.residentText.text = "this home is full, I can't sleep here";
+                            }
+
+                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
+                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayerHome = false;
+                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+
+                            playerInteractions.residentFollowing = false;
+                            playerInteractions.resident = null;
+                            playerInteractions.residentText = null;
                         }
-
-                        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
-                        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-
-                        playerInteractions.residentFollowing = false;
-                        playerInteractions.resident = null;
-                        playerInteractions.residentText = null;
                     }
                 }
             }

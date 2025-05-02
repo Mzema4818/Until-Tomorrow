@@ -47,30 +47,25 @@ public class Tent : MonoBehaviour
             for (int i = 0; i < ResidentsActive.Length; i++)
             {
                 ResidentsActive[i].GetComponent<ResidentScheudle>().home = null;
+                ResidentsActive[i].GetComponent<StatBar>().UpdateHome();
                 //ResidentsActive[i].GetComponent<ResidentWander>().ResetSchedule();
-                ResidentsActive[i].GetComponent<ResidentConditions>().hasHome = false;
+                //ResidentsActive[i].GetComponent<ResidentConditions>().hasHome = false;
             }
         }
         catch { };
     }
 
-    /*public void WakeUpSleepingResidents()
+    public void RemoveResident(int residentNum)
     {
-        for(int i = 0; i < ResidentsActive.Length; i++)
-        {
-            if(ResidentsActive[i] != null)
-            {
-                ResidentScheudle residentScheudle = ResidentsActive[i].GetComponent<ResidentScheudle>();
-                if (residentScheudle.shouldWakeUp && time.WhatTimeIsIt() == residentScheudle.TimeToWakeUp)
-                {
-                    residentScheudle.TimeToWakeUp = -1;
-                    residentScheudle.shouldWakeUp = false;
-                    ResidentsActive[i].SetActive(true);
-                }
+        ResidentsActive[residentNum].GetComponent<ResidentScheudle>().home = null;
+        ResidentsActive[residentNum].GetComponent<StatBar>().UpdateHome();
+        ResidentsActive[residentNum].GetComponent<ResidentScheudle>().AtLocation = false;
+        ResidentsActive[residentNum].SetActive(true);
 
-            }
-        }
-    }*/
+        Residents--;
+        ResidentsActive[residentNum] = null;
+        ResidentsActive = ReorganizeArray();
+    }
 
     private void HealResidents()
     {
@@ -103,5 +98,23 @@ public class Tent : MonoBehaviour
             if (resident != null) resident.SetActive(true);
         }
         enableResidents = false;
+    }
+
+    private GameObject[] ReorganizeArray()
+    {
+        //when deleting a resident from an array theres an empty space there which messes things up, this just gets rid of that space
+        GameObject[] returnArray = new GameObject[MaxResidents];
+
+        int index = 0;
+        for (int i = 0; i < returnArray.Length; i++)
+        {
+            if (ResidentsActive[i] != null)
+            {
+                returnArray[index] = ResidentsActive[i];
+                index++;
+            }
+        }
+
+        return returnArray;
     }
 }

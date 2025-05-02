@@ -12,6 +12,7 @@ public class TurnOffFollow : MonoBehaviour
         try
         {
             transform.parent.GetComponent<ResidentScheudle>().followPlayer = false;
+            transform.parent.GetComponent<ResidentScheudle>().followPlayerHome = false;
             transform.parent.GetComponent<ResidentScheudle>().isBeingTalkedTo = false;
             transform.parent.GetComponent<NavMeshAgent>().stoppingDistance = 0;
             transform.parent.GetComponent<BoxCollider>().enabled = true;

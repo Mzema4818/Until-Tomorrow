@@ -2258,11 +2258,11 @@ public class GetData : MonoBehaviour
                     home.GetComponent<Tent>().Residents++;
                     home.GetComponent<Tent>().ResidentsActive[home.GetComponent<Tent>().Residents - 1] = newElement;
 
-                    newElement.AddComponent<ResidentConditions>().hasHome = true;
+                    //newElement.AddComponent<ResidentConditions>().hasHome = true;
                 }
                 else
                 {
-                    newElement.AddComponent<ResidentConditions>().hasHome = false;
+                    //newElement.AddComponent<ResidentConditions>().hasHome = false;
                 }
 
                 //Giving resident job

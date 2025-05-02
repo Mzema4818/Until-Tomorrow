@@ -62,7 +62,7 @@ public class ExportPrisoners : MonoBehaviour
             for (int i = 0; i < prisoners.Length; i++)
             {
                 prisoners[i].transform.parent = residentParent;
-                prisoners[i].AddComponent<ResidentConditions>();
+                //prisoners[i].AddComponent<ResidentConditions>();
             }
         }
         catch (Exception) { };

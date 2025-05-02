@@ -24,5 +24,6 @@ public class ResidentButtonConstants : MonoBehaviour
     public GameObject GiveItemButton;
     public GameObject JoinTownButton;
     public GameObject GiveJobButton;
+    public GameObject GiveHomeButton;
     public GameObject AssignButton;
 }

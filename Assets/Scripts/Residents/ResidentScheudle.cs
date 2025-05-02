@@ -35,6 +35,7 @@ public class ResidentScheudle : MonoBehaviour
     [Header("Schedule Side Conditions")]
     public bool isBeingTalkedTo;
     public bool followPlayer;
+    public bool followPlayerHome;
     public bool shouldGoWander;
 
     [Header("Schedule Conditions")]
@@ -84,7 +85,7 @@ public class ResidentScheudle : MonoBehaviour
         WhatShouldResidentDo();
 
         //Following the player takes all priority 
-        if (followPlayer)
+        if (followPlayer || followPlayerHome)
         {
             agent.SetDestination(player.transform.position);
         }
