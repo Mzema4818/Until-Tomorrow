@@ -47,8 +47,12 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void DropItem()
     {
-        ItemWorld.DropItem(player, item, dropableParent);
-        count--;
+        if (player == null) return;
+
+        for(int i = 0; i < count; i++)
+        {
+            ItemWorld.DropItem(player, item, dropableParent);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)

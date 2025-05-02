@@ -527,11 +527,21 @@ public class Crosshair : MonoBehaviour
     public void BasicCloseMenu(ref bool change)
     {
         change = false;
-        openMenus.CloseChestInventory();
-        openMenus.Inventory.SetActive(false);
-        openMenus.changePlayerState(true);
-        openMenus.ChestInventory.SetActive(false);
+
+        if (openMenus != null)
+        {
+            openMenus.CloseChestInventory();
+
+            if (openMenus.Inventory != null)
+                openMenus.Inventory.SetActive(false);
+
+            openMenus.changePlayerState(true);
+
+            if (openMenus.ChestInventory != null)
+                openMenus.ChestInventory.SetActive(false);
+        }
     }
+
 
     private bool CheckIfAllTrue()
     {

@@ -48,6 +48,11 @@ public class OpenMenus : MonoBehaviour
     [Header("Animator")]
     public Animator animator;
 
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -205,7 +210,10 @@ public class OpenMenus : MonoBehaviour
 
     public void CloseChestInventory()
     {
+        if (ChestInventory == null) return;
+
         WhatInventory inventory = ChestInventory.GetComponent<WhatInventory>();
+        if (inventory == null) return;
 
         if (inventory.inventoryOpen1 != null)
         {
@@ -219,6 +227,7 @@ public class OpenMenus : MonoBehaviour
             inventory.inventoryOpen2 = null;
         }
     }
+
 
     public void TurnOffMenus()
     {
