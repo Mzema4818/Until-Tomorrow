@@ -206,6 +206,7 @@ public class OpenMenus : MonoBehaviour
     public void CloseChestInventory()
     {
         WhatInventory inventory = ChestInventory.GetComponent<WhatInventory>();
+
         if (inventory.inventoryOpen1 != null)
         {
             inventory.inventoryOpen1.SetActive(false);

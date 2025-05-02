@@ -40,7 +40,6 @@ public class Book : MonoBehaviour {
     private RawImage image;
     private Button button;
 
-
     //represent the index of the sprite shown in the right page
     public int currentPage = 0;
 
@@ -406,6 +405,8 @@ public class Book : MonoBehaviour {
                 TweenForward();
         }
     }
+
+
     Coroutine currentCoroutine;
     void UpdateSprites()
     {
@@ -419,6 +420,28 @@ public class Book : MonoBehaviour {
         else
         currentCoroutine = StartCoroutine(TweenTo(ebr, 0.15f, () => { Flip(); }));
     }
+
+    private void OnDisable()
+    {
+        Invoke(nameof(FlipEnd), 0f); // Delay until end of frame
+    }
+
+    void FlipEnd()
+    {
+        LeftNext.transform.SetParent(BookPanel.transform, true);
+        Left.transform.SetParent(BookPanel.transform, true);
+        LeftNext.transform.SetParent(BookPanel.transform, true);
+        Left.gameObject.SetActive(false);
+        Right.gameObject.SetActive(false);
+        Right.transform.SetParent(BookPanel.transform, true);
+        RightNext.transform.SetParent(BookPanel.transform, true);
+        UpdateSprites();
+        Shadow.gameObject.SetActive(false);
+        ShadowLTR.gameObject.SetActive(false);
+        if (OnFlip != null)
+            OnFlip.Invoke();
+    }
+
     void Flip()
     {
         if (mode == FlipMode.RightToLeft)
@@ -441,8 +464,16 @@ public class Book : MonoBehaviour {
         if (currentPage == 2) coverPage.gameObject.SetActive(true);
         else ChangeText(currentPage);
     }
+
+    public void ChangePage()
+    {
+        print("hi");
+    }
+
     public void TweenBack()
     {
+        print("done");
+
         if (mode == FlipMode.RightToLeft)
         {
             currentCoroutine = StartCoroutine(TweenTo(ebr,0.15f,
@@ -501,6 +532,7 @@ public class Book : MonoBehaviour {
 
         //page / 2 - 2 because page number is a multiple of 2 always, and then we -2 because we start at page 2
         string childName = coverPage.GetChild(1).GetChild(pageToBuilding[page / 2 - 2]).name;
+
         Name.text = childName;
 
         switch (childName)
