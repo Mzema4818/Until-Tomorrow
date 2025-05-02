@@ -262,6 +262,8 @@ public class OpenMenus : MonoBehaviour
 
     public void changePlayerState(bool state)
     {
+        if (animator == null) return;
+
         playerController.shouldMove = state;
         animator.SetFloat("velocity X", 0);
         animator.SetFloat("velocity Z", 0);

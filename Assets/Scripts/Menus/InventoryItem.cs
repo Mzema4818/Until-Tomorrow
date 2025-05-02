@@ -45,6 +45,12 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
+    public void DropItem()
+    {
+        ItemWorld.DropItem(player, item, dropableParent);
+        count--;
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         canRemove = true;

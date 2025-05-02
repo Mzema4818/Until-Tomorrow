@@ -104,6 +104,8 @@ public class ResidentButtons : MonoBehaviour
         else if (Goodbye)
         {
             constant.actions.SetActive(false);
+            constant.StatsObject.SetActive(false);
+            constant.ScheduleObject.SetActive(false);
         }
         else if (GiveHome)
         {

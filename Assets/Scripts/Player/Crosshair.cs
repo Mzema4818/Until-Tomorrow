@@ -524,7 +524,7 @@ public class Crosshair : MonoBehaviour
         ChestInventory.SetActive(true);
     }
 
-    private void BasicCloseMenu(ref bool change)
+    public void BasicCloseMenu(ref bool change)
     {
         change = false;
         openMenus.CloseChestInventory();

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Chest : MonoBehaviour
 {
+    public Crosshair crosshair;
     public int ChestSize;
 
     public GameObject prefab;
@@ -38,6 +39,27 @@ public class Chest : MonoBehaviour
 
             test = false;
         }
+    }
+
+    private void OnDestroy()
+    {
+        crosshair.BasicCloseMenu(ref crosshair.chestOpen);
+        crosshair.openMenus.CloseChestInventory();
+
+        for (int i = 0; i < inventorySlots.Length; i++)
+        {
+            foreach (Transform child in inventorySlots[i].transform)
+            {
+                InventoryItem item = child.GetComponent<InventoryItem>();
+                int dropCount = item.count;
+
+                for (int j = 0; j < dropCount; j++)
+                {
+                    item.DropItem();
+                }
+            }
+        }
+
     }
 
     public void SetItem(Item item, int amount, InventorySlot slot)
