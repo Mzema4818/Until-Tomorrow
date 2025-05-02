@@ -43,9 +43,6 @@ public class Chest : MonoBehaviour
 
     private void OnDestroy()
     {
-        crosshair.BasicCloseMenu(ref crosshair.chestOpen);
-        crosshair.openMenus.CloseChestInventory();
-
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             foreach (Transform child in inventorySlots[i].transform)
@@ -60,6 +57,7 @@ public class Chest : MonoBehaviour
             }
         }
 
+        if(crosshair != null) crosshair.BasicCloseMenu(ref crosshair.chestOpen);
     }
 
     public void SetItem(Item item, int amount, InventorySlot slot)
