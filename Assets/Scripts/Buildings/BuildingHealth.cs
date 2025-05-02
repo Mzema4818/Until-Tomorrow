@@ -14,6 +14,7 @@ public class BuildingHealth : MonoBehaviour
     public OpenMenus openMenus;
 
     public bool campfire;
+    public bool chest;
     public bool damage;
 
     private void Awake()
@@ -35,6 +36,7 @@ public class BuildingHealth : MonoBehaviour
             openMenus.CloseChestInventory();
 
             if (campfire) GetComponent<Campfire>().gameOver = true;
+            if (chest) GetComponent<Chest>().RemoveItems();
 
             Destroy(gameObject);
         }

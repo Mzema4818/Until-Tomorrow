@@ -41,7 +41,7 @@ public class Chest : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
+    public void RemoveItems()
     {
         crosshair.BasicCloseMenu(ref crosshair.chestOpen);
 
