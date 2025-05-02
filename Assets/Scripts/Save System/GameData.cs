@@ -408,12 +408,16 @@ public class GameData
 
         turnIntoNames(data.GetTentNames(), ref TentNames);
 
+        turnIntoHealth(data.GetTentHealth(), ref TentHealth);
+
         //mine data
         turnIntoPositions(data.GetMinePosition(), ref MinePosition);
 
         turnIntoRotations(data.GetMineRotation(), ref MineRotation);
 
         turnIntoNames(data.GetMineNames(), ref MineNames);
+
+        turnIntoHealth(data.GetMineHealth(), ref MineHealth);
 
         MineItems = data.GetMineItems();
 
@@ -430,6 +434,8 @@ public class GameData
 
         turnIntoNames(data.GetLumbermillNames(), ref LumbermillNames);
 
+        turnIntoHealth(data.GetLumbermillHealth(), ref LumbermillHealth);
+
         //Farm data
         turnIntoPositions(data.GetFarmPosition(), ref FarmPosition);
 
@@ -441,12 +447,16 @@ public class GameData
 
         turnIntoNames(data.GetFarmNames(), ref FarmNames);
 
+        turnIntoHealth(data.GetFarmHealth(), ref FarmHealth);
+
         //wall data
         turnIntoPositions(data.GetWallPosition(), ref WallPosition);
 
         turnIntoRotations(data.GetWallRotation(), ref WallRotation);
 
         turnIntoNames(data.GetWallNames(), ref WallNames);
+
+        turnIntoHealth(data.GetWallHealth(), ref WallHealth);
 
         //tavern data
         turnIntoPositions(data.GetTavernPosition(), ref tavernPosition);
@@ -455,12 +465,16 @@ public class GameData
 
         turnIntoNames(data.GetTavernNames(), ref tavernNames);
 
+        turnIntoHealth(data.GetTavernHealth(), ref tavernHealth);
+
         //tower data
         turnIntoPositions(data.GetTowerPosition(), ref towerPosition);
 
         turnIntoRotations(data.GetTowerRotation(), ref towerRotation);
 
         turnIntoNames(data.GetTowerNames(), ref towerNames);
+
+        turnIntoHealth(data.GetTowerHealth(), ref towerHealth);
 
         //knight hut data
         turnIntoPositions(data.GetKnightHutPosition(), ref knightHutPosition);
@@ -469,12 +483,16 @@ public class GameData
 
         turnIntoNames(data.GetKnightHutNames(), ref knightHutNames);
 
+        turnIntoHealth(data.GetKnightHutHealth(), ref knightHutHealth);
+
         //door data
         turnIntoPositions(data.GetDoorPosition(), ref DoorPosition);
 
         turnIntoRotations(data.GetDoorRotation(), ref DoorRotation);
 
         turnIntoNames(data.GetDoorNames(), ref DoorNames);
+
+        turnIntoHealth(data.GetDoorHealth(), ref DoorHealth);
 
         //chest data
         turnIntoPositions(data.GetChestPosition(), ref ChestPosition);
@@ -487,9 +505,9 @@ public class GameData
 
         ChestAmounts = data.GetChestAmounts();
 
-        //Debug.Log(i + ": " + ChestItems[i] + ": " + ChestAmounts[i]);
+        turnIntoHealth(data.GetChestHealth(), ref ChestHealth);
 
-        //door data
+        //messhall data
         turnIntoPositions(data.GetMesshallPosition(), ref MesshallPosition);
 
         turnIntoRotations(data.GetMesshallRotation(), ref MesshallRotation);
@@ -505,6 +523,8 @@ public class GameData
         MesshallAmountsCooked = data.GetMesshallAmountsCooked();
 
         MesshallFarm = data.GetMesshallFarm();
+
+        turnIntoHealth(data.GetMesshallHealth(), ref MesshallHealth);
 
         //TurnItemTypeIntoStringsArray(data.ChestData(), ref inventoryItemNamesChest, ref inventoryItemAmountsChest);
 

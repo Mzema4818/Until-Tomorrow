@@ -847,6 +847,11 @@ public class GetData : MonoBehaviour
         return GetNames(ref TentName, buildingsParent.transform.GetChild(1).gameObject);
     }
 
+    public int[] GetTentHealth()
+    {
+        return GetHealth(ref TentHealth, buildingsParent.transform.GetChild(1).gameObject);
+    }
+
     //Get mine Data
     public Vector3[] GetMinePosition()
     {
@@ -856,6 +861,11 @@ public class GetData : MonoBehaviour
     public Quaternion[] GetMineRotation()
     {
         return GetRotations(ref MineRotation, buildingsParent.transform.GetChild(2).gameObject);
+    }
+
+    public int[] GetMineHealth()
+    {
+        return GetHealth(ref MineHealth, buildingsParent.transform.GetChild(2).gameObject);
     }
 
     public string[] GetMineItems()
@@ -914,6 +924,11 @@ public class GetData : MonoBehaviour
     public Quaternion[] GetLumbermillRotation()
     {
         return GetRotations(ref LumbermillRotation, buildingsParent.transform.GetChild(3).gameObject);
+    }
+
+    public int[] GetLumbermillHealth()
+    {
+        return GetHealth(ref LumbermillHealth, buildingsParent.transform.GetChild(3).gameObject);
     }
 
     public string[] GetLumbermillNames()
@@ -979,6 +994,11 @@ public class GetData : MonoBehaviour
         return GetNames(ref FarmName, buildingsParent.transform.GetChild(4).gameObject);
     }
 
+    public int[] GetFarmHealth()
+    {
+        return GetHealth(ref FarmHealth, buildingsParent.transform.GetChild(4).gameObject);
+    }
+
     public string[] GetFarmItems()
     {
         List<string> items = new List<string>();
@@ -1037,6 +1057,11 @@ public class GetData : MonoBehaviour
         return GetNames(ref WallName, buildingsParent.transform.GetChild(5).gameObject);
     }
 
+    public int[] GetWallHealth()
+    {
+        return GetHealth(ref WallHealth, buildingsParent.transform.GetChild(5).gameObject);
+    }
+
     //Get door Data
     public Vector3[] GetDoorPosition()
     {
@@ -1053,6 +1078,11 @@ public class GetData : MonoBehaviour
         return GetNames(ref DoorName, buildingsParent.transform.GetChild(6).gameObject);
     }
 
+    public int[] GetDoorHealth()
+    {
+        return GetHealth(ref DoorHealth, buildingsParent.transform.GetChild(6).gameObject);
+    }
+
     //Get chest Data
     public Vector3[] GetChestPosition()
     {
@@ -1062,6 +1092,11 @@ public class GetData : MonoBehaviour
     public Quaternion[] GetChestRotation()
     {
         return GetRotations(ref ChestRotation, buildingsParent.transform.GetChild(7).gameObject);
+    }
+
+    public int[] GetChestHealth()
+    {
+        return GetHealth(ref ChestHealth, buildingsParent.transform.GetChild(7).gameObject);
     }
 
     public string[] GetChestNames()
@@ -1125,6 +1160,11 @@ public class GetData : MonoBehaviour
     public string[] GetMesshallNames()
     {
         return GetNames(ref MesshallName, buildingsParent.transform.GetChild(8).gameObject);
+    }
+
+    public int[] GetMesshallHealth()
+    {
+        return GetHealth(ref MesshallHealth, buildingsParent.transform.GetChild(8).gameObject);
     }
 
     public string[] GetMesshallItemsRaw()
@@ -1246,6 +1286,12 @@ public class GetData : MonoBehaviour
         return GetNames(ref tavernName, buildingsParent.transform.GetChild(9).gameObject);
     }
 
+    public int[] GetTavernHealth()
+    {
+        return GetHealth(ref tavernHealth, buildingsParent.transform.GetChild(9).gameObject);
+    }
+
+    //Tower data
     public Vector3[] GetTowerPosition()
     {
         return GetPositions(ref towerPosition, buildingsParent.transform.GetChild(10).gameObject);
@@ -1261,7 +1307,12 @@ public class GetData : MonoBehaviour
         return GetNames(ref towerName, buildingsParent.transform.GetChild(10).gameObject);
     }
 
+    public int[] GetTowerHealth()
+    {
+        return GetHealth(ref towerHealth, buildingsParent.transform.GetChild(10).gameObject);
+    }
 
+    //Knighthut Data
     public Vector3[] GetKnightHutPosition()
     {
         return GetPositions(ref knightHutPosition, buildingsParent.transform.GetChild(11).gameObject);
@@ -1275,6 +1326,11 @@ public class GetData : MonoBehaviour
     public string[] GetKnightHutNames()
     {
         return GetNames(ref knightHutName, buildingsParent.transform.GetChild(11).gameObject);
+    }
+
+    public int[] GetKnightHutHealth()
+    {
+        return GetHealth(ref knightHutHealth, buildingsParent.transform.GetChild(11).gameObject);
     }
 
     //Get hotbaritem Data
@@ -1802,50 +1858,60 @@ public class GetData : MonoBehaviour
         SetPositions(data.TentPosition, ref TentPosition);
         SetRotations(data.TentRotation, ref TentRotation);
         SetNames(data.TentNames, ref TentName);
+        SetHealth(data.TentHealth, ref TentHealth);
 
         SetPositions(data.MinePosition, ref MinePosition);
         SetRotations(data.MineRotation, ref MineRotation);
         MineAmounts = data.MineAmounts;
         MineItems = data.MineItems;
         SetNames(data.MineNames, ref MineName);
+        SetHealth(data.MineHealth, ref MineHealth);
 
         SetPositions(data.LumbermillPosition, ref LumbermillPosition);
         SetRotations(data.LumbermillRotation, ref LumbermillRotation);
         LumbermillAmounts = data.LumbermillAmounts;
         LumbermillItems = data.LumbermillItems;
         SetNames(data.LumbermillNames, ref LumbermillName);
+        SetHealth(data.LumbermillHealth, ref LumbermillHealth);
 
         SetPositions(data.FarmPosition, ref FarmPosition);
         SetRotations(data.FarmRotation, ref FarmRotation);
         FarmAmounts = data.FarmAmounts;
         FarmItems = data.FarmItems;
         SetNames(data.FarmNames, ref FarmName);
+        SetHealth(data.FarmHealth, ref FarmHealth);
 
         SetPositions(data.WallPosition, ref WallPosition);
         SetRotations(data.WallRotation, ref WallRotation);
         SetNames(data.WallNames, ref WallName);
+        SetHealth(data.WallHealth, ref WallHealth);
 
         SetPositions(data.tavernPosition, ref tavernPosition);
         SetRotations(data.tavernRotation, ref tavernRotation);
         SetNames(data.tavernNames, ref tavernName);
+        SetHealth(data.tavernHealth, ref tavernHealth);
 
         SetPositions(data.towerPosition, ref towerPosition);
         SetRotations(data.towerRotation, ref towerRotation);
         SetNames(data.towerNames, ref towerName);
+        SetHealth(data.towerHealth, ref towerHealth);
 
         SetPositions(data.knightHutPosition, ref knightHutPosition);
         SetRotations(data.knightHutRotation, ref knightHutRotation);
         SetNames(data.knightHutNames, ref knightHutName);
+        SetHealth(data.knightHutHealth, ref knightHutHealth);
 
         SetPositions(data.DoorPosition, ref DoorPosition);
         SetRotations(data.DoorRotation, ref DoorRotation);
         SetNames(data.DoorNames, ref DoorName);
+        SetHealth(data.DoorHealth, ref DoorHealth);
 
         SetPositions(data.ChestPosition, ref ChestPosition);
         SetRotations(data.ChestRotation, ref ChestRotation);
         SetNames(data.ChestNames, ref ChestName);
         ChestAmounts = data.ChestAmounts;
         ChestItems = data.ChestItems;
+        SetHealth(data.ChestHealth, ref ChestHealth);
 
         //Debug.Log(i + ": " + ChestItems[i] + ": " + ChestAmounts[i]);
 
@@ -1857,23 +1923,24 @@ public class GetData : MonoBehaviour
         MesshallItemsCooked = data.MesshallItemsCooked;
         MesshallAmountsCooked = data.MesshallAmountsCooked;
         MesshallFarm = data.MesshallFarm;
+        SetHealth(data.MesshallHealth, ref MesshallHealth);
         //inventoryItemAmountsChest = data.inventoryItemAmountsChest;
         //inventoryItemNamesChest = data.inventoryItemNamesChest;
         //TurnStringArrayIntoDictonaries(ref invetoryItemsArrayChest, inventoryItemNamesChest, inventoryItemAmountsChest);
 
         //ClearGameObjects();
         SpawnBuildings(CampfirePosition, CampfireRotation, CampfireName, CampfireHealth, buildingsParent.transform.GetChild(0));
-        SpawnObjects(TentPosition, TentRotation, TentName, buildingsParent.transform.GetChild(1), "building");
-        SpawnObjects(MinePosition, MineRotation, MineName, buildingsParent.transform.GetChild(2), "building");
-        SpawnObjects(LumbermillPosition, LumbermillRotation, LumbermillName, buildingsParent.transform.GetChild(3), "building");
-        SpawnObjects(FarmPosition, FarmRotation, FarmName, buildingsParent.transform.GetChild(4), "building");
-        SpawnObjects(WallPosition, WallRotation, WallName, buildingsParent.transform.GetChild(5), "building");;
-        SpawnObjects(DoorPosition, DoorRotation, DoorName, buildingsParent.transform.GetChild(6), "building");
-        SpawnObjects(ChestPosition, ChestRotation, ChestName, buildingsParent.transform.GetChild(7), "building");
-        SpawnObjects(MesshallPosition, MesshallRotation, MesshallName, buildingsParent.transform.GetChild(8), "building");
-        SpawnObjects(tavernPosition, tavernRotation, tavernName, buildingsParent.transform.GetChild(9), "building");
-        SpawnObjects(towerPosition, towerRotation, towerName, buildingsParent.transform.GetChild(10), "building");
-        SpawnObjects(knightHutPosition, knightHutRotation, knightHutName, buildingsParent.transform.GetChild(11), "building");
+        SpawnBuildings(TentPosition, TentRotation, TentName, TentHealth, buildingsParent.transform.GetChild(1));
+        SpawnBuildings(MinePosition, MineRotation, MineName, MineHealth, buildingsParent.transform.GetChild(2));
+        SpawnBuildings(LumbermillPosition, LumbermillRotation, LumbermillName, LumbermillHealth, buildingsParent.transform.GetChild(3));
+        SpawnBuildings(FarmPosition, FarmRotation, FarmName, FarmHealth, buildingsParent.transform.GetChild(4));
+        SpawnBuildings(WallPosition, WallRotation, WallName, WallHealth, buildingsParent.transform.GetChild(5));;
+        SpawnBuildings(DoorPosition, DoorRotation, DoorName, DoorHealth, buildingsParent.transform.GetChild(6));
+        SpawnBuildings(ChestPosition, ChestRotation, ChestName, ChestHealth, buildingsParent.transform.GetChild(7));
+        SpawnBuildings(MesshallPosition, MesshallRotation, MesshallName, MesshallHealth, buildingsParent.transform.GetChild(8));
+        SpawnBuildings(tavernPosition, tavernRotation, tavernName, tavernHealth, buildingsParent.transform.GetChild(9));
+        SpawnBuildings(towerPosition, towerRotation, towerName, towerHealth, buildingsParent.transform.GetChild(10));
+        SpawnBuildings(knightHutPosition, knightHutRotation, knightHutName, knightHutHealth, buildingsParent.transform.GetChild(11));
 
         //residents
         SetPositions(data.ResidentPosition, ref ResidentPosition);

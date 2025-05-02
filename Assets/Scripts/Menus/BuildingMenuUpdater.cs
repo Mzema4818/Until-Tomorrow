@@ -30,6 +30,11 @@ public class BuildingMenuUpdater : MonoBehaviour
         else ChangeResidents();
     }
 
+    private void OnEnable()
+    {
+        buildingHealth.ModifyHealth(0);
+    }
+
     public void ChangeResidents()
     {
         Job job = transform.parent.GetComponent<Job>();
