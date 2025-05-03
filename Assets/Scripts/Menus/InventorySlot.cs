@@ -19,7 +19,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     public bool OnlyFood;
     public bool dontDrop;
 
-    private void Awake()
+    private void Start()
     {
         image = transform.GetComponent<Image>();
         //Deselect(); //this was on last time i used this, it might have another use i forgot about
@@ -27,14 +27,14 @@ public class InventorySlot : MonoBehaviour, IDropHandler
 
     public void Select()
     {
-        //image.color = selectedColor;
-        transform.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+        transform.GetComponent<RectTransform>().localScale = new Vector3(1.2f, 1.2f, 1.2f);
+        transform.GetComponent<Image>().color = selectedColor;
     }
 
     public void Deselect()
     {
-        //image.color = notSelectedColor;
         transform.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
+        transform.GetComponent<Image>().color = notSelectedColor;
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -43,7 +43,10 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         {
             InventoryItem inventoryItem = eventData.pointerDrag.GetComponent<InventoryItem>();
 
-            //dropping an item into an active slot/non active slot keeps its size it should be and item held gets changed
+            //Below was causing issues with dropping items into chests cause it would do the same thing,
+            //its not reallllly needed anymore because the change in size is smaller and it changes color so its hard to notice
+
+            /*//dropping an item into an active slot/non active slot keeps its size it should be and item held gets changed
             if (inventoryManager.selectedSlot == transform.GetSiblingIndex())
             {
                 inventoryManager.changeSlotOnDropSame(inventoryItem.item.itemType);
@@ -53,7 +56,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
             {
                 inventoryManager.ChangeSlotOnDrop(inventoryItem.item.itemType);
                 inventoryItem.GetComponent<RectTransform>().localScale = new Vector3(1f, 1f, 1f);
-            }
+            }*/
 
             if (OnlyFood && inventoryItem.item.IsFood())
             {
