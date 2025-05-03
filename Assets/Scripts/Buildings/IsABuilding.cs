@@ -8,4 +8,12 @@ public class IsABuilding : MonoBehaviour
     public bool beingMoved;
     public GameObject actions;
     public GameObject canvas;
+
+    private void Awake()
+    {
+        int distance = transform.GetComponent<ProximitySettings>().maxDistance;
+
+        transform.GetComponent<PickUpPopUpAdvanced>().distance = distance + 5;
+        actions.GetComponent<Orbiting>().distanceFromBuilding = distance;
+    }
 }

@@ -33,6 +33,7 @@ public class Crosshair : MonoBehaviour
     public GameObject mainMenu;
     public bool canHit;
     public LayerMask IgnoreMe;
+    public LayerMask RayCastBlocker;
     public JobCamera jobCamera;
     public Book book;
 
@@ -92,6 +93,8 @@ public class Crosshair : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, transform.forward, out hit, distance * 2, ~IgnoreMe))
         {
+            if (hit.collider.gameObject.layer == 20) return; //the ignoreraycast layer
+
             TouchingObjects();
             OpeningMenus();
         }
@@ -132,6 +135,7 @@ public class Crosshair : MonoBehaviour
                         buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
                         builder.buildingHealth = buildingHealth;
 
+                        //isABuilding.actions.GetComponent<Orbiting>().SetLocation();
                         isABuilding.actions.SetActive(true);
 
 
@@ -312,7 +316,7 @@ public class Crosshair : MonoBehaviour
                             }
                             else
                             {
-                                playerInteractions.residentText.text = "this job is full, I can't work here";
+                                playerInteractions.residentText.text = "I can't do anything with this, can I go?";
                             }
 
                             playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
@@ -342,7 +346,7 @@ public class Crosshair : MonoBehaviour
                             }
                             else
                             {
-                                playerInteractions.residentText.text = "this home is full, I can't sleep here";
+                                playerInteractions.residentText.text = "I can't do anything with this, can I go?";
                             }
 
                             playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
