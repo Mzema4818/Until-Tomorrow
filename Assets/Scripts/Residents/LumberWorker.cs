@@ -38,82 +38,115 @@ public class LumberWorker : MonoBehaviour
 
     void Update()
     {
+        if (!IsLumbermillValid()) return;
+
+        if (ShouldFindTree)
+        {
+            HandleFindTree();
+        }
+        else if (ShouldGoToTree)
+        {
+            HandleGoToTree();
+        }
+        else if (ShouldChopTree)
+        {
+            HandleChopTree();
+        }
+        else if (ShouldDropOffTree)
+        {
+            HandleDropOffTree();
+        }
+    }
+
+    bool IsLumbermillValid()
+    {
         try
         {
             if (lumbermill.gameObject.GetComponent<IsABuilding>().beingMoved)
             {
                 Destroy(this);
+                return false;
             }
         }
         catch
         {
             Destroy(this);
+            return false;
         }
+        return true;
+    }
 
-        if (ShouldFindTree)
+    void HandleFindTree()
+    {
+        if (Tree == null)
         {
-            if (Tree == null)
-            {
-                Tree = lumbermill.GetClosestTree();
-                agent.SetDestination(lumbermill.gameObject.transform.position);
-            }
-            else
-            {
-                GetPosition(Tree.transform.position);
-                agent.ResetPath();
-                ShouldFindTree = false;
-                ShouldGoToTree = true;
-            }
+            Tree = lumbermill.GetClosestTree();
+            agent.SetDestination(lumbermill.gameObject.transform.position);
         }
-        else if (ShouldGoToTree)
+        else
         {
-            try
-            {
-                agent.SetDestination(Tree.transform.position);
+            GetPosition(Tree.transform.position);
+            agent.ResetPath();
+            ShouldFindTree = false;
+            ShouldGoToTree = true;
+        }
+    }
 
-                if (agent.remainingDistance != 0 && agent.remainingDistance < 5)
-                {
-                    ShouldGoToTree = false;
-                    ShouldChopTree = true;
-                    agent.ResetPath();
-                }
-            }
-            catch
+    void HandleGoToTree()
+    {
+        try
+        {
+            agent.SetDestination(Tree.transform.position);
+
+            if (agent.remainingDistance > 0 && agent.remainingDistance < 5)
             {
                 ShouldGoToTree = false;
-                ShouldFindTree = true;
-                Tree = null;
+                ShouldChopTree = true;
+                agent.ResetPath();
             }
         }
-        else if (ShouldChopTree)
+        catch
         {
-            try
-            {
-                LookAtTree();
-                animator.SetBool("Chopping", true);
-            }
-            catch
-            {
-                animator.SetBool("Chopping", false);
-                ShouldChopTree = false;
-                ShouldFindTree = true;
-                Tree = null;
-            }
+            ResetTreeSearch();
         }
-        else if (ShouldDropOffTree)
-        {
-            agent.SetDestination(lumbermill.gameObject.transform.position);
+    }
 
-            if (agent.remainingDistance != 0 && agent.remainingDistance < lumbermill.GetComponent<IsABuilding>().distance)
-            {
-                ShouldDropOffTree = false;
-                lumbermill.GatheringResources(transform.GetComponent<ResidentStats>()); //go to lumbermill script to change, rn its getting strength stat to see how many resources it gains;
-                ShouldFindTree = true;
-                transform.GetComponent<ResidentTools>().ChangeEnable(2, false);
-                transform.GetComponent<ResidentTools>().ChangeEnable(0, true);
-                animator.SetBool("Holding", false);
-            }
+    void HandleChopTree()
+    {
+        try
+        {
+            LookAtTree();
+            animator.SetBool("Chopping", true);
         }
+        catch
+        {
+            animator.SetBool("Chopping", false);
+            ResetTreeSearch();
+        }
+    }
+
+    void HandleDropOffTree()
+    {
+        agent.SetDestination(lumbermill.gameObject.transform.position);
+
+        if (agent.remainingDistance > 0 && agent.remainingDistance < lumbermill.GetComponent<IsABuilding>().distance)
+        {
+            ShouldDropOffTree = false;
+            lumbermill.GatheringResources(GetComponent<ResidentStats>());
+            ShouldFindTree = true;
+            var tools = GetComponent<ResidentTools>();
+            tools.ChangeEnable(2, false);
+            tools.ChangeEnable(0, true);
+            animator.SetBool("Holding", false);
+        }
+    }
+
+    void ResetTreeSearch()
+    {
+        Tree = null;
+        ShouldGoToTree = false;
+        ShouldChopTree = false;
+        ShouldFindTree = true;
     }
 
     private void OnDestroy()
@@ -131,46 +164,16 @@ public class LumberWorker : MonoBehaviour
 
     private void GetPosition(Vector3 pos)
     {
-        /*Vector3 newposition = new Vector3(pos.x, pos.y + 10, pos.z);
-
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(newposition, transform.TransformDirection(Vector3.down), out hit, 10, 8))
-        {
-            //Debug.DrawRay(newposition, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            Debug.DrawRay(newposition, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-            //return hit.point - new Vector3(0, 0, 0); //the subtraction of 1 makes the resident slightly lower
-        }
-        else
-        {
-            Debug.DrawRay(newposition, transform.TransformDirection(Vector3.down) * 10, Color.white);
-            Debug.Log("Did not Hit");
-        }
-
-        return Vector3.zero;*/
-
-
         int layerMask = 1 << 8;
 
-        // This would cast rays only against colliders in layer 8.
-        // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-        //layerMask = ~layerMask;
+        // Raycast straight down from above the position to avoid intersection issues
+        Vector3 rayStart = pos + Vector3.up * 10f;
 
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(pos, transform.TransformDirection(Vector3.down), out hit, Mathf.Infinity, layerMask))
+        if (Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 20f, layerMask))
         {
-            //Debug.DrawRay(pos, transform.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
             TreeLocation = hit.point;
             TreeRotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-            //Debug.Log("Did Hit");
         }
-       // else
-       // {
-           // Debug.DrawRay(pos, transform.TransformDirection(Vector3.down) * 1000, Color.white);
-           // Debug.Log("Did not Hit");
-        //}
     }
 
     private void LookAtTree()

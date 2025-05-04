@@ -16,4 +16,12 @@ public class IsABuilding : MonoBehaviour
         transform.GetComponent<PickUpPopUpAdvanced>().distance = distance + 5;
         actions.GetComponent<Orbiting>().distanceFromBuilding = distance;
     }
+
+    public void SetPosition()
+    {
+        Orbiting orbiting = actions.GetComponent<Orbiting>();
+
+        Vector3 directionToPlayer = (orbiting.playerCamera.transform.position - transform.position).normalized;
+        actions.transform.position = transform.position + orbiting.offset + directionToPlayer * distance;
+    }
 }

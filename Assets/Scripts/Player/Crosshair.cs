@@ -135,7 +135,7 @@ public class Crosshair : MonoBehaviour
                         buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
                         builder.buildingHealth = buildingHealth;
 
-                        //isABuilding.actions.GetComponent<Orbiting>().SetLocation();
+                        //isABuilding.SetPosition();
                         isABuilding.actions.SetActive(true);
 
 
