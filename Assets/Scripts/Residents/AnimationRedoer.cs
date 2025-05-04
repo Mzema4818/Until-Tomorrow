@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AnimationRedoer : StateMachineBehaviour
 {
@@ -35,6 +36,7 @@ public class AnimationRedoer : StateMachineBehaviour
             //sapling.AddComponent<RegrowSaplings>().forestGenerator = lumbermill.forestGenerator;
             //sapling.GetComponent<RegrowSaplings>().parent = lumbermill.treeParent.gameObject;
 
+            resident.GetComponent<NavMeshAgent>().isStopped = false;
             lumberWorker.ShouldDropOffTree = true;
 
             resident.GetComponent<ResidentTools>().ChangeEnable(2, true);

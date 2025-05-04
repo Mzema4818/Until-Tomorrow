@@ -38,6 +38,8 @@ public class LumberWorker : MonoBehaviour
 
     void Update()
     {
+        //print(agent.remainingDistance);
+
         if (!IsLumbermillValid()) return;
 
         if (ShouldFindTree)
@@ -115,11 +117,13 @@ public class LumberWorker : MonoBehaviour
     {
         try
         {
+            agent.isStopped = true;
             LookAtTree();
             animator.SetBool("Chopping", true);
         }
         catch
         {
+            agent.isStopped = false;
             animator.SetBool("Chopping", false);
             ResetTreeSearch();
         }
@@ -155,6 +159,7 @@ public class LumberWorker : MonoBehaviour
         //lumbermill.workersActive--;
         //lumbermill.statMultiplier -= transform.GetComponent<ResidentStats>().Stats[3];
 
+        agent.isStopped = false;
         transform.GetComponent<ResidentScheudle>().AtLocation = false;
         if (agent.isOnNavMesh) agent.ResetPath();
         animator.SetBool("Chopping", false);
