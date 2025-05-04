@@ -26,7 +26,7 @@ public class ResidentStats : MonoBehaviour
         //transform.GetComponent<StatBar>().stats = Stats;
         //transform.GetComponent<StatBar>().UpdateStats();
         textBox = transform.Find("Actions").gameObject;
-        schedule = transform.Find("Schedule").gameObject;
+        schedule = textBox.transform.Find("Schedule").gameObject;
     }
 
     private void Start()
