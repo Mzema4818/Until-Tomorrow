@@ -6,6 +6,7 @@ public class BuildingButtons : MonoBehaviour
 {
     public Builder builder;
     public GameObject hammer;
+    public GameObject checkpoint;
 
     [Header("Type Of Button")]
     public bool Repair;
@@ -13,6 +14,8 @@ public class BuildingButtons : MonoBehaviour
     public bool destroy;
     public bool fire;
     public bool remove;
+    public bool yes;
+    public bool no;
 
     public void ButtonClick()
     {
@@ -26,7 +29,7 @@ public class BuildingButtons : MonoBehaviour
         }
         else if (destroy && hammer.activeSelf)
         {
-            Destroy(builder.buildingData);
+            checkpoint.SetActive(true);
         }
         else if (fire)
         {
@@ -37,6 +40,15 @@ public class BuildingButtons : MonoBehaviour
         {
             transform.parent.parent.parent.parent.parent.parent.GetComponent<Tent>().RemoveResident(transform.parent.GetSiblingIndex());
             Destroy(transform.parent.gameObject);
+        }
+        else if (yes && hammer.activeSelf)
+        {
+            BuildingHealth buildingHealth = builder.buildingData.GetComponent<BuildingHealth>();
+            buildingHealth.ModifyHealth(-buildingHealth.maxHealth);
+        }
+        else if (no)
+        {
+            checkpoint.SetActive(false);
         }
     }
 }

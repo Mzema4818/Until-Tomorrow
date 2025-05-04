@@ -155,16 +155,14 @@ public class LumberWorker : MonoBehaviour
 
     private void OnDestroy()
     {
-        //it removes stats[3] because this job replies on strength stat
-        //lumbermill.workersActive--;
-        //lumbermill.statMultiplier -= transform.GetComponent<ResidentStats>().Stats[3];
+        if (agent != null && agent.isOnNavMesh) agent.isStopped = false;
 
-        agent.isStopped = false;
         transform.GetComponent<ResidentScheudle>().AtLocation = false;
-        if (agent.isOnNavMesh) agent.ResetPath();
         animator.SetBool("Chopping", false);
         animator.SetBool("Holding", false);
-        residentTools.TurnOffAll();
+
+        if (residentTools != null)
+            residentTools.TurnOffAll();
     }
 
     private void GetPosition(Vector3 pos)
