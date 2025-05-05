@@ -97,7 +97,7 @@ public class PlayerAttack : MonoBehaviour
             ParticleHolder particle = hit.transform.parent.GetComponent<ParticleHolder>();
             if(particle != null) ParticleHit(hit.transform.parent.GetComponent<ParticleHolder>());
 
-            if (((1 << hit.transform.gameObject.layer) & treeHit.value) != 0) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
+            if (((1 << hit.transform.gameObject.layer) & treeHit.value) != 0) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject, cam.transform.forward));
 
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
@@ -110,59 +110,65 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    private IEnumerator ScaleTreeEffect(Vector3 originalScale, GameObject hit)
+    private IEnumerator ScaleTreeEffect(Vector3 originalScale, GameObject hit, Vector3 hitDirection)
     {
         if (hit == null) yield break;
 
         float scaleDuration = 0.1f;
         float returnDelay = 0.1f;
+        float swayAngle = Random.Range(3f, 7f);
+        float swayDuration = 0.3f;
 
-        // Add some variation
-        float randomScaleFactor = Random.Range(1.05f, 1.1f); // Slightly "grow"
-        float popHeight = Random.Range(0.05f, 0.1f); // Small upward motion
+        float randomScaleFactor = Random.Range(1.05f, 1.1f);
+        float popHeight = Random.Range(0.05f, 0.1f);
 
         Vector3 targetScale = originalScale * randomScaleFactor;
         Vector3 originalPosition = hit.transform.position;
-        Vector3 popOffset = new Vector3(0, popHeight, 0);
-        Vector3 poppedPosition = originalPosition + popOffset;
+        Vector3 poppedPosition = originalPosition + new Vector3(0, popHeight, 0);
+
+        Quaternion originalRotation = hit.transform.rotation;
+
+        // Compute sway rotation based on hit direction
+        Vector3 swayAxis = Vector3.Cross(Vector3.up, hitDirection.normalized);
+        Quaternion swayRotation = originalRotation * Quaternion.AngleAxis(swayAngle, swayAxis);
 
         float timeElapsed = 0f;
 
-        // Scale up and pop up with easing
         while (timeElapsed < scaleDuration)
         {
             if (hit == null) yield break;
 
             float t = timeElapsed / scaleDuration;
-            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
+            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f);
 
             hit.transform.localScale = Vector3.Lerp(originalScale, targetScale, easedT);
             hit.transform.position = Vector3.Lerp(originalPosition, poppedPosition, easedT);
+            hit.transform.rotation = Quaternion.Slerp(originalRotation, swayRotation, easedT);
 
             timeElapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Final adjustment
         if (hit != null)
         {
             hit.transform.localScale = targetScale;
             hit.transform.position = poppedPosition;
+            hit.transform.rotation = swayRotation;
         }
 
         yield return new WaitForSeconds(returnDelay);
 
-        // Scale and move back down smoothly
         timeElapsed = 0f;
-        while (timeElapsed < scaleDuration)
+        while (timeElapsed < swayDuration)
         {
             if (hit == null) yield break;
 
-            float t = timeElapsed / scaleDuration;
-            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
+            float t = timeElapsed / swayDuration;
+            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f);
 
             hit.transform.localScale = Vector3.Lerp(targetScale, originalScale, easedT);
             hit.transform.position = Vector3.Lerp(poppedPosition, originalPosition, easedT);
+            hit.transform.rotation = Quaternion.Slerp(swayRotation, originalRotation, easedT);
 
             timeElapsed += Time.deltaTime;
             yield return null;
@@ -172,6 +178,7 @@ public class PlayerAttack : MonoBehaviour
         {
             hit.transform.localScale = originalScale;
             hit.transform.position = originalPosition;
+            hit.transform.rotation = originalRotation;
         }
     }
 
