@@ -113,7 +113,8 @@ public class Hungry : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         animator.SetBool("Eating", false);
-        foodBar.GetComponent<Image>().fillAmount += (float).3; //Hard coded how much food per food.  Gotta change it depending on food held. //also sometimes food doesnt go up?
+        transform.GetComponent<ResidentHunger>().ModifyHunger(30);
+        //foodBar.GetComponent<Image>().fillAmount += (float).3; //Hard coded how much food per food.  Gotta change it depending on food held. //also sometimes food doesnt go up?
         transform.GetComponent<ResidentStats>().Stats[1] += 30;
 
         Destroy(gameObject.GetComponent<Hungry>());
