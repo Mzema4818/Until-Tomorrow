@@ -97,7 +97,7 @@ public class PlayerAttack : MonoBehaviour
             ParticleHolder particle = hit.transform.parent.GetComponent<ParticleHolder>();
             if(particle != null) ParticleHit(hit.transform.parent.GetComponent<ParticleHolder>());
 
-            if (hit.transform.gameObject.layer == treeHit) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
+            if (((1 << hit.transform.gameObject.layer) & treeHit.value) != 0) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject));
 
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
@@ -112,44 +112,69 @@ public class PlayerAttack : MonoBehaviour
 
     private IEnumerator ScaleTreeEffect(Vector3 originalScale, GameObject hit)
     {
-        float scaleUpFactor = 0.95f; //Scale factor when the tree grows
-        float scaleDuration = 0.1f; //Duration of the scale effect
+        if (hit == null) yield break;
 
-        Vector3 targetScale = originalScale * scaleUpFactor;
+        float scaleDuration = 0.1f;
+        float returnDelay = 0.1f;
+
+        // Add some variation
+        float randomScaleFactor = Random.Range(1.05f, 1.1f); // Slightly "grow"
+        float popHeight = Random.Range(0.05f, 0.1f); // Small upward motion
+
+        Vector3 targetScale = originalScale * randomScaleFactor;
+        Vector3 originalPosition = hit.transform.position;
+        Vector3 popOffset = new Vector3(0, popHeight, 0);
+        Vector3 poppedPosition = originalPosition + popOffset;
+
         float timeElapsed = 0f;
 
-        // Smoothly scale up
+        // Scale up and pop up with easing
         while (timeElapsed < scaleDuration)
         {
-            //Check if the object is destroyed
-            if (hit == null) yield break; //Exit the coroutine if the object is destroyed
+            if (hit == null) yield break;
 
-            hit.transform.localScale = Vector3.Lerp(originalScale, targetScale, timeElapsed / scaleDuration);
-            timeElapsed += Time.deltaTime;
-            yield return null; //Wait until next frame
-        }
+            float t = timeElapsed / scaleDuration;
+            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
 
-        //Ensure the final scale is set exactly
-        if (hit != null) hit.transform.localScale = targetScale;
+            hit.transform.localScale = Vector3.Lerp(originalScale, targetScale, easedT);
+            hit.transform.position = Vector3.Lerp(originalPosition, poppedPosition, easedT);
 
-        // Wait for the scale-up effect to finish before returning to original size
-        yield return new WaitForSeconds(0.1f);
-
-        //Smoothly scale back to the original size
-        timeElapsed = 0f;
-        while (timeElapsed < scaleDuration)
-        {
-            //Check if the object is destroyed
-            if (hit == null) yield break; //Exit the coroutine if the object is destroyed
-
-            hit.transform.localScale = Vector3.Lerp(targetScale, originalScale, timeElapsed / scaleDuration);
             timeElapsed += Time.deltaTime;
             yield return null;
         }
 
-        //Ensure the scale is exactly the original size
-        if (hit != null) hit.transform.localScale = originalScale;
+        // Final adjustment
+        if (hit != null)
+        {
+            hit.transform.localScale = targetScale;
+            hit.transform.position = poppedPosition;
+        }
+
+        yield return new WaitForSeconds(returnDelay);
+
+        // Scale and move back down smoothly
+        timeElapsed = 0f;
+        while (timeElapsed < scaleDuration)
+        {
+            if (hit == null) yield break;
+
+            float t = timeElapsed / scaleDuration;
+            float easedT = Mathf.Sin(t * Mathf.PI * 0.5f); // Ease-out
+
+            hit.transform.localScale = Vector3.Lerp(targetScale, originalScale, easedT);
+            hit.transform.position = Vector3.Lerp(poppedPosition, originalPosition, easedT);
+
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (hit != null)
+        {
+            hit.transform.localScale = originalScale;
+            hit.transform.position = originalPosition;
+        }
     }
+
 
     void OnEnable()
     { input.Enable(); }
