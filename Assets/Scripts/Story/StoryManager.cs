@@ -11,76 +11,59 @@ public class StoryManager : MonoBehaviour
     public GameObject MerchantShip;
 
     [Header("Game Objects Needed")]
+    public Transform prisonShipParent;
+    public SpawnEnemies spawnEnemies;
     public TextMeshProUGUI Announcement;
     public TextMeshProUGUI Error;
     public GameObject hotbar;
-
-    [Header("Story Moments")]
-    public bool SpawnPrisonShips;
-    public bool CheckSpawnShips;
-    public int SpawnPrisonShipDay;
-    public Transform prisonShipParent;
-    public bool test;
     private string direction;
 
-    [Header("Enemy Moments")]
-    public SpawnEnemies spawnEnemies;
-    public bool ShouldSpawnEnemies;
-    public bool DoSpawnEnemies;
+    [Header("Story Moments")]
+    public bool CanSpawnShips;
+    public int SpawnShipDay;
+    public int SpawnEnemyDay;
+
+    [Header("Story Conditions")]
+    public int toolsCollected;
+
+    [Header("Bools per day")]
+    private bool spawnedShip;
+    private bool spawnedEnemy;
+
+    [Header("Tests")]
+    public bool prisonShipTest;
+    public bool waveTest;
 
     // Update is called once per frame
     void Update()
     {
-        //Checking to spawn prisonships
-        if (!SpawnPrisonShips && CheckSpawnShips)
+        //Spawn ships
+        if(CanSpawnShips && lightingManager.numberOfDays >= SpawnShipDay && lightingManager.IsTimeApproximately(10) && !spawnedShip)
         {
-            int num = 0;
-            foreach(Transform child in hotbar.transform)
-            {
-                if (!child.gameObject.activeSelf)
-                {
-                    //print(child.name);
-                    num++;
-                }
-            }
+            SpawnPrisonShip();
+            SpawnShipDay += 2;
+            spawnedShip = true;
+        }
+        else if (!lightingManager.IsTimeApproximately(10)) spawnedShip = false;
 
-            if(num == 4)
-            {
-                SpawnPrisonShips = true;
-                SpawnPrisonShipDay = lightingManager.numberOfDays + 1;
-            }
+        //Spawn enemies;
+        if (lightingManager.numberOfDays >= SpawnEnemyDay && lightingManager.IsTimeApproximately(18) && !spawnedEnemy){
+            spawnEnemies.SpawnEnemyWave();
+            SpawnEnemyDay += 2;
+            spawnedEnemy = true;
+        }
+        else if (!lightingManager.IsTimeApproximately(18)) spawnedEnemy = false;
 
-            CheckSpawnShips = false;
+        if (prisonShipTest)
+        {
+            SpawnPrisonShip();
+            prisonShipTest = false;
         }
 
-        //Spawning Prison Ship
-        if (SpawnPrisonShips)
-        {
-            if (lightingManager.numberOfDays >= SpawnPrisonShipDay && lightingManager.TimeOfDay > 10)
-            {
-                SpawnPrisonShip();
-                SpawnPrisonShipDay += 2;
-            }
-        }
-
-        if (lightingManager.numberOfDays >= 7 && !ShouldSpawnEnemies) ShouldSpawnEnemies = true;
-
-        if(ShouldSpawnEnemies && DoSpawnEnemies)
+        if (waveTest)
         {
             spawnEnemies.SpawnEnemyWave();
-            DoSpawnEnemies = false;
-        }
-
-        if (test)
-        {
-            int[] coords = GetShipCords();
-            GameObject ship = Instantiate(MerchantShip, new Vector3(coords[0], 10, coords[1]), Quaternion.identity);
-            ship.transform.parent = prisonShipParent;
-            ship.name = FixName(ship.name);
-
-            Announcement.gameObject.SetActive(true);
-            Announcement.text = "A ship is apporching from the " + direction;
-            test = false;
+            waveTest = false;
         }
     }
 
@@ -98,48 +81,31 @@ public class StoryManager : MonoBehaviour
     private int[] GetShipCords()
     {
         int[] returnValues = new int[2];
+        int num = Random.Range(0, 4); //Pick a direction: 0 = South, 1 = East, 2 = North, 3 = West
 
-        //int num = Random.Range(1, 99);
-
-        //if (Random.Range(0, 2) == 1) num += -600;
-        //else num += 500;
-
-        //returnValues[0] = num;
-        //returnValues[1] = Random.Range(-500, 500);
-
-        int num = Random.Range(0, 4);
-        //4 conditions
-
-        //conditon 1
-        if(num == 0)
+        if (num == 0) // South edge
         {
             direction = "South";
-            returnValues[0] = Random.Range(-600, 600);
-            returnValues[1] = -600;
+            returnValues[0] = Random.Range(-600, 601); // x
+            returnValues[1] = -600;                    // y
         }
-
-        //conditon 2
-        if (num == 1)
+        else if (num == 1) // East edge
         {
             direction = "East";
-            returnValues[0] = -600;
-            returnValues[1] = Random.Range(-600, 600);
+            returnValues[0] = 600;                     // x
+            returnValues[1] = Random.Range(-600, 601); // y
         }
-
-        //conditon 3
-        if(num == 2)
+        else if (num == 2) // North edge
         {
             direction = "North";
-            returnValues[0] = Random.Range(-600, 600);
-            returnValues[1] = 600;
+            returnValues[0] = Random.Range(-600, 601); // x
+            returnValues[1] = 600;                     // y
         }
-
-        //conditon 4
-        if(num == 3)
+        else if (num == 3) // West edge
         {
             direction = "West";
-            returnValues[0] = 600;
-            returnValues[1] = Random.Range(-600, 600);
+            returnValues[0] = -600;                    // x
+            returnValues[1] = Random.Range(-600, 601); // y
         }
 
         return returnValues;

@@ -272,8 +272,9 @@ public class GetData : MonoBehaviour
     public bool AccessToLevel3Buildings;
 
     public StoryManager storyManager;
-    public bool SpawnPrisonShips;
-    public int SpawnPrisonShipDay;
+    public bool CanSpawnShips;
+    public int SpawnShipDay;
+    public int SpawnEnemyDay;
 
     [Header("Enemies")]
     public Transform enemyParent;
@@ -1580,16 +1581,22 @@ public class GetData : MonoBehaviour
     }*/
 
     //Story stuff
-    public bool GetShouldSpawnPrisonShip()
+    public bool GetCanSpawnShips()
     {
-        SpawnPrisonShips = storyManager.SpawnPrisonShips;
-        return SpawnPrisonShips;
+        CanSpawnShips = storyManager.CanSpawnShips;
+        return CanSpawnShips;
     }
 
-    public int GetPrisonShipSpawnDay()
+    public int GetSpawnShipDay()
     {
-        SpawnPrisonShipDay = storyManager.SpawnPrisonShipDay;
-        return SpawnPrisonShipDay;
+        SpawnShipDay = storyManager.SpawnShipDay;
+        return SpawnShipDay;
+    }
+
+    public int GetSpawnEnemyDay()
+    {
+        SpawnEnemyDay = storyManager.SpawnEnemyDay;
+        return SpawnEnemyDay;
     }
 
     public bool GetAccessToLevel0Buildings()
@@ -1706,11 +1713,13 @@ public class GetData : MonoBehaviour
         buildMenuUpdater.AccessToLevel2Buildings = AccessToLevel2Buildings;
         buildMenuUpdater.AccessToLevel3Buildings = AccessToLevel3Buildings;
 
-        SpawnPrisonShips = data.SpawnPrisonShips;
-        SpawnPrisonShipDay = data.SpawnPrisonShipDay;
+        CanSpawnShips = data.CanSpawnShips;
+        SpawnShipDay = data.SpawnShipDay;
+        SpawnEnemyDay = data.SpawnEnemyDay;
 
-        storyManager.SpawnPrisonShips = SpawnPrisonShips;
-        storyManager.SpawnPrisonShipDay = SpawnPrisonShipDay;
+        storyManager.CanSpawnShips = CanSpawnShips;
+        storyManager.SpawnShipDay = SpawnShipDay;
+        storyManager.SpawnEnemyDay = SpawnEnemyDay;
 
         //Settings
         playerController.sensitivity = data.sensitivity;
@@ -2565,6 +2574,7 @@ public class GetData : MonoBehaviour
             if (!active[i])
             {
                 HotBarMenuItems[i].SetActive(true);
+                storyManager.toolsCollected++;
             }
         }
     }

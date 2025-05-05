@@ -220,8 +220,9 @@ public class GameData
     public bool AccessToLevel2Buildings;
     public bool AccessToLevel3Buildings;
 
-    public bool SpawnPrisonShips;
-    public int SpawnPrisonShipDay;
+    public bool CanSpawnShips;
+    public int SpawnShipDay;
+    public int SpawnEnemyDay;
 
     public GameData(GetData data)
     {
@@ -240,8 +241,9 @@ public class GameData
         AccessToLevel2Buildings = data.GetAccessToLevel2Buildings();
         AccessToLevel3Buildings = data.GetAccessToLevel3Buildings();
 
-        SpawnPrisonShips = data.GetShouldSpawnPrisonShip();
-        SpawnPrisonShipDay = data.GetPrisonShipSpawnDay();
+        CanSpawnShips = data.GetCanSpawnShips();
+        SpawnShipDay = data.GetSpawnShipDay();
+        SpawnEnemyDay = data.GetSpawnEnemyDay();
 
         //Player Data
         data.getPlayerHealth();

@@ -104,12 +104,14 @@ public class Crosshair : MonoBehaviour
     {
         if(hit.distance <= distance && CheckIfAllTrue() && !mainMenu.activeSelf)
         {
+            //If user clicks mouse 0 
             if (Input.GetMouseButtonDown(0))
             {
-                if(hit.collider.transform.parent != null && playerInteractions.residentTalkingTo == null)
-                {
-                    Transform parent = hit.collider.transform.parent;
+                Transform parent = hit.collider.transform.parent;
+                Transform gameObject = hit.collider.transform;
 
+                if (parent != null && playerInteractions.residentTalkingTo == null)
+                {
                     //opening buildings
                     if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
                     {
@@ -137,159 +139,23 @@ public class Crosshair : MonoBehaviour
 
                         //isABuilding.SetPosition();
                         isABuilding.actions.SetActive(true);
-
-
-                        //If hammer is active
-                        /*if (hammer.activeSelf)
-                        {
-                            builder.buildingData = parent.gameObject;
-                            menuNames[0].SetActive(true);
-                            buildEditor.SetActive(true);
-
-                            //you cant destroy the campfire so if you click on the campfire, disable the destroy option
-                            if (hit.collider.transform.parent.transform.name.Contains("Campfire")) buildEditor.transform.GetChild(0).gameObject.SetActive(false);
-                            else buildEditor.transform.GetChild(0).gameObject.SetActive(true);
-                            openMenus.changePlayerState(false);
-                        }
-                        else
-                        {
-                            BasicBuildingSelect(parent.name.Split('_')[0]);
-
-                            //Open Tent
-                            if (parent.GetComponent<Tent>() != null)
-                            {
-                                ResidentNamesBar.gameObject.SetActive(true);
-
-                                ResidentNames.text = "";
-                                Tent tent = parent.GetComponent<Tent>();
-                                for (int i = 0; i < tent.Residents; i++)
-                                {
-                                    //print(tent.ResidentsActive[i].name);
-                                    ResidentNames.text += tent.ResidentsActive[i].name + "\n";
-                                }
-                            }
-
-                            //Open Job
-                            if (parent.GetComponent<Job>() != null)
-                            {
-                                //Destroy all children
-                                foreach (Transform child in JobNamesBar.transform)
-                                {
-                                    Destroy(child.gameObject);
-                                }
-
-                                JobNamesBar.gameObject.SetActive(true);
-
-                                JobNames.text = "";
-                                Job job = parent.GetComponent<Job>();
-                                for (int i = 0; i < job.Workers; i++)
-                                {
-                                    GameObject worker = Instantiate(JobNames.gameObject, JobNames.transform.position, Quaternion.identity);
-                                    worker.SetActive(true);
-                                    worker.transform.SetParent(JobNamesBar.transform);
-                                    worker.GetComponent<TextMeshProUGUI>().text = job.WorkersActive[i].name;
-                                    worker.transform.GetChild(0).GetComponent<JobOptions>().resident = job.WorkersActive[i];
-                                    worker.transform.GetChild(0).GetComponent<JobOptions>().num = i;
-                                }
-
-                                //storage.gameObject.SetActive(true);
-                                //storage.GetComponent<AutoUpdate>().storage = hit.collider.transform.parent.gameObject;
-                            }
-
-                            //Open messhall
-                            if (parent.GetComponent<Messhall>() != null)
-                            {
-                                Messhall messhall = parent.GetComponent<Messhall>();
-                                if (messhall.farm != null) MarksObject.transform.GetChild(1).GetComponent<RawImage>().texture = MarksObject.GetComponent<Marks>().checkMark;
-                                else MarksObject.transform.GetChild(1).GetComponent<RawImage>().texture = MarksObject.GetComponent<Marks>().xMark;
-                                MarksObject.SetActive(true);
-                            }
-                        }*/
-                    }
-                }
-                
-                if(hit.collider.transform != null)
-                {
-                    Transform gameObject = hit.collider.transform;
-
-                    if (gameObject.GetComponent<IsACollectable>() != null)
-                    {
-                        hit.collider.transform.gameObject.SetActive(false);
-                        exclamation.SetActive(true);
-
-                        if (gameObject.name == "Opening Letter")
-                        {
-                            collectables[0].SetActive(true);
-                        }
-                    }
-
-                    if (gameObject.GetComponent<IsATool>() != null)
-                    {
-                        hit.collider.transform.gameObject.SetActive(false);
-
-                        gameObject.GetComponent<IsATool>().AddItem();
-
-                        storyManager.CheckSpawnShips = true;
-                        pickup.Play();
-                    }
-
-                    if (gameObject.GetComponent<ResidentStats>() != null)
-                    {
-                        //Turn off all menus of the resident, if you are were just talking to one
-                        if (playerInteractions.residentTalkingTo != null)
-                        {
-                            ResidentStats resident = playerInteractions.residentTalkingTo.GetComponent<ResidentStats>();
-                            resident.textBox.SetActive(false);
-                            resident.schedule.SetActive(false);
-                            resident.StatObject.SetActive(false);
-                            //playerInteractions.residentTalkingTo.GetComponent<StatBar>().starbar.transform.parent.gameObject.SetActive(false);
-                        }
-                        playerInteractions.residentTalkingTo = hit.collider.gameObject;
-                        hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-
-                        //stops having 2 residents following you at once, after you tell one to follow you, if one is following you, stop that first
-                        if (playerInteractions.resident != null)
-                        {
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = false;
-                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-
-                            playerInteractions.resident = null;
-                            playerInteractions.residentFollowing = false;
-                            playerInteractions.residentText = null;
-                        }
-
-                        GameObject textBox = hit.collider.GetComponent<ResidentStats>().textBox;
-                        if (!textBox.activeSelf) textBox.SetActive(true);
-                        
-                        /*if (textBox.activeSelf)
-                        {
-                            //textBox.SetActive(false);
-                            //textBox.SetActive(true);
-                        }
-                        else textBox.SetActive(true);
-                        //ResidentTextChoices.GetComponent<TextBoxChoices>().ResidentTalkingTo = hit.collider.gameObject;
-                        //jobCamera.ResidentTalkingTo = hit.collider.gameObject;
-                        //ResidentTextBox.GetComponent<TextBox>().ResidentTalkingTo = hit.collider.gameObject;
-                        //ResidentTextBox.SetActive(true);*/
                     }
                 }
 
-                if(hit.collider.transform.parent != null && playerInteractions.residentTalkingTo != null)
+                if (parent != null && playerInteractions.residentTalkingTo != null)
                 {
-                    Transform parent = hit.collider.transform.parent;
-
+                    //Assigning farm
                     if (parent.GetComponent<Farm>() && playerInteractions.assign)
                     {
-                        Messhall messhall = playerInteractions.resident.GetComponent<ResidentScheudle>().job.GetComponent<Messhall>();
+                        ResidentScheudle residentScheudle = playerInteractions.resident.GetComponent<ResidentScheudle>();
+                        Messhall messhall = residentScheudle.job.GetComponent<Messhall>();
                         messhall.farm = parent.gameObject;
                         parent.GetComponent<Farm>().messhall = messhall;
 
                         playerInteractions.residentText.text = "Okay perfect I will collect food from here now";
                         playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-                        playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
+                        residentScheudle.isBeingTalkedTo = true;
+                        residentScheudle.followPlayer = false;
                         playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
 
                         playerInteractions.resident = null;
@@ -300,8 +166,10 @@ public class Crosshair : MonoBehaviour
                         messhall.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().farmCheck.text = "Farm: yes";
                     }
 
+                    //While resident is following player
                     if (playerInteractions.residentFollowing)
                     {
+                        //Assigning a job or home to resident
                         if (playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer)
                         {
                             Job job = parent.GetComponent<Job>();
@@ -363,8 +231,77 @@ public class Crosshair : MonoBehaviour
                         }
                     }
                 }
+
+                if (gameObject != null)
+                {
+                    //user touches a collectable
+                    if (gameObject.GetComponent<IsACollectable>() != null)
+                    {
+                        hit.collider.transform.gameObject.SetActive(false);
+                        exclamation.SetActive(true);
+
+                        if (gameObject.name == "Opening Letter")
+                        {
+                            collectables[0].SetActive(true);
+                        }
+                    }
+
+                    //User touches a tool
+                    if (gameObject.GetComponent<IsATool>() != null)
+                    {
+                        hit.collider.transform.gameObject.SetActive(false);
+
+                        gameObject.GetComponent<IsATool>().AddItem();
+
+                        storyManager.toolsCollected++;
+                        //Once all tools are collected
+                        if (storyManager.toolsCollected == 4)
+                        {
+                            storyManager.CanSpawnShips = true;
+                            storyManager.SpawnShipDay = storyManager.lightingManager.numberOfDays + 1;
+                        }
+
+                        //storyManager.CheckSpawnShips = true;
+                        pickup.Play();
+                    }
+
+                    //User talks to a resident
+                    if (gameObject.GetComponent<ResidentStats>() != null)
+                    {
+                        //Turn off all menus of the resident, if you are were just talking to one
+                        if (playerInteractions.residentTalkingTo != null)
+                        {
+                            ResidentStats resident = playerInteractions.residentTalkingTo.GetComponent<ResidentStats>();
+                            resident.textBox.SetActive(false);
+                            resident.schedule.SetActive(false);
+                            resident.StatObject.SetActive(false);
+                            //playerInteractions.residentTalkingTo.GetComponent<StatBar>().starbar.transform.parent.gameObject.SetActive(false);
+                        }
+                        playerInteractions.residentTalkingTo = hit.collider.gameObject;
+                        hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
+
+                        //stops having 2 residents following you at once, after you tell one to follow you, if one is following you, stop that first
+                        if (playerInteractions.resident != null)
+                        {
+                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
+                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = false;
+                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+
+                            playerInteractions.resident = null;
+                            playerInteractions.residentFollowing = false;
+                            playerInteractions.residentText = null;
+                        }
+
+                        GameObject textBox = hit.collider.GetComponent<ResidentStats>().textBox;
+                        if (!textBox.activeSelf) textBox.SetActive(true);
+                        
+                    }
+                }
+
             }
 
+            //If user clicks F
             if (Input.GetKeyDown(KeyCode.F))
             {
                 if(hit.collider.transform.parent != null || hit.collider.transform != null)

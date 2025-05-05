@@ -13,18 +13,16 @@ public class LightingManager : MonoBehaviour
 
     public bool countDaysStart;
     public int numberOfDays;
-    public bool countDays;
     public bool startSun;
     public float multiplier = 30;
     public TextMeshProUGUI dayUpdater;
     public UnderWater underWater;
 
-    [Header("Resident Schedule")]
-    public bool sleepTime;
-    public bool workTime;
-    public bool wanderTime;
-
     public bool[] Hours = new bool[24];
+
+    [Header("Conditions")]
+    public bool countDays;
+    public bool enemyTime;
 
     [Header("Story")]
     public StoryManager storyManager;
@@ -34,10 +32,7 @@ public class LightingManager : MonoBehaviour
         countDays = true;
         startSun = true;
         countDaysStart = false;
-
-        sleepTime = false;
-        workTime = false;
-        wanderTime = false;
+        enemyTime = false;
     }
 
     private void Update()
@@ -52,52 +47,17 @@ public class LightingManager : MonoBehaviour
                 //(Replace with a reference to the game time)
                 TimeOfDay += Time.deltaTime / multiplier; //Number 2 here makes day twice as long.  Without 2 its 24 second days.  With 2 its 48 second days ||| number 30 makes 12 minute days
 
-
-                if (TimeOfDay >= 23.99 && countDays && countDaysStart)
+                //Count days
+                if (IsTimeApproximately(0f) && !countDays && countDaysStart)
                 {
                     numberOfDays++;
                     dayUpdater.gameObject.SetActive(true);
                     dayUpdater.text = "Day " + numberOfDays;
-                    countDays = false;
-                }
-
-                if (TimeOfDay <= 0.5 && !countDays)
-                {
                     countDays = true;
                 }
-
+                else if (!IsTimeApproximately(0f)) countDays = false;
 
                 SetResidentSchedules();
-                if ((TimeOfDay >= 20 || TimeOfDay < 6) && !sleepTime) //sleepy time
-                {
-                    sleepTime = true;
-                    wanderTime = false;
-                    workTime = false;
-
-                }
-
-                if (TimeOfDay >= 6 && TimeOfDay < 8 && !wanderTime) //wandering time (morning)
-                {
-                    sleepTime = false;
-                    wanderTime = true;
-                    workTime = false;
-                }
-
-                if (TimeOfDay >= 8 && TimeOfDay < 18 && !workTime) //work time
-                {
-                    sleepTime = false;
-                    wanderTime = false;
-                    workTime = true;
-                }
-
-                if (TimeOfDay >= 18 && TimeOfDay < 20 && !wanderTime) //wanderirng time (night)
-                {
-                    if(storyManager.ShouldSpawnEnemies) storyManager.DoSpawnEnemies = true;
-                    sleepTime = false;
-                    wanderTime = true;
-                    workTime = false;
-                }
-
 
                 TimeOfDay %= 24; //Modulus to ensure always between 0-24
                 UpdateLighting(TimeOfDay / 24f);
@@ -107,6 +67,11 @@ public class LightingManager : MonoBehaviour
                 UpdateLighting(TimeOfDay / 24f);
             }
         }
+    }
+
+    public bool IsTimeApproximately(float target, float threshold = 0.01f)
+    {
+        return Mathf.Abs(TimeOfDay - target) < threshold;
     }
 
     private void UpdateLighting(float timePercent)

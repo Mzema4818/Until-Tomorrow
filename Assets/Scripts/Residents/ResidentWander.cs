@@ -70,7 +70,7 @@ public class ResidentWander : MonoBehaviour
         }
         else
         {
-            //Go to places
+            /*//Go to places
             if (shouldWork)
             {
                 agent.SetDestination(job.transform.position);
@@ -110,7 +110,7 @@ public class ResidentWander : MonoBehaviour
                 shouldGoHome = false;
                 shouldWander = true;
                 agent.SetDestination(RandomNavMeshLocation());
-            }
+            }*/
         }
 
         //disapear at home
