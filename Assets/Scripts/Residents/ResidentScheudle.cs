@@ -29,6 +29,7 @@ public class ResidentScheudle : MonoBehaviour
 
     [Header("Resident Movement")]
     [Range(0, 100)] public float speed;
+    [Range(0, 100)] public float runSpeed;
     private float realSpeed;
     [Range(0, 500)] public float walkRadius;
 
@@ -37,6 +38,7 @@ public class ResidentScheudle : MonoBehaviour
     public bool followPlayer;
     public bool followPlayerHome;
     public bool shouldGoWander;
+    public Transform runAwayFrom;
 
     [Header("Schedule Conditions")]
     public bool shouldWork;
@@ -84,66 +86,75 @@ public class ResidentScheudle : MonoBehaviour
 
         WhatShouldResidentDo();
 
-        //Following the player takes all priority 
-        if (followPlayer || followPlayerHome)
+        //Being attacked overrides everything 
+        if (runAwayFrom != null)
         {
-            agent.SetDestination(player.transform.position);
+            //print("run");
+            RunAway(player.transform);
         }
         else
         {
-            //Talking to the player is next 
-            if (isBeingTalkedTo)
+            //Following the player takes all priority 
+            if (followPlayer || followPlayerHome)
             {
-                if(!AtLocation) LookAtPlayer();
-                pause();
+                agent.SetDestination(player.transform.position);
             }
             else
             {
-                //If NPC is not being spoken to, or following player, then it follows its basic scheudle
-
-                //If its wander time OR work time, OR sleep time, but the NPC doesnt have a job/home, OR the job/home is being moved, then they wander around aimlessly
-                if (shouldWander || (shouldWork && job == null) || (shouldSleep && home == null) || (home != null && home.GetComponent<IsABuilding>().beingMoved) || (job != null && job.GetComponent<IsABuilding>().beingMoved))
+                //Talking to the player is next 
+                if (isBeingTalkedTo)
                 {
-                    if(closestMessHall == null) closestMessHall = FindClosestBuilding(messHalls.transform);
-                    if(closestTavern == null) closestTavern = FindClosestBuilding(taverns.transform);
+                    if (!AtLocation) LookAtPlayer();
+                    pause();
+                }
+                else
+                {
+                    //If NPC is not being spoken to, or following player, then it follows its basic scheudle
 
-                    if (closestTavern != null)
+                    //If its wander time OR work time, OR sleep time, but the NPC doesnt have a job/home, OR the job/home is being moved, then they wander around aimlessly
+                    if (shouldWander || (shouldWork && job == null) || (shouldSleep && home == null) || (home != null && home.GetComponent<IsABuilding>().beingMoved) || (job != null && job.GetComponent<IsABuilding>().beingMoved))
                     {
-                        tavern = closestTavern.GetComponent<Tavern>();
-                    }
+                        if (closestMessHall == null) closestMessHall = FindClosestBuilding(messHalls.transform);
+                        if (closestTavern == null) closestTavern = FindClosestBuilding(taverns.transform);
 
-                    //Check if the NPC is hungry, if there exsists a messhall and tavern, and the tavern seats arent full, AND messhall and tavern aren't being moved
-                    if (residentStats.joinedTown && foodBar.GetComponent<Image>().fillAmount < .85 && closestMessHall != null && closestTavern != null && CheckIfHasFood(closestMessHall) 
-                        && !closestTavern.GetComponent<IsABuilding>().beingMoved && !closestMessHall.GetComponent<IsABuilding>().beingMoved && tavern != null && tavern.sitting < tavern.maxSeats)
-                    {
-                        if(gameObject.GetComponent<Hungry>() == null)
+                        if (closestTavern != null)
                         {
-                            gameObject.AddComponent<Hungry>().messhall = closestMessHall;
-                            gameObject.GetComponent<Hungry>().tavern = closestTavern;
-                            gameObject.GetComponent<Hungry>().residentTools = residentTools;
-                            gameObject.GetComponent<Hungry>().foodBar = foodBar;
+                            tavern = closestTavern.GetComponent<Tavern>();
+                        }
+
+                        //Check if the NPC is hungry, if there exsists a messhall and tavern, and the tavern seats arent full, AND messhall and tavern aren't being moved
+                        if (residentStats.joinedTown && foodBar.GetComponent<Image>().fillAmount < .85 && closestMessHall != null && closestTavern != null && CheckIfHasFood(closestMessHall)
+                            && !closestTavern.GetComponent<IsABuilding>().beingMoved && !closestMessHall.GetComponent<IsABuilding>().beingMoved && tavern != null && tavern.sitting < tavern.maxSeats)
+                        {
+                            if (gameObject.GetComponent<Hungry>() == null)
+                            {
+                                gameObject.AddComponent<Hungry>().messhall = closestMessHall;
+                                gameObject.GetComponent<Hungry>().tavern = closestTavern;
+                                gameObject.GetComponent<Hungry>().residentTools = residentTools;
+                                gameObject.GetComponent<Hungry>().foodBar = foodBar;
+                            }
+                        }
+                        else
+                        {
+                            //dont forget to fix it so, if resident takes last food but hes holding it, it doesnt remove script
+                            if (shouldGoWander)
+                            {
+                                StartCoroutine(WaitForWander());
+                            }
                         }
                     }
-                    else
+                    //If its sleep time, a home exists, and it isnt being moved, then go to home
+                    else if (shouldSleep && home != null && !home.GetComponent<IsABuilding>().beingMoved)
                     {
-                        //dont forget to fix it so, if resident takes last food but hes holding it, it doesnt remove script
-                        if (shouldGoWander)
-                        {
-                            StartCoroutine(WaitForWander());
-                        }
+                        if (home != null && !AtLocation) agent.SetDestination(home.transform.position); StopCoroutine(WaitForWander());
+                        if (home != null && !AtLocation) GoToWork(home, shouldSleep);
                     }
-                }
-                //If its sleep time, a home exists, and it isnt being moved, then go to home
-                else if (shouldSleep && home != null && !home.GetComponent<IsABuilding>().beingMoved)
-                {
-                    if (home != null && !AtLocation) agent.SetDestination(home.transform.position); StopCoroutine(WaitForWander());
-                    if (home != null && !AtLocation) GoToWork(home, shouldSleep);
-                }
-                //If its work time, a work exists, and it isnt being moved, then go to work
-                else if (shouldWork && job != null && !job.GetComponent<IsABuilding>().beingMoved)
-                {
-                    if (job != null && !AtLocation) agent.SetDestination(job.transform.position); StopCoroutine(WaitForWander());
-                    if (job != null && !AtLocation) GoToWork(job, shouldWork);
+                    //If its work time, a work exists, and it isnt being moved, then go to work
+                    else if (shouldWork && job != null && !job.GetComponent<IsABuilding>().beingMoved)
+                    {
+                        if (job != null && !AtLocation) agent.SetDestination(job.transform.position); StopCoroutine(WaitForWander());
+                        if (job != null && !AtLocation) GoToWork(job, shouldWork);
+                    }
                 }
             }
         }
@@ -157,6 +168,14 @@ public class ResidentScheudle : MonoBehaviour
         try { 
             if(agent.isActiveAndEnabled) agent.SetDestination(RandomNavMeshLocation());
         } catch { }; //might need to get rid of try catch for testing
+    }
+
+    public void RunAway(Transform target)
+    {
+        Vector3 directionToPlayer = target.position - transform.position;
+        Vector3 oppositeDirection = transform.position - directionToPlayer;
+
+        agent.SetDestination(oppositeDirection);
     }
 
     public Vector3 RandomNavMeshLocation()

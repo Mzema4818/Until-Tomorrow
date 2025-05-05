@@ -2247,7 +2247,7 @@ public class GetData : MonoBehaviour
 
                 newElement.GetComponent<ResidentHealth>().currentHealth = ResidentStats[i][0]; //sets health to health
                 newElement.GetComponent<ResidentStats>().StatObject.transform.GetChild(0).GetComponentsInChildren<HealthBar>()[0].SetHeathResident();
-                newElement.GetComponent<ResidentHealth>().ModifyHealth(0); //updates healthbar
+                newElement.GetComponent<ResidentHealth>().ModifyHealth(0, null); //updates healthbar
 
                 newElement.GetComponent<ResidentHunger>().currentHunger = ResidentStats[i][1]; //sets food to food
                 newElement.GetComponent<ResidentStats>().StatObject.transform.GetChild(0).GetComponentsInChildren<HungerBar>()[0].SetHungerResident();

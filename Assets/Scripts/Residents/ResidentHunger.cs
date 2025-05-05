@@ -41,7 +41,7 @@ public class ResidentHunger : MonoBehaviour
     {
         if (currentHunger <= 0)
         {
-            health.ModifyHealth(-10);
+            health.ModifyHealth(-10, null);
         }
     }
 

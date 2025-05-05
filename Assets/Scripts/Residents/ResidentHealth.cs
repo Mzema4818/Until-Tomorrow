@@ -13,11 +13,15 @@ public class ResidentHealth : MonoBehaviour
     public event Action<float> onHealthPctChanged = delegate { };
 
     public ResidentStats residentStats;
+    private ResidentScheudle residentScheudle;
+    private Coroutine attackCoroutine;
 
     public bool damage;
+    public Transform whoDamaged;
 
     private void Awake()
     {
+        residentScheudle = transform.GetComponent<ResidentScheudle>();
         currentHealth = maxHealth;
     }
 
@@ -25,7 +29,7 @@ public class ResidentHealth : MonoBehaviour
     {
         if (damage)
         {
-            ModifyHealth(-20);
+            ModifyHealth(-20, null);
             damage = false;
         }
 
@@ -37,13 +41,18 @@ public class ResidentHealth : MonoBehaviour
 
     private void Start()
     {
-        ModifyHealth(0); //this just sets the value when first opened.
+        ModifyHealth(0, null); //this just sets the value when first opened.
     }
 
-    public void ModifyHealth(int amount)
+    public void ModifyHealth(int amount, Transform whoDamaged)
     {
         if (amount < 0)
+        {
             amount = Mathf.Max(amount, -currentHealth); // Ensure we don't go below 0
+            print(whoDamaged);
+            this.whoDamaged = whoDamaged;
+            TriggerBeingAttacked();
+        }
         else
             amount = Mathf.Min(amount, maxHealth - currentHealth); // Ensure we don't exceed maxHunger
 
@@ -57,5 +66,26 @@ public class ResidentHealth : MonoBehaviour
         onHealthPctChanged(currentHungerPct);
 
         residentStats.Stats[0] += amount;
+    }
+
+    private void TriggerBeingAttacked()
+    {
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+        }
+
+        residentScheudle.runAwayFrom = whoDamaged;
+        residentScheudle.shouldRun = true;
+        residentScheudle.agent.speed = residentScheudle.runSpeed;
+        attackCoroutine = StartCoroutine(ResetBeingAttackedAfterDelay(5f));
+    }
+
+    private IEnumerator ResetBeingAttackedAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        residentScheudle.runAwayFrom = null;
+        residentScheudle.shouldRun = false;
+        residentScheudle.agent.speed = residentScheudle.speed;
     }
 }

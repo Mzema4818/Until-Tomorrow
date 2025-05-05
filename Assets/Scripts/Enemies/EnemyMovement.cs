@@ -110,10 +110,11 @@ public class EnemyMovement : MonoBehaviour
                 return;
             }
 
+            //Attacking residents
             ResidentHealth residentHealth = attackingObject.GetComponent<ResidentHealth>();
             if (residentHealth != null)
             {
-                residentHealth.ModifyHealth(-damage);
+                residentHealth.ModifyHealth(-damage, transform);
                 if (residentHealth.currentHealth < 0) attackingObject = null;
                 return;
             }

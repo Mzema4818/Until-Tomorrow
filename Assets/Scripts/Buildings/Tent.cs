@@ -81,7 +81,7 @@ public class Tent : MonoBehaviour
             //if the resident is sleeping and has a health bar, heal health
             if (sleeping != null && residentHealth != null && residentHealth.currentHealth != residentHealth.maxHealth)
             {
-                residentHealth.ModifyHealth(10);
+                residentHealth.ModifyHealth(10, null);
 
                 //adding heart particles
                 GameObject heart = Instantiate(heartParticles, transform.position, heartParticles.transform.rotation);

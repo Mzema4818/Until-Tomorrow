@@ -98,6 +98,13 @@ public class PlayerAttack : MonoBehaviour
             if(particle != null) ParticleHit(hit.transform.parent.GetComponent<ParticleHolder>());
 
             if (((1 << hit.transform.gameObject.layer) & treeHit.value) != 0) StartCoroutine(ScaleTreeEffect(hit.transform.parent.localScale, hit.transform.parent.gameObject, cam.transform.forward));
+            
+            //For residents
+            if (hit.transform.TryGetComponent<ResidentHealth>(out var damageable))
+            {
+                print("damaged");
+                damageable.ModifyHealth(-attackDamage, transform.root);
+            }
 
             if (hit.transform.parent.TryGetComponent(out Health T))
             { T.ModifyHealth(-attackDamage); }
@@ -226,9 +233,6 @@ public class PlayerAttack : MonoBehaviour
             hitEffect.transform.position += hitNormal * 0.01f;
         }
     }
-
-
-
 
     public void ChangeAnimationState(string newState)
     {
