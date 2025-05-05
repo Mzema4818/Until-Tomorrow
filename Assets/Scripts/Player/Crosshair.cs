@@ -284,6 +284,7 @@ public class Crosshair : MonoBehaviour
                     {
                         Messhall messhall = playerInteractions.resident.GetComponent<ResidentScheudle>().job.GetComponent<Messhall>();
                         messhall.farm = parent.gameObject;
+                        parent.GetComponent<Farm>().messhall = messhall;
 
                         playerInteractions.residentText.text = "Okay perfect I will collect food from here now";
                         playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
@@ -295,6 +296,8 @@ public class Crosshair : MonoBehaviour
                         playerInteractions.residentText = null;
                         playerInteractions.assign = false;
                         playerInteractions.resident = null;
+
+                        messhall.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().farmCheck.text = "Farm: yes";
                     }
 
                     if (playerInteractions.residentFollowing)

@@ -12,6 +12,7 @@ public class BuildingMenuUpdater : MonoBehaviour
     public Transform costChecker;
     public GameObject residentsBar;
     public GameObject namesPrefab;
+    public TextMeshProUGUI farmCheck;
 
     private void Awake()
     {
@@ -34,6 +35,12 @@ public class BuildingMenuUpdater : MonoBehaviour
         {
             residentsBar.SetActive(true);
             ChangeResidentsTent();
+        }
+
+        Messhall messhall = transform.parent.GetComponent<Messhall>();
+        if (messhall != null)
+        {
+            if (messhall.farm != null) farmCheck.text = "Farm: yes";
         }
 
     }

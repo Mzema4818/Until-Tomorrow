@@ -10,6 +10,7 @@ public class Farm : MonoBehaviour
     public GameObject walkable;
     public Item.ItemType grownItem;
     public int radius;
+    public Messhall messhall;
 
     [Header("inventory stuff")]
     public int size;
@@ -34,6 +35,11 @@ public class Farm : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (messhall != null) messhall.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().farmCheck.text = "Farm: no";
+    }
+
     private void Start()
     {
         InvokeRepeating("GatheringResources", 0.0f, (float)(5 - (job.workersWorking * 1))); //subtracts 1 seconds off for each new worker
@@ -45,7 +51,7 @@ public class Farm : MonoBehaviour
         if (job.workersWorking == 0) return;
         for (int i = 0; i < Mathf.FloorToInt((1 * job.workersWorking) * Mathf.Pow(job.statMultiplier, 1f / 3f)); i++)
         {
-            AddItem(new Item { itemType = Item.ItemType.berry });
+            AddItem(new Item { itemType = grownItem });
         }
     }
 
