@@ -16,6 +16,7 @@ public class EnemyMovement : MonoBehaviour
     public float timeBetweenAttacks;
     public int attackRange;
     private bool alreadyAttacked;
+    private bool startMoving;
 
     //Stats
     public int damage;
@@ -31,26 +32,31 @@ public class EnemyMovement : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        transform.LookAt(townHall);
     }
 
     private void Update()
     {
-        animator.SetFloat("Velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 0.5f));
-
-        if (fieldOfView.canSeePlayer)
+        if (startMoving)
         {
-            //enemy attacks object until either its dead, or the objects dead
-            if (attackingObject == null) { attackingObject = null; try { attackingObject = fieldOfView.objectSeen.transform; } catch { }; }
+            animator.SetFloat("Velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 0.5f));
+
+            if (fieldOfView.canSeePlayer)
+            {
+                //enemy attacks object until either its dead, or the objects dead
+                if (attackingObject == null) { attackingObject = null; try { attackingObject = fieldOfView.objectSeen.transform; } catch { }; }
+                else
+                {
+                    bool enemyInAttackRange = Vector3.Distance(transform.position, attackingObject.transform.position) <= attackRange;
+                    if (enemyInAttackRange) Attack();
+                    else GoToEnemy();
+                }
+            }
             else
             {
-                bool enemyInAttackRange = Vector3.Distance(transform.position, attackingObject.transform.position) <= attackRange;
-                if (enemyInAttackRange) Attack();
-                else GoToEnemy();
+                GoToTownHall();
             }
-        }
-        else
-        {
-            GoToTownHall();
         }
     }
 
@@ -118,5 +124,10 @@ public class EnemyMovement : MonoBehaviour
     private void ResetAttack()
     {
         alreadyAttacked = false;
+    }
+
+    public void StartMoving()
+    {
+        startMoving = true;
     }
 }

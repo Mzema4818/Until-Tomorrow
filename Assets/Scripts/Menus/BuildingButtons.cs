@@ -7,6 +7,8 @@ public class BuildingButtons : MonoBehaviour
     public Builder builder;
     public GameObject hammer;
     public GameObject checkpoint;
+    public Transform enemiesParent;
+    public GameObject error;
 
     [Header("Type Of Button")]
     public bool Repair;
@@ -25,7 +27,8 @@ public class BuildingButtons : MonoBehaviour
         }
         else if (Move && hammer.activeSelf)
         {
-            builder.MoveBuilding();
+            if (enemiesParent.childCount == 0) builder.MoveBuilding();
+            else error.SetActive(true);
         }
         else if (destroy && hammer.activeSelf)
         {
