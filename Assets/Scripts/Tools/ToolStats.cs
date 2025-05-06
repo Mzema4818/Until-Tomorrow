@@ -23,6 +23,8 @@ public class ToolStats : MonoBehaviour
 
     private void OnEnable()
     {
+        playerAttack.attackToken++; // invalidate any pending attack
+
         playerAttack.canAttack = canAttack;
         playerAttack.attackDistance = attackDistance;
         playerAttack.attackDelay = attackDelay;
@@ -35,5 +37,11 @@ public class ToolStats : MonoBehaviour
         playerAttack.heldHand = heldHand;
         playerAttack.ATTACK1 = attackName;
         playerAttack.ATTACK2 = attackName2;
+
+        if (playerAttack.attackCoroutine != null)
+        {
+            playerAttack.StopCoroutine(playerAttack.attackCoroutine);
+            playerAttack.attackCoroutine = null;
+        }
     }
 }

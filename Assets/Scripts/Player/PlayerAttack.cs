@@ -20,6 +20,8 @@ public class PlayerAttack : MonoBehaviour
     public GameObject hitEffect;
     public AudioClip swingSound;
 
+    public int attackToken = 0;
+    public Coroutine attackCoroutine;
     public bool shouldAttack = true;
     bool attacking = false;
     bool readyToAttack = true;
@@ -60,16 +62,22 @@ public class PlayerAttack : MonoBehaviour
 
     public void Attack()
     {
-        if (!shouldAttack || !readyToAttack || attacking) return;
+        if (!shouldAttack || !canAttack ||!readyToAttack || attacking) return;
 
         readyToAttack = false;
         attacking = true;
 
-        Invoke(nameof(ResetAttack), attackSpeed);
-        Invoke(nameof(AttackRaycast), attackDelay);
+        // Cancel previous coroutine if it exists
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+            attackCoroutine = null;
+        }
 
-        //audioSource.pitch = Random.Range(0.9f, 1.1f);
-        //audioSource.PlayOneShot(swordSwing);
+        // Start new coroutine
+        attackCoroutine = StartCoroutine(DelayedAttackRaycast());
+
+        Invoke(nameof(ResetAttack), attackSpeed);
 
         if (attackCount == 0)
         {
@@ -83,7 +91,7 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    void ResetAttack()
+    public void ResetAttack()
     {
         attacking = false;
         readyToAttack = true;
@@ -102,7 +110,6 @@ public class PlayerAttack : MonoBehaviour
             //For residents
             if (hit.transform.TryGetComponent<ResidentHealth>(out var damageable))
             {
-                print("damaged");
                 damageable.ModifyHealth(-attackDamage, transform.root);
             }
 
@@ -249,9 +256,12 @@ public class PlayerAttack : MonoBehaviour
         input.Attack.started += ctx => Attack();
     }
 
-    public void SwingSound()
+
+    private IEnumerator DelayedAttackRaycast()
     {
-        //might need this later, if i switch to a weapon mid swing, it still plays the sound
+        yield return new WaitForSeconds(attackDelay);
+        AttackRaycast();
+        attackCoroutine = null; 
     }
 
 }

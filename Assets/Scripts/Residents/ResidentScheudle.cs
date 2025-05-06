@@ -89,7 +89,7 @@ public class ResidentScheudle : MonoBehaviour
         //Being attacked overrides everything 
         if (runAwayFrom != null)
         {
-            //print("run");
+            print("run");
             RunAway(player.transform);
         }
         else
@@ -172,10 +172,16 @@ public class ResidentScheudle : MonoBehaviour
 
     public void RunAway(Transform target)
     {
-        Vector3 directionToPlayer = target.position - transform.position;
-        Vector3 oppositeDirection = transform.position - directionToPlayer;
+        Vector3 newPos = Vector3.zero;
+        float distance = Vector3.Distance(target.position, transform.position);
 
-        agent.SetDestination(oppositeDirection);
+        if (distance < 20)
+        {
+            Vector3 dirToPlayer = transform.position - target.position;
+            newPos = transform.position + dirToPlayer;
+        }
+
+        agent.SetDestination(newPos);
     }
 
     public Vector3 RandomNavMeshLocation()

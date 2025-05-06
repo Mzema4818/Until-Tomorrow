@@ -49,7 +49,6 @@ public class ResidentHealth : MonoBehaviour
         if (amount < 0)
         {
             amount = Mathf.Max(amount, -currentHealth); // Ensure we don't go below 0
-            print(whoDamaged);
             this.whoDamaged = whoDamaged;
             TriggerBeingAttacked();
         }
@@ -78,6 +77,7 @@ public class ResidentHealth : MonoBehaviour
         residentScheudle.runAwayFrom = whoDamaged;
         residentScheudle.shouldRun = true;
         residentScheudle.agent.speed = residentScheudle.runSpeed;
+        residentScheudle.RemoveJobs();
         attackCoroutine = StartCoroutine(ResetBeingAttackedAfterDelay(5f));
     }
 

@@ -51,6 +51,7 @@ public class InventoryManager : MonoBehaviour
                 {
                     ChangeSelectedSlot(number - 1);
                     ListOfHeldItems[selectedItem].SetActive(false);
+                    playerAttack.attackToken = 0;
                     if (GetSelectedItem() != null && GetSelectedItem().IsEquipable())
                     {
                         //ChangeAnimationState(GetSelectedItem().GetArmAnimation());
