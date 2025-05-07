@@ -27,7 +27,6 @@ public class AnimalMovement : MonoBehaviour
     private bool iswalking = false;
     private bool shouldWander = true;
 
-    // Start is called before the first frame update
     void Start()
     {
         controller = transform.GetComponent<CharacterController>();
