@@ -10,6 +10,7 @@ public class AutoFlip : MonoBehaviour {
     public Book ControledBook;
     public int AnimationFramesCount = 40;
     bool isFlipping = false;
+
     // Use this for initialization
     void Start () {
         if (!ControledBook)
@@ -52,6 +53,19 @@ public class AutoFlip : MonoBehaviour {
         float dx = (xl) * 2 / AnimationFramesCount;
         StartCoroutine(FlipLTR(xc, xl, h, frameTime, dx));
     }
+
+    public void GoToPage(int num)
+    {
+        FlipRightPage();
+        ControledBook.currentPage = num - 2; //Each flip adds 2 so we are offsetting
+    }
+
+    public void GoToIndex()
+    {
+        FlipLeftPage();
+        ControledBook.currentPage = 4; //Each flip removes 2 so we are offsetting (we are trying to go to page 2)
+    }
+
     IEnumerator FlipToEnd()
     {
         yield return new WaitForSeconds(DelayBeforeStarting);

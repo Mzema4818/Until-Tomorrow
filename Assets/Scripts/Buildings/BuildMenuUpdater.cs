@@ -30,6 +30,7 @@ public class BuildMenuUpdater : MonoBehaviour
         if (AccessToLevel2Buildings) Level2Access();
         if (AccessToLevel3Buildings) Level3Access();
         buildMenuFirstPage.RenameGridChildren();
+        book.pageToBuilding.Sort(); //Might not be the best, but without it, the pages arent in the same order as index
     }
 
     private void OnDisable()

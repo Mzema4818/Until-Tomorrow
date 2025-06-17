@@ -6,6 +6,7 @@ using TMPro;
 
 public class BuildMenuFirstPage : MonoBehaviour
 {
+    public AutoFlip autoFlip;
     public GridLayoutGroup gridLayout;
 
     public void RenameGridChildren()
@@ -16,7 +17,9 @@ public class BuildMenuFirstPage : MonoBehaviour
         {
             if (child.gameObject.activeSelf) // Only consider active children
             {
-                TextMeshProUGUI tm = child.GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI tm = child.GetChild(0).GetComponent<TextMeshProUGUI>();
+                Button button = child.GetComponent<Button>();
+
                 if (tm != null)
                 {
                     // Reset text before appending the new number
@@ -32,6 +35,9 @@ public class BuildMenuFirstPage : MonoBehaviour
                     // Apply new numbering
                     tm.text = index + ") " + originalText;
                     index++;
+
+                    int page = index * 2; //pages go by 2's
+                    button.onClick.AddListener(() => autoFlip.GoToPage(page)); 
                 }
             }
         }
