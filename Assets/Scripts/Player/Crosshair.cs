@@ -68,7 +68,12 @@ public class Crosshair : MonoBehaviour
     public TextMeshProUGUI Announcement;
 
     [Header("Sounds")]
-    public AudioSource pickup;
+    public AudioSource audioSource;
+    public AudioClip openingBuilding;
+    public AudioClip buildingInventory;
+    //public AudioSource pickup;
+    //public AudioSource openingBuilding;
+    //public AudioSource openingBuildInventory;
 
     [Header("Building Health")]
     public BuildingHealth buildingHealth;
@@ -78,6 +83,8 @@ public class Crosshair : MonoBehaviour
     //Start is called before the first frame update
     void Start()
     {
+        audioSource = transform.parent.parent.GetComponent<AudioSource>();
+
         for (int i = 0; i < canvasItems.Length; i++)
         {
             for (int i2 = 0; i2 < canvasItems[i].transform.childCount; i2++)
@@ -129,6 +136,7 @@ public class Crosshair : MonoBehaviour
                         {
                             isABuilding.actions.SetActive(false);
                             builder.buildingData = null;
+                            audioSource.PlayOneShot(openingBuilding);
                             return;
                         }
 
@@ -139,6 +147,7 @@ public class Crosshair : MonoBehaviour
 
                         //isABuilding.SetPosition();
                         isABuilding.actions.SetActive(true);
+                        audioSource.PlayOneShot(openingBuilding);
                     }
                 }
 
@@ -262,7 +271,7 @@ public class Crosshair : MonoBehaviour
                         }
 
                         //storyManager.CheckSpawnShips = true;
-                        pickup.Play();
+                        //pickup.Play();
                     }
 
                     //User talks to a resident
@@ -352,7 +361,7 @@ public class Crosshair : MonoBehaviour
                             Destroy(hit.collider.transform.parent.gameObject);
                         }
 
-                        pickup.Play();
+                        //pickup.Play();
                     }
 
                     //Open gravestone
@@ -466,6 +475,8 @@ public class Crosshair : MonoBehaviour
         inventoryObject.SetActive(true);
         toolBar.SetActive(true);
         ChestInventory.SetActive(true);
+        audioSource.PlayOneShot(buildingInventory);
+        //openingBuildInventory.Play();
     }
 
     public void BasicCloseMenu(ref bool change)
@@ -483,6 +494,8 @@ public class Crosshair : MonoBehaviour
 
             if (openMenus.ChestInventory != null)
                 openMenus.ChestInventory.SetActive(false);
+
+            audioSource.PlayOneShot(buildingInventory);
         }
     }
 
