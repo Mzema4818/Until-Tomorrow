@@ -48,9 +48,19 @@ public class OpenMenus : MonoBehaviour
     [Header("Animator")]
     public Animator animator;
 
+    [Header("Sounds")]
+    public AudioSource audioSource;
+    public AudioClip openInventory;
+    public AudioClip openMenu;
+
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void Start()
+    {
+        audioSource = transform.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -88,6 +98,7 @@ public class OpenMenus : MonoBehaviour
                 menu.SetActive(true);
                 changePlayerState(false);
                 //playerAttack.shouldAttack = false;
+                audioSource.PlayOneShot(openMenu);
                 return;
             }
 
@@ -98,6 +109,7 @@ public class OpenMenus : MonoBehaviour
                 changePlayerState(true);
                 ChestInventory.SetActive(false);
                 playerAttack.shouldAttack = !playerAttack.shouldAttack;
+                print('h');
                 return;
             }
 
@@ -108,6 +120,7 @@ public class OpenMenus : MonoBehaviour
                 if (!NeedHammer || HammerOn)
                 {
                     //playerAttack.shouldAttack = true;
+                    audioSource.PlayOneShot(openInventory);
                     if (builder.isBuilding){ builder.DestroyBuilding(); builder.isBuilding = false;}
                     if (!menu.activeSelf)
                     {
@@ -128,6 +141,7 @@ public class OpenMenus : MonoBehaviour
 
                 if (menu == Inventory)
                 {
+                    audioSource.PlayOneShot(openInventory);
                     ToolBar.SetActive(true);
                 }
             }
