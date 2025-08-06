@@ -109,18 +109,19 @@ public class OpenMenus : MonoBehaviour
                 changePlayerState(true);
                 ChestInventory.SetActive(false);
                 playerAttack.shouldAttack = !playerAttack.shouldAttack;
-                print('h');
+                print("second");
                 return;
             }
 
             if ((CheckIfMenusAreClosed() && CheckIfOtherMenusAreClosed()) || menu.activeSelf)
             {
                 //if (builder.isBuilding) hammer.SetActive(false);
+                if(menu == PauseMenu) audioSource.PlayOneShot(openMenu); 
 
                 if (!NeedHammer || HammerOn)
                 {
                     //playerAttack.shouldAttack = true;
-                    audioSource.PlayOneShot(openInventory);
+                    if (menu == BuildMenu) audioSource.PlayOneShot(openInventory);
                     if (builder.isBuilding){ builder.DestroyBuilding(); builder.isBuilding = false;}
                     if (!menu.activeSelf)
                     {
@@ -142,7 +143,7 @@ public class OpenMenus : MonoBehaviour
                 if (menu == Inventory)
                 {
                     audioSource.PlayOneShot(openInventory);
-                    ToolBar.SetActive(true);
+                    ToolBar.SetActive(true); 
                 }
             }
         }
