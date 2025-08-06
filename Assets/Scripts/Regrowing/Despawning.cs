@@ -8,11 +8,6 @@ public class Despawning : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("Despawn", despawnTime, despawnTime);
-    }
-
-    private void Despawn()
-    {
-        Destroy(gameObject);
+        Destroy(gameObject, despawnTime);
     }
 }

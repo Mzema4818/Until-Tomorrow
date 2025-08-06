@@ -5,6 +5,14 @@ using UnityEngine;
 public class PlayInventory : MonoBehaviour
 {
     public InventoryManager inventoryManager;
+    private AudioSource audioSource;
+    public AudioClip pickupItem;
+
+    private void Start()
+    {
+        audioSource = transform.GetComponent<AudioSource>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         ItemWorld itemWorld = other.transform.GetComponent<ItemWorld>();
@@ -17,11 +25,13 @@ public class PlayInventory : MonoBehaviour
             }
         }
 
-        if (itemWorld != null)
+        if (itemWorld != null && itemWorld.TryPickUp())
         {
             inventoryManager.AddItem(itemWorld.GetItem());
             itemWorld.DestroySelf();
+            audioSource.PlayOneShot(pickupItem);
             return;
         }
     }
+
 }

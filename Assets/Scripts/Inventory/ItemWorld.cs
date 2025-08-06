@@ -8,6 +8,7 @@ public class ItemWorld : MonoBehaviour
 {
     public Transform parentObjectInspector;
     private static Transform parentObject;
+    private bool isPickedUp = false;
 
     public static ItemWorld SpawnItemWorld(Vector3 position, Item item, Transform parent)
     {
@@ -89,5 +90,13 @@ public class ItemWorld : MonoBehaviour
         int strSet = name.IndexOf("(");
 
         return name.Substring(0, strSet);
+    }
+
+    public bool TryPickUp()
+    {
+        if (isPickedUp) return false;
+
+        isPickedUp = true;
+        return true;
     }
 }
