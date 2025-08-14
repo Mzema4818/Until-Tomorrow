@@ -8,7 +8,10 @@ public class LightingManager : MonoBehaviour
     //Scene References
     [SerializeField] private Light DirectionalLight;
     [SerializeField] private LightingPreset Preset;
+
     //Variables
+    public int lastHour = -1;
+    public Transform allResidents;
     [SerializeField, Range(0, 24)] public float TimeOfDay;
 
     public bool countDaysStart;
@@ -17,8 +20,6 @@ public class LightingManager : MonoBehaviour
     public float multiplier = 30;
     public TextMeshProUGUI dayUpdater;
     public UnderWater underWater;
-
-    public bool[] Hours = new bool[24];
 
     [Header("Conditions")]
     public bool countDays;
@@ -120,25 +121,21 @@ public class LightingManager : MonoBehaviour
         }
     }
 
-    public void ResetSchedule()
+    /*public void ResetSchedule()
     {
         for(int i = 0; i < Hours.Length; i++)
         {
             Hours[i] = false;
         }
     }
+    */
 
     public int WhatTimeIsIt()
     {
-        for (int i = 0; i < Hours.Length; i++)
-        {
-            if (Hours[i]) return i;
-        }
-
-        return -1;
+        return Mathf.FloorToInt(TimeOfDay) % 24;
     }
 
-    private void SetResidentSchedules()
+    /*private void SetResidentSchedules()
     {
         if (TimeOfDay >= 0 && TimeOfDay < 1) { Hours[0] = true; Hours[23] = false; }
         else if (TimeOfDay >= 1 && TimeOfDay < 2) { Hours[1] = true; Hours[0] = false; }
@@ -164,20 +161,26 @@ public class LightingManager : MonoBehaviour
         else if (TimeOfDay >= 21 && TimeOfDay < 22) { Hours[21] = true; Hours[20] = false; }
         else if (TimeOfDay >= 22 && TimeOfDay < 23) { Hours[22] = true; Hours[21] = false; }
         else if (TimeOfDay >= 23 && TimeOfDay < 24) { Hours[23] = true; Hours[22] = false; }
+    }*/
 
+    public void SetResidentSchedules()
+    {
+        int currentHour = Mathf.FloorToInt(TimeOfDay) % 24;
 
-        //trying to automatic above, it doesnt work, almost does.  to tired rn.
-        /*for(int i = 0; i < 24; i++)
+        if (currentHour != lastHour)
         {
-            int time = i;
-            int timePlus1 = i + 1;
-            int timeMinus1 = i - 1;
-            if (timeMinus1 == -1) timeMinus1 = 23;
-
-            if (TimeOfDay >= time && TimeOfDay < timePlus1) { 
-                    Hours[timePlus1] = true; 
-                    Hours[timeMinus1] = false; 
-             }
-        }*/
+            lastHour = currentHour;
+            OnHourChanged(currentHour);
+        }
     }
+
+    private void OnHourChanged(int hour)
+    {
+        if (allResidents.childCount == 0) return;
+        for(int i = 0; i < allResidents.childCount; i++)
+        {
+            allResidents.GetChild(i).GetComponent<ResidentScheudle>().UpdateActivity(hour);
+        }
+    }
+
 }

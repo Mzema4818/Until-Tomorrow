@@ -84,7 +84,7 @@ public class StartGame : MonoBehaviour
         lightingManager.TimeOfDay = 11;
         lightingManager.numberOfDays = 0;
         lightingManager.countDaysStart = false;
-        lightingManager.ResetSchedule();
+        //lightingManager.ResetSchedule();
         buildMenuUpdater.WipeAccess();
 
         inventory.WipeInventory();
@@ -106,7 +106,7 @@ public class StartGame : MonoBehaviour
         lightingManager.TimeOfDay = 10;
         lightingManager.numberOfDays = 0;
         lightingManager.countDaysStart = true;
-        lightingManager.ResetSchedule();
+        //lightingManager.ResetSchedule();
         StartGameMenu();
         noiseData.setNewSeed();
         mapGenerator.DrawMapInEditor();
@@ -141,7 +141,7 @@ public class StartGame : MonoBehaviour
         StartInventory();
         lightingManager.multiplier = 30;
         lightingManager.countDaysStart = true;
-        lightingManager.ResetSchedule();
+        //lightingManager.ResetSchedule();
         StartGameMenu();
         mapGenerator.DrawMapInEditor();
         updateVertices();

@@ -63,9 +63,12 @@ public class ResidentScheudle : MonoBehaviour
 
         residentTools = GetComponent<ResidentTools>();
         animator = GetComponent<Animator>();
-        WhatShouldResidentDo();
+
+        UpdateActivity(time.WhatTimeIsIt());
+
         if (shouldWander) shouldGoWander = true;
         if (shouldWork && job == null) shouldGoWander = true;
+        if (shouldSleep && home == null) shouldGoWander = true;
     }
 
     void Start()
@@ -84,7 +87,7 @@ public class ResidentScheudle : MonoBehaviour
         if (shouldRun) animator.SetFloat("velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 1f));
         else animator.SetFloat("velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 0.5f));
 
-        WhatShouldResidentDo();
+        //WhatShouldResidentDo();
 
         //Being attacked overrides everything 
         if (runAwayFrom != null)
@@ -139,6 +142,7 @@ public class ResidentScheudle : MonoBehaviour
                             //dont forget to fix it so, if resident takes last food but hes holding it, it doesnt remove script
                             if (shouldGoWander)
                             {
+                                print("should wander");
                                 StartCoroutine(WaitForWander());
                             }
                         }
@@ -213,44 +217,45 @@ public class ResidentScheudle : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime);
     }
 
-    private void WhatShouldResidentDo()
+    /*private void WhatShouldResidentDo()
     {
         for(int i = 0; i < time.Hours.Length; i++)
         {
             if (time.Hours[i])
             {
-                Convert(Schedule[i]);
+                //Convert(Schedule[i]);
             }
         }
-    }
+    }*/
 
-    public void Convert(int i)
+    public void UpdateActivity(int hour)
     {
-        if(i == 0)
+        switch (Schedule[hour])
         {
-            shouldWork = false;
-            shouldSleep = true;
-            shouldWander = false;
-        }
-        else if (i == 1)
-        {
-            shouldWork = true;
-            shouldSleep = false;
-            shouldWander = false;
-        }
-        else if (i == 2)
-        {
-            shouldWork = false;
-            shouldSleep = false;
-            shouldWander = true;
-            RemoveJobs();
+            case 0:
+                shouldSleep = true;
+                shouldWork = false;
+                shouldWander = false;
+                RemoveJobs();
+                break;
+
+            case 1:
+                shouldWork = true;
+                shouldSleep = false;
+                shouldWander = false;
+                break;
+
+            case 2:
+                shouldWander = true;
+                shouldWork = false;
+                shouldSleep = false;
+                RemoveJobs();
+                break;
         }
     }
 
     public void RemoveJobs()
     {
-        //UpdateWorkers(null, job.GetComponent<Farm>(), transform.GetComponent<Lumbermill>(), -1);
-
         Destroy(transform.GetComponent<Farmer>());
         Destroy(transform.GetComponent<LumberWorker>());
         Destroy(transform.GetComponent<Miner>());
