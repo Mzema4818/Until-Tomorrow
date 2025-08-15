@@ -38,6 +38,7 @@ public class ResidentScheudle : MonoBehaviour
     public bool followPlayer;
     public bool followPlayerHome;
     public bool shouldGoWander;
+    private Coroutine wanderRoutine;
     public Transform runAwayFrom;
 
     [Header("Schedule Conditions")]
@@ -52,9 +53,6 @@ public class ResidentScheudle : MonoBehaviour
     public GameObject closestTavern;
     public ResidentTools residentTools;
 
-    //0 = sleep
-    //1 = work
-    //2 = wander
     public int[] Schedule = new int[24];
 
     private void Awake()
@@ -66,9 +64,7 @@ public class ResidentScheudle : MonoBehaviour
 
         UpdateActivity(time.WhatTimeIsIt());
 
-        if (shouldWander) shouldGoWander = true;
-        if (shouldWork && job == null) shouldGoWander = true;
-        if (shouldSleep && home == null) shouldGoWander = true;
+        if (shouldWander || (shouldWork && job == null) || (shouldSleep && home == null)) shouldGoWander = true;
     }
 
     void Start()
@@ -80,87 +76,127 @@ public class ResidentScheudle : MonoBehaviour
         speed = agent.speed;
     }
 
-    // Update is called once per frame
+    //Update is called once per frame
     void Update()
     {
         //Handle Speed;
         if (shouldRun) animator.SetFloat("velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 1f));
         else animator.SetFloat("velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 0.5f));
 
-        //WhatShouldResidentDo();
+        //Handle movement
+        if (HandleImmediateReactions()) return;
+        HandleDynamicBehavior();
+    }
 
-        //Being attacked overrides everything 
+    private bool HandleImmediateReactions()
+    {
         if (runAwayFrom != null)
         {
-            print("run");
             RunAway(player.transform);
+            return true;
+        }
+
+        if (followPlayer || followPlayerHome)
+        {
+            agent.SetDestination(player.transform.position);
+            return true;
+        }
+
+        if (isBeingTalkedTo)
+        {
+            if (!AtLocation) LookAtPlayer();
+            pause();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void HandleDynamicBehavior()
+    {
+        //Wander or eat
+        if (shouldWander ||
+            (shouldWork && (job == null || job.GetComponent<IsABuilding>().beingMoved)) ||
+            (shouldSleep && (home == null || home.GetComponent<IsABuilding>().beingMoved)))
+        {
+            HandleWanderOrEat();
+            return;
+        }
+
+        //Sleep
+        if (shouldSleep && home != null && !home.GetComponent<IsABuilding>().beingMoved)
+        {
+            GoHome();
+            return;
+        }
+
+        //Work
+        if (shouldWork && job != null && !job.GetComponent<IsABuilding>().beingMoved)
+        {
+            GoWork();
+        }
+    }
+
+    private void HandleWanderOrEat()
+    {
+        if (closestMessHall == null) closestMessHall = FindClosestBuilding(messHalls.transform);
+        if (closestTavern == null) closestTavern = FindClosestBuilding(taverns.transform);
+
+        if (closestTavern != null)
+            tavern = closestTavern.GetComponent<Tavern>();
+
+        //Eat conditions
+        if (residentStats.joinedTown &&
+            foodBar.GetComponent<Image>().fillAmount < .85f &&
+            closestMessHall != null && closestTavern != null &&
+            CheckIfHasFood(closestMessHall) &&
+            !closestTavern.GetComponent<IsABuilding>().beingMoved &&
+            !closestMessHall.GetComponent<IsABuilding>().beingMoved &&
+            tavern != null && tavern.sitting < tavern.maxSeats)
+        {
+            if (GetComponent<Hungry>() == null)
+            {
+                var hungry = gameObject.AddComponent<Hungry>();
+                hungry.messhall = closestMessHall;
+                hungry.tavern = closestTavern;
+                hungry.residentTools = null;
+                hungry.foodBar = foodBar;
+            }
+
+            //Stop wandering if we decide to eat
+            if (wanderRoutine != null)
+            {
+                StopCoroutine(wanderRoutine);
+                wanderRoutine = null;
+            }
         }
         else
         {
-            //Following the player takes all priority 
-            if (followPlayer || followPlayerHome)
+            // Only start wander once
+            if (wanderRoutine == null)
             {
-                agent.SetDestination(player.transform.position);
+                wanderRoutine = StartCoroutine(WaitForWander());
             }
-            else
-            {
-                //Talking to the player is next 
-                if (isBeingTalkedTo)
-                {
-                    if (!AtLocation) LookAtPlayer();
-                    pause();
-                }
-                else
-                {
-                    //If NPC is not being spoken to, or following player, then it follows its basic scheudle
+        }
+    }
 
-                    //If its wander time OR work time, OR sleep time, but the NPC doesnt have a job/home, OR the job/home is being moved, then they wander around aimlessly
-                    if (shouldWander || (shouldWork && job == null) || (shouldSleep && home == null) || (home != null && home.GetComponent<IsABuilding>().beingMoved) || (job != null && job.GetComponent<IsABuilding>().beingMoved))
-                    {
-                        if (closestMessHall == null) closestMessHall = FindClosestBuilding(messHalls.transform);
-                        if (closestTavern == null) closestTavern = FindClosestBuilding(taverns.transform);
+    private void GoHome()
+    {
+        if (!AtLocation)
+        {
+            agent.SetDestination(home.transform.position);
+            StopCoroutine(WaitForWander());
+            GoToWork(home, shouldSleep);
+        }
+    }
 
-                        if (closestTavern != null)
-                        {
-                            tavern = closestTavern.GetComponent<Tavern>();
-                        }
-
-                        //Check if the NPC is hungry, if there exsists a messhall and tavern, and the tavern seats arent full, AND messhall and tavern aren't being moved
-                        if (residentStats.joinedTown && foodBar.GetComponent<Image>().fillAmount < .85 && closestMessHall != null && closestTavern != null && CheckIfHasFood(closestMessHall)
-                            && !closestTavern.GetComponent<IsABuilding>().beingMoved && !closestMessHall.GetComponent<IsABuilding>().beingMoved && tavern != null && tavern.sitting < tavern.maxSeats)
-                        {
-                            if (gameObject.GetComponent<Hungry>() == null)
-                            {
-                                gameObject.AddComponent<Hungry>().messhall = closestMessHall;
-                                gameObject.GetComponent<Hungry>().tavern = closestTavern;
-                                gameObject.GetComponent<Hungry>().residentTools = residentTools;
-                                gameObject.GetComponent<Hungry>().foodBar = foodBar;
-                            }
-                        }
-                        else
-                        {
-                            //dont forget to fix it so, if resident takes last food but hes holding it, it doesnt remove script
-                            if (shouldGoWander)
-                            {
-                                print("should wander");
-                                StartCoroutine(WaitForWander());
-                            }
-                        }
-                    }
-                    //If its sleep time, a home exists, and it isnt being moved, then go to home
-                    else if (shouldSleep && home != null && !home.GetComponent<IsABuilding>().beingMoved)
-                    {
-                        if (home != null && !AtLocation) agent.SetDestination(home.transform.position); StopCoroutine(WaitForWander());
-                        if (home != null && !AtLocation) GoToWork(home, shouldSleep);
-                    }
-                    //If its work time, a work exists, and it isnt being moved, then go to work
-                    else if (shouldWork && job != null && !job.GetComponent<IsABuilding>().beingMoved)
-                    {
-                        if (job != null && !AtLocation) agent.SetDestination(job.transform.position); StopCoroutine(WaitForWander());
-                        if (job != null && !AtLocation) GoToWork(job, shouldWork);
-                    }
-                }
-            }
+    private void GoWork()
+    {
+        if (!AtLocation)
+        {
+            agent.SetDestination(job.transform.position);
+            StopCoroutine(WaitForWander());
+            GoToWork(job, shouldWork);
         }
     }
 
@@ -203,8 +239,8 @@ public class ResidentScheudle : MonoBehaviour
 
     void pause()
     {
-        //lastAgentVelocity = agent.velocity;
-        //lastAgentPath = agent.path;
+        StopCoroutine(WaitForWander());
+        wanderRoutine = null;
         agent.velocity = Vector3.zero;
         if(agent.enabled) agent.ResetPath();
     }
@@ -217,19 +253,13 @@ public class ResidentScheudle : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime);
     }
 
-    /*private void WhatShouldResidentDo()
-    {
-        for(int i = 0; i < time.Hours.Length; i++)
-        {
-            if (time.Hours[i])
-            {
-                //Convert(Schedule[i]);
-            }
-        }
-    }*/
 
     public void UpdateActivity(int hour)
     {
+        //0 = sleep
+        //1 = work
+        //2 = wander
+
         switch (Schedule[hour])
         {
             case 0:
