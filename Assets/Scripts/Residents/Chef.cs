@@ -42,8 +42,10 @@ public class Chef : MonoBehaviour
 
     private void Update()
     {
-        //If farm exists and grown food isnt empty, and messhall has room for raw food, and both buildings arent being moved
-        if(messhall.farm != null && !messhall.farm.GetComponent<IsABuilding>().beingMoved && messhall.farm.GetComponent<Farm>().CheckIfEmpty() && !messhall.CheckIfRawFoodIsEmpty())
+        if (messhall.farm != null &&
+            !messhall.farm.GetComponent<IsABuilding>().beingMoved &&
+            messhall.farm.GetComponent<Farm>().CheckIfEmpty() &&
+            !messhall.CheckIfRawFoodIsEmpty())
         {
             if (Cooking)
             {
@@ -54,75 +56,88 @@ public class Chef : MonoBehaviour
                 Cooking = false;
             }
 
-            if (WalkToFarm)
-            {
-                agent.SetDestination(messhall.farm.gameObject.transform.position);
-                if (agent.remainingDistance < messhall.farm.GetComponent<IsABuilding>().distance)
-                {
-                    int num = 0;
-                    Farm farm = messhall.farm.GetComponent<Farm>();
-                    for (int i = 0; i < maxHeldAmount; i++)
-                    {
-                        if (!farm.RemoveItem(farm.grownItem)) break;
-                        num++;
-                    }
-
-                    item = farm.grownItem;
-                    amount = num;
-
-                    residentTools.ChangeEnable(WhatItemIsHeld(item), true);
-
-                    WalkToMesshall = true;
-                    WalkToFarm = false;
-                }
-            }
-
-            if (WalkToMesshall)
-            {
-                agent.SetDestination(messhall.gameObject.transform.position);
-
-                if(agent.remainingDistance < messhall.GetComponent<IsABuilding>().distance)
-                {
-                    for (int i = 0; i < amount; i++)
-                    {
-                        messhall.AddItem(new Item { itemType = item }, messhall.rawFoodSlots);
-                    }
-
-                    item = ItemType.nothing;
-                    amount = 0;
-
-                    JoinJob();
-                    WalkToMesshall = false;
-                    Cooking = true;
-                }
-            }
+            HandleWalkToFarm();
+            HandleWalkToMesshall();
         }
         else
         {
-            if (!Cooking)
-            {
-                agent.SetDestination(messhall.gameObject.transform.position);
-
-                if (agent.remainingDistance < messhall.GetComponent<IsABuilding>().distance)
-                {
-                    if (amount != 0 && item != Item.ItemType.nothing)
-                    {
-                        for (int i = 0; i < amount; i++)
-                        {
-                            messhall.AddItem(new Item { itemType = item }, messhall.rawFoodSlots);
-                        }
-
-                        item = ItemType.nothing;
-                        amount = 0;
-                    }
-
-                    JoinJob();
-                    WalkToFarm = false;
-                    WalkToMesshall = false;
-                    Cooking = true;
-                }
-            }
+            HandleFallbackDelivery();
         }
+    }
+
+    private void HandleWalkToFarm()
+    {
+        if (!WalkToFarm) return;
+
+        if (agent.destination != messhall.farm.transform.position)
+            agent.SetDestination(messhall.farm.transform.position);
+
+        if (!agent.pathPending && agent.remainingDistance <= messhall.farm.GetComponent<IsABuilding>().distance)
+        {
+            PickUpFarmItems();
+            WalkToFarm = false;
+            WalkToMesshall = true;
+        }
+    }
+
+    private void HandleWalkToMesshall()
+    {
+        if (!WalkToMesshall) return;
+
+        if (agent.destination != messhall.transform.position)
+            agent.SetDestination(messhall.transform.position);
+
+        if (!agent.pathPending && agent.remainingDistance <= messhall.GetComponent<IsABuilding>().distance)
+        {
+            DeliverItemsToMesshall();
+            WalkToMesshall = false;
+            Cooking = true;
+        }
+    }
+
+    private void HandleFallbackDelivery()
+    {
+        if (Cooking) return;
+
+        if (agent.destination != messhall.transform.position)
+            agent.SetDestination(messhall.transform.position);
+
+        if (!agent.pathPending && agent.remainingDistance <= messhall.GetComponent<IsABuilding>().distance)
+        {
+            if (amount != 0 && item != ItemType.nothing)
+                DeliverItemsToMesshall();
+
+            WalkToFarm = false;
+            WalkToMesshall = false;
+            Cooking = true;
+        }
+    }
+
+    private void PickUpFarmItems()
+    {
+        int num = 0;
+        Farm farm = messhall.farm.GetComponent<Farm>();
+        for (int i = 0; i < maxHeldAmount; i++)
+        {
+            if (!farm.RemoveItem(farm.grownItem)) break;
+            num++;
+        }
+
+        item = farm.grownItem;
+        amount = num;
+        residentTools.ChangeEnable(WhatItemIsHeld(item), true);
+    }
+
+    private void DeliverItemsToMesshall()
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            messhall.AddItem(new Item { itemType = item }, messhall.rawFoodSlots);
+        }
+
+        item = ItemType.nothing;
+        amount = 0;
+        JoinJob();
     }
 
     private void JoinJob()

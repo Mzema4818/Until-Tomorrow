@@ -56,23 +56,19 @@ public class Messhall : MonoBehaviour
 
     void Start()
     {
-        farm.GetComponent<Farm>().messhall = this;
+        if(farm != null) farm.GetComponent<Farm>().messhall = this;
 
         InvokeRepeating("Cook", 0.0f, 5.0f); 
     }
 
     private void Update()
     {
-        if (addFood)
-        {
-            AddItem(new Item { itemType = Item.ItemType.charredBerry}, cookedFoodSlots);
-            addFood = false;
-        }
+
     }
 
     private void OnDestroy()
     {
-        farm.GetComponent<Farm>().messhall = null;
+        if(farm != null) farm.GetComponent<Farm>().messhall = null;
     }
 
     private void Cook()
