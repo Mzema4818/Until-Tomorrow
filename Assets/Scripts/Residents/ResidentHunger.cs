@@ -33,7 +33,7 @@ public class ResidentHunger : MonoBehaviour
     {
         if (currentHunger >= 0)
         {
-            ModifyHunger(0);
+            ModifyHunger(-5);
         }
     }
 

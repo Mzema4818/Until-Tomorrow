@@ -63,7 +63,11 @@ public class Messhall : MonoBehaviour
 
     private void Update()
     {
-
+        if (addFood)
+        {
+            AddItem(new Item { itemType = Item.ItemType.charredBerry}, cookedFoodSlots);
+            addFood = false;
+        }
     }
 
     private void OnDestroy()

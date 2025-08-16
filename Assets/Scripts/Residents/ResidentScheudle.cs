@@ -159,7 +159,6 @@ public class ResidentScheudle : MonoBehaviour
                 var hungry = gameObject.AddComponent<Hungry>();
                 hungry.messhall = closestMessHall;
                 hungry.tavern = closestTavern;
-                hungry.residentTools = null;
                 hungry.foodBar = foodBar;
             }
 

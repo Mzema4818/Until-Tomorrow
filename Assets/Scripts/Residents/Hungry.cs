@@ -34,6 +34,7 @@ public class Hungry : MonoBehaviour
         locationEntered = new Vector3(-100,-100,-100);
 
         residentScheudle = GetComponent<ResidentScheudle>();
+        residentTools = GetComponent<ResidentTools>();
     }
 
     void Start()
@@ -47,56 +48,91 @@ public class Hungry : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(messhall == null || tavern == null || tavern.GetComponent<IsABuilding>().beingMoved || messhall.GetComponent<IsABuilding>().beingMoved || tavernScript.sitting > tavernScript.maxSeats ||
-            residentScheudle.shouldSleep || residentScheudle.shouldWork || residentScheudle.followPlayer || residentScheudle.isBeingTalkedTo)
+        // Check if hunger should be cancelled
+        if (ShouldCancelHunger())
         {
-            Destroy(gameObject.GetComponent<Hungry>());
+            Destroy(GetComponent<Hungry>());
+            return;
         }
 
-        if (goingToFood && messhall != null)
+        // Handle hunger states
+        if (goingToFood)
         {
-            agent.SetDestination(messhall.transform.position);
-            if (Vector3.Distance(transform.position, messhall.transform.position) < messhall.GetComponent<IsABuilding>().distance)
-            {
-                Messhall messhallScript = messhall.GetComponent<Messhall>();
-                //goingToEat = true;
-                //goingToGetFood = false;
-                agent.ResetPath();
-                animator.SetBool("Holding", true);
-                Item.ItemType itemShouldEat = messhallScript.GetItemInSlot(messhallScript.cookedFoodSlots);
-                //print(itemShouldEat);
-                messhallScript.RemoveItem(itemShouldEat, messhallScript.cookedFoodSlots);
-                residentTools.ChangeEnable(ItemToInt(itemShouldEat), true);
-                goingToFood = false;
-                goingToSit = true;
-            }
+            HandleGoingToFood();
         }
-        else if (goingToSit && tavern != null)
+        else if (goingToSit)
         {
-            agent.SetDestination(tavern.transform.position);
-            if (Vector3.Distance(transform.position, tavern.transform.position) < tavern.GetComponent<IsABuilding>().distance)
-            {
-                animator.SetBool("Holding", false);
-                //goingToEat = false;
-                agent.ResetPath();
-                agent.enabled = false;
-                animator.SetBool("Eating", true);
-                //gameObject.AddComponent<Eating>().location = closestTavern;
-                //StartCoroutine(Eat());
-                goingToSit = false;
-                goingToEat = true;
-            }
+            HandleGoingToSit();
         }
-        else if (goingToEat && tavern != null)
+        else if (goingToEat)
         {
-            locationEntered = transform.position;
-            transform.position = tavernScript.seats[tavernScript.sitting].transform.position;
-            transform.LookAt(tavern.transform);
-            tavernScript.sitting++;
-            StartCoroutine(Eat());
-            goingToEat = false;
+            HandleGoingToEat();
         }
     }
+
+    private bool ShouldCancelHunger()
+    {
+        return messhall == null ||
+               tavern == null ||
+               tavern.GetComponent<IsABuilding>().beingMoved ||
+               messhall.GetComponent<IsABuilding>().beingMoved ||
+               tavernScript.sitting > tavernScript.maxSeats ||
+               residentScheudle.followPlayer ||
+               residentScheudle.isBeingTalkedTo ||
+               (residentScheudle.shouldSleep && residentScheudle.home != null) ||
+               (residentScheudle.shouldWork && residentScheudle.job != null);
+    }
+
+    private void HandleGoingToFood()
+    {
+        agent.SetDestination(messhall.transform.position);
+
+        if (Vector3.Distance(transform.position, messhall.transform.position) <
+            messhall.GetComponent<IsABuilding>().distance)
+        {
+            Messhall messhallScript = messhall.GetComponent<Messhall>();
+            agent.ResetPath();
+            animator.SetBool("Holding", true);
+
+            // Grab food
+            Item.ItemType food = messhallScript.GetItemInSlot(messhallScript.cookedFoodSlots);
+            messhallScript.RemoveItem(food, messhallScript.cookedFoodSlots);
+            residentTools.ChangeEnable(ItemToInt(food), true);
+
+            goingToFood = false;
+            goingToSit = true;
+        }
+    }
+
+    private void HandleGoingToSit()
+    {
+        agent.SetDestination(tavern.transform.position);
+
+        if (Vector3.Distance(transform.position, tavern.transform.position) <
+            tavern.GetComponent<IsABuilding>().distance)
+        {
+            animator.SetBool("Holding", false);
+            agent.ResetPath();
+            agent.enabled = false;
+            animator.SetBool("Eating", true);
+
+            goingToSit = false;
+            goingToEat = true;
+        }
+    }
+
+    private void HandleGoingToEat()
+    {
+        locationEntered = transform.position;
+        transform.position = tavernScript.seats[tavernScript.sitting].transform.position;
+        transform.LookAt(tavern.transform);
+
+        tavernScript.sitting++;
+        StartCoroutine(Eat());
+
+        goingToEat = false;
+    }
+
     public bool CheckIfHasFood(GameObject messhall)
     {
         Messhall building = messhall.GetComponent<Messhall>();
@@ -133,12 +169,13 @@ public class Hungry : MonoBehaviour
     {
         StopCoroutine(Eat());
         residentTools.TurnOffAll();
-        agent.enabled = true;
 
         if(locationEntered != new Vector3(-100, -100, -100))
         {
             transform.position = locationEntered;
         }
+
+        agent.enabled = true;
 
         animator.SetBool("Eating", false);
         animator.SetBool("Holding", false);
