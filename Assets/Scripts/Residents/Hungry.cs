@@ -72,6 +72,8 @@ public class Hungry : MonoBehaviour
 
     private bool ShouldCancelHunger()
     {
+        //might want to add something where if resident already grabbed the food from the messhall, he can still go to the tavern and eat 
+
         return messhall == null ||
                tavern == null ||
                tavern.GetComponent<IsABuilding>().beingMoved ||

@@ -50,17 +50,17 @@ public class ResidentHealth : MonoBehaviour
         {
             amount = Mathf.Max(amount, -currentHealth); // Ensure we don't go below 0
             this.whoDamaged = whoDamaged;
-            TriggerBeingAttacked();
+            if(whoDamaged != null) TriggerBeingAttacked();
         }
         else
-            amount = Mathf.Min(amount, maxHealth - currentHealth); // Ensure we don't exceed maxHunger
+            amount = Mathf.Min(amount, maxHealth - currentHealth); // Ensure we don't exceed maxHealth
 
         currentHealth += amount;
 
-        // Ensure maxHunger stays within valid bounds
+        //Ensure maxHealth stays within valid bounds
         maxHealth = Mathf.Clamp(maxHealth, 0, 100);
 
-        // Calculate the current hunger percentage
+        // Calculate the current health percentage
         float currentHungerPct = (float)currentHealth / (float)maxHealth;
         onHealthPctChanged(currentHungerPct);
 
