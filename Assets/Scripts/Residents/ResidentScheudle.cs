@@ -38,7 +38,7 @@ public class ResidentScheudle : MonoBehaviour
     public bool followPlayer;
     public bool followPlayerHome;
     public bool shouldGoWander;
-    public bool recentlyHurt;
+    public bool recentlyAttacked;
     private Coroutine wanderRoutine;
     public Transform runAwayFrom;
 

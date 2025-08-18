@@ -74,6 +74,16 @@ public class ResidentHealth : MonoBehaviour
             StopCoroutine(attackCoroutine);
         }
 
+        //turn off menus if they are on
+        ResidentStats resident = gameObject.GetComponent<ResidentStats>();
+        if (resident.textBox.activeSelf)
+        {
+            resident.textBox.SetActive(false);
+            resident.schedule.SetActive(false);
+            resident.StatObject.SetActive(false);
+        }
+
+        residentScheudle.recentlyAttacked = true;
         residentScheudle.runAwayFrom = whoDamaged;
         residentScheudle.shouldRun = true;
         residentScheudle.agent.speed = residentScheudle.runSpeed;
@@ -84,6 +94,7 @@ public class ResidentHealth : MonoBehaviour
     private IEnumerator ResetBeingAttackedAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+        residentScheudle.recentlyAttacked = false;
         residentScheudle.runAwayFrom = null;
         residentScheudle.shouldRun = false;
         residentScheudle.agent.speed = residentScheudle.speed;
