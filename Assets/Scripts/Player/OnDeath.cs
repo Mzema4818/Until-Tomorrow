@@ -109,7 +109,6 @@ public class OnDeath : MonoBehaviour
         {
             collider.enabled = state;
         }
-
     }
 
     public void Respawn()

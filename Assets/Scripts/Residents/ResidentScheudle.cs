@@ -39,6 +39,7 @@ public class ResidentScheudle : MonoBehaviour
     public bool followPlayerHome;
     public bool shouldGoWander;
     public bool recentlyAttacked;
+    public bool dead;
     private Coroutine wanderRoutine;
     public Transform runAwayFrom;
 
@@ -80,6 +81,8 @@ public class ResidentScheudle : MonoBehaviour
     //Update is called once per frame
     void Update()
     {
+        if (dead) return;
+
         //Handle Speed;
         if (shouldRun) animator.SetFloat("velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 1f));
         else animator.SetFloat("velocity Z", Mathf.Clamp(agent.velocity.magnitude, 0, 0.5f));

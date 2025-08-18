@@ -274,8 +274,8 @@ public class Crosshair : MonoBehaviour
                         //pickup.Play();
                     }
 
-                    //User talks to a resident
-                    if (gameObject.GetComponent<ResidentStats>() != null && !gameObject.GetComponent<ResidentScheudle>().recentlyAttacked)
+                    //User talks to a resident as long as they arent dead or being attacked
+                    if (gameObject.GetComponent<ResidentStats>() != null && !gameObject.GetComponent<ResidentScheudle>().recentlyAttacked && !gameObject.GetComponent<ResidentScheudle>().dead)
                     {
                         //Turn off all menus of the resident, if you are were just talking to one
                         if (playerInteractions.residentTalkingTo != null)

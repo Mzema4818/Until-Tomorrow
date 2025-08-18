@@ -19,10 +19,29 @@ public class ResidentHealth : MonoBehaviour
     public bool damage;
     public Transform whoDamaged;
 
+    public Transform tempObject;
+    private Rigidbody[] rigidbodies;
+    private Collider[] colliders;
+
     private void Awake()
     {
         residentScheudle = transform.GetComponent<ResidentScheudle>();
         currentHealth = maxHealth;
+
+        rigidbodies = GetComponentsInChildren<Rigidbody>();
+        colliders = GetComponentsInChildren<Collider>();
+    }
+
+    private void Start()
+    {
+        ModifyHealth(0, null); //this just sets the value when first opened.
+
+        //turn off all colliders and on all rigidbodies for ragdoll, then turn on just the one we need to interact with
+        setRigidbodyState(true);
+        setColliderState(false);
+
+        gameObject.GetComponent<BoxCollider>().enabled = true;
+        gameObject.GetComponent<Rigidbody>().isKinematic = false;
     }
 
     private void Update()
@@ -35,13 +54,13 @@ public class ResidentHealth : MonoBehaviour
 
         if (currentHealth <= 0)
         {
-            Destroy(gameObject);
-        }
-    }
+            setRigidbodyState(false);
+            setColliderState(true);
 
-    private void Start()
-    {
-        ModifyHealth(0, null); //this just sets the value when first opened.
+            StopAllMovementAndInteraction();
+            residentScheudle.dead = true;
+            Destroy(gameObject, 5f);
+        }
     }
 
     public void ModifyHealth(int amount, Transform whoDamaged)
@@ -98,5 +117,36 @@ public class ResidentHealth : MonoBehaviour
         residentScheudle.runAwayFrom = null;
         residentScheudle.shouldRun = false;
         residentScheudle.agent.speed = residentScheudle.speed;
+    }
+
+    void setRigidbodyState(bool state)
+    {
+        foreach (Rigidbody rigidbody in rigidbodies)
+        {
+            rigidbody.isKinematic = state;
+        }
+    }
+
+    void setColliderState(bool state)
+    {
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = state;
+        }
+    }
+
+
+    private void StopAllMovementAndInteraction()
+    {
+        ResidentStats resident = gameObject.GetComponent<ResidentStats>();
+        if (resident.textBox.activeSelf)
+        {
+            resident.textBox.SetActive(false);
+            resident.schedule.SetActive(false);
+            resident.StatObject.SetActive(false);
+        }
+
+        transform.parent = tempObject;
+        transform.GetComponent<Animator>().enabled = false;
     }
 }
