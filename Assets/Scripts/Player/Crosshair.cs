@@ -286,6 +286,7 @@ public class Crosshair : MonoBehaviour
                             resident.StatObject.SetActive(false);
                             //playerInteractions.residentTalkingTo.GetComponent<StatBar>().starbar.transform.parent.gameObject.SetActive(false);
                         }
+
                         playerInteractions.residentTalkingTo = hit.collider.gameObject;
                         hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
 

@@ -465,15 +465,8 @@ public class Book : MonoBehaviour {
         else ChangeText(currentPage);
     }
 
-    public void ChangePage()
-    {
-        print("hi");
-    }
-
     public void TweenBack()
     {
-        print("done");
-
         if (mode == FlipMode.RightToLeft)
         {
             currentCoroutine = StartCoroutine(TweenTo(ebr,0.15f,
