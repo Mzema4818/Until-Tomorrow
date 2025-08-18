@@ -24,6 +24,9 @@ public class ResidentChoices : MonoBehaviour
     public GameObject JoinHomeButton;
     public GameObject AssignButton;
 
+    [Header("Other")]
+    public TextMeshProUGUI farmAttached;
+
     private void Awake()
     {
         TextBox = gameObject;
@@ -35,25 +38,16 @@ public class ResidentChoices : MonoBehaviour
 
     private void OnEnable()
     {
-        /*if(!resident.joinedTown && buildMenuUpdater.AccessToLevel0Buildings)
+        //turn on Farm Attached: if job is a messhall
+        if(residentScheudle.job.GetComponent<Messhall>() != null)
         {
-            text.text = "You don't have anything for me right now, go away";
-        }else if(!resident.joinedTown && buildMenuUpdater.AccessToLevel1Buildings)
-        {
-            text.text = "Hmm, what do you want?";
-            joinTownButton.SetActive(true);
-        }else if (resident.joinedTown && buildMenuUpdater.AccessToLevel2Buildings)
-        {
-            text.text = "What can I do for you boss?";
-            CheckIfHasJob();
-        }
-        else if (buildMenuUpdater.AccessToLevel3Buildings)
-        {
-            text.text = "What can I do for you boss?";
-            CheckIfHasJob();
-        }*/
+            farmAttached.gameObject.SetActive(true);
+            if (residentScheudle.job.GetComponent<Messhall>().farm != null) farmAttached.text = "Farm Attached: Yes";
+            else farmAttached.text = "Farm Attached: No";
+        } else farmAttached.gameObject.SetActive(false);
 
-        if(resident.transform.parent.name != "Resident")
+        //regular text
+        if (resident.transform.parent.name != "Resident")
         {
             text.text = "I just got here, leave me alone";
         }
@@ -87,12 +81,6 @@ public class ResidentChoices : MonoBehaviour
                 CheckIfHasHome();
             }
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
 
     private void CheckIfHasJob()

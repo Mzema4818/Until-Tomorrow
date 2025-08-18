@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.AI;
 
 public class ResidentHealth : MonoBehaviour
 {
@@ -148,5 +149,7 @@ public class ResidentHealth : MonoBehaviour
 
         transform.parent = tempObject;
         transform.GetComponent<Animator>().enabled = false;
+        transform.GetComponent<NavMeshAgent>().isStopped = true;
+        transform.GetComponent<NavMeshAgent>().speed = 0;
     }
 }
