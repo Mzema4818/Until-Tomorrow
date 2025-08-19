@@ -185,12 +185,18 @@ public class ResidentScheudle : MonoBehaviour
     private void GoHome()
     {
         if (!AtLocation)
-        { 
+        {
             //sometimes tent is too far above terrain to get recongized???
+            NavMeshHit hit;
+            bool isOnNavMesh = NavMesh.SamplePosition(home.transform.position, out hit, 2.0f, NavMesh.AllAreas);
+
+            if(!isOnNavMesh) agent.SetDestination(home.transform.position - new Vector3(0, 2, 0));
+            else agent.SetDestination(home.transform.position);
+
             agent.SetDestination(home.transform.position - new Vector3(0,2,0));
             StopCoroutine(WaitForWander());
             wanderRoutine = null;
-            GoToWork(home, shouldSleep);
+            GoToLocation(home, shouldSleep);
         }
     }
 
@@ -201,7 +207,7 @@ public class ResidentScheudle : MonoBehaviour
             agent.SetDestination(job.transform.position);
             StopCoroutine(WaitForWander());
             wanderRoutine = null;
-            GoToWork(job, shouldWork);
+            GoToLocation(job, shouldWork);
         }
     }
 
@@ -300,13 +306,13 @@ public class ResidentScheudle : MonoBehaviour
         Destroy(transform.GetComponent<Knight>());
     }
 
-    private void GoToWork(GameObject location, bool EnterTime)
+    private void GoToLocation(GameObject location, bool EnterTime)
     {
         Job job = location.GetComponent<Job>();
+        Tent tent = location.GetComponent<Tent>();
+
         if (EnterTime)
         {
-            Tent tent = location.GetComponent<Tent>();
-
             if (Vector3.Distance(transform.position, location.transform.position) < location.GetComponent<IsABuilding>().distance)
             {
                 if (tent != null)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,18 +16,16 @@ public class TurnOnGameObjects : MonoBehaviour
         {
             if (time.WhatTimeIsIt() == TimeToWakeUp)
             {
-                //print(1);
                 EnableResident();
             }
             else if (building.GetComponent<IsABuilding>().beingMoved)
             {
-                //print(2);
                 EnableResident();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            //print(3);
+            Debug.LogError("Exception caught: " + ex.Message);
             EnableResident();
         }
     }

@@ -55,8 +55,21 @@ public class Tent : MonoBehaviour
         catch { };
     }
 
+    //for "firing"
     public void RemoveResident(int residentNum)
     {
+        //removing TurnOnGameObjects and sleeping
+        var scripts = ResidentsActive[residentNum].transform.parent.GetComponents<TurnOnGameObjects>();
+        foreach (var s in scripts)
+        {
+            if (s.resident == ResidentsActive[residentNum])
+            {
+                Destroy(s);
+                break;
+            }
+        }
+        if (ResidentsActive[residentNum].TryGetComponent<Sleeping>(out var sleeping)) Destroy(sleeping);
+
         ResidentsActive[residentNum].GetComponent<ResidentScheudle>().home = null;
         ResidentsActive[residentNum].GetComponent<StatBar>().UpdateHome();
         ResidentsActive[residentNum].GetComponent<ResidentScheudle>().AtLocation = false;
@@ -67,8 +80,19 @@ public class Tent : MonoBehaviour
         ResidentsActive = ReorganizeArray();
     }
 
+    //for when resident dies
     public void RemoveResident(GameObject gameobject)
     {
+        var scripts = gameobject.transform.parent.GetComponents<TurnOnGameObjects>();
+        foreach (var s in scripts)
+        {
+            if (s.resident == gameobject)
+            {
+                Destroy(s);
+                break;
+            }
+        }
+
         int num = FindMatchIndex(ResidentsActive, gameobject);
 
         Residents--;
