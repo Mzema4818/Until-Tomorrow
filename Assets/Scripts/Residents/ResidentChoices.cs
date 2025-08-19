@@ -39,7 +39,7 @@ public class ResidentChoices : MonoBehaviour
     private void OnEnable()
     {
         //turn on Farm Attached: if job is a messhall
-        if(residentScheudle.job.GetComponent<Messhall>() != null)
+        if(residentScheudle.job != null && residentScheudle.job.GetComponent<Messhall>() != null)
         {
             farmAttached.gameObject.SetActive(true);
             if (residentScheudle.job.GetComponent<Messhall>().farm != null) farmAttached.text = "Farm Attached: Yes";

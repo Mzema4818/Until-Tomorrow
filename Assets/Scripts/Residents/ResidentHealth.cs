@@ -53,7 +53,7 @@ public class ResidentHealth : MonoBehaviour
             damage = false;
         }
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !residentScheudle.dead)
         {
             setRigidbodyState(false);
             setColliderState(true);
@@ -154,6 +154,19 @@ public class ResidentHealth : MonoBehaviour
         {
             navMeshAgent.isStopped = true;
             navMeshAgent.speed = 0;
+        }
+
+        //remove jobs and homes once resident is dead
+        if (residentScheudle.job != null)
+        {
+            residentScheudle.job.GetComponent<Job>().RemoveResident(gameObject);
+            residentScheudle.job.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidents();
+        }
+
+        if(residentScheudle.home != null)
+        {
+            residentScheudle.home.GetComponent<Tent>().RemoveResident(gameObject);
+            residentScheudle.home.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidentsTent();
         }
     }
 }

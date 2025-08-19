@@ -30,7 +30,6 @@ public class Job : MonoBehaviour
     //5 = knight
     public bool[] JobType = new bool[6]; //6 jobs 
 
-
     private void Awake()
     {
         if (name.Contains("Level0")) MaxWorkers = MaxNumberOfWorkers;
@@ -166,5 +165,44 @@ public class Job : MonoBehaviour
                 //WorkersActive[i].GetComponent<StatBar>().UpdateJob();
             }
         }
+    }
+
+    public void RemoveResident(GameObject gameobject)
+    {
+        int num = FindMatchIndex(WorkersActive, gameobject);
+
+        Workers--;
+        WorkersActive[num] = null;
+        WorkersActive = ReorganizeArray();
+    }
+
+    int FindMatchIndex(GameObject[] list, GameObject target)
+    {
+        for (int i = 0; i < list.Length; i++)
+        {
+            if (list[i] == target)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private GameObject[] ReorganizeArray()
+    {
+        //when deleting a resident from an array theres an empty space there which messes things up, this just gets rid of that space
+        GameObject[] returnArray = new GameObject[MaxWorkers];
+
+        int index = 0;
+        for (int i = 0; i < returnArray.Length; i++)
+        {
+            if (WorkersActive[i] != null)
+            {
+                returnArray[index] = WorkersActive[i];
+                index++;
+            }
+        }
+
+        return returnArray;
     }
 }

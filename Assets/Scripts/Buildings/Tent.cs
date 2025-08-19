@@ -67,6 +67,27 @@ public class Tent : MonoBehaviour
         ResidentsActive = ReorganizeArray();
     }
 
+    public void RemoveResident(GameObject gameobject)
+    {
+        int num = FindMatchIndex(ResidentsActive, gameobject);
+
+        Residents--;
+        ResidentsActive[num] = null;
+        ResidentsActive = ReorganizeArray();
+    }
+
+    int FindMatchIndex(GameObject[] list, GameObject target)
+    {
+        for (int i = 0; i < list.Length; i++)
+        {
+            if (list[i] == target)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private void HealResidents()
     {
         if (ResidentsActive[0] == null) return;
