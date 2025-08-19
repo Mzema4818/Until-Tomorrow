@@ -323,7 +323,7 @@ public class ResidentScheudle : MonoBehaviour
 
                 if (job != null)
                 {
-                    job.JoinJob(job.GetWorkerIndex(gameObject.name));
+                    job.JoinJob(job.GetWorkerIndex(gameObject));
                     GetComponent<Hats>().GetHat(job.name);
                 }
 

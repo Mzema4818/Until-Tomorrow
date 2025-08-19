@@ -12,6 +12,18 @@ public class JobOptions : MonoBehaviour
     public void Fire(Job job, int num)
     {
         resident = job.WorkersActive[num];
+
+        //removing TurnOnGameObjects
+        var scripts = resident.transform.parent.GetComponents<TurnOnGameObjects>();
+        foreach (var s in scripts)
+        {
+            if (s.resident == resident)
+            {
+                Destroy(s);
+                break;
+            }
+        }
+
         //Job job = resident.GetComponent<ResidentScheudle>().job.GetComponent<Job>();
         //Messhall messhall = resident.GetComponent<ResidentScheudle>().job.GetComponent<Messhall>();
 

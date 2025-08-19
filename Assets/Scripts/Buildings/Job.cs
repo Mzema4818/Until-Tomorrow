@@ -139,11 +139,11 @@ public class Job : MonoBehaviour
         //print(resident);
     }
 
-    public int GetWorkerIndex(string name)
+    public int GetWorkerIndex(GameObject resident)
     {
         for(int i = 0; i < WorkersActive.Length; i++)
         {
-            if (name.Contains(WorkersActive[i].name)) return i;
+            if (resident == WorkersActive[i]) return i;
         }
 
         return -1;
