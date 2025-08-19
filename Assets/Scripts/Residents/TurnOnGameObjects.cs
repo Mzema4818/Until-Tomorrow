@@ -23,9 +23,8 @@ public class TurnOnGameObjects : MonoBehaviour
                 EnableResident();
             }
         }
-        catch (Exception ex)
+        catch
         {
-            Debug.LogError("Exception caught: " + ex.Message);
             EnableResident();
         }
     }

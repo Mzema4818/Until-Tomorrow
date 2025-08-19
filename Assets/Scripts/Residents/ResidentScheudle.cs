@@ -193,7 +193,7 @@ public class ResidentScheudle : MonoBehaviour
             if(!isOnNavMesh) agent.SetDestination(home.transform.position - new Vector3(0, 2, 0));
             else agent.SetDestination(home.transform.position);
 
-            agent.SetDestination(home.transform.position - new Vector3(0,2,0));
+            //agent.SetDestination(home.transform.position - new Vector3(0,2,0));
             StopCoroutine(WaitForWander());
             wanderRoutine = null;
             GoToLocation(home, shouldSleep);
@@ -379,6 +379,34 @@ public class ResidentScheudle : MonoBehaviour
         }
 
         return returnArray;
+    }
+
+    private int FindNext(int time, int[] TimesToNotFind)
+    {
+        int TimeToWakeUp = -1;
+
+        for (int i = time; i <Schedule.Length; i++)
+        {
+            if (Schedule[i] == TimesToNotFind[0] || Schedule[i] == TimesToNotFind[1])
+            {
+                TimeToWakeUp = i;
+                break;
+            }
+        }
+
+        if (TimeToWakeUp == -1)
+        {
+            for (int i = 0; i < time; i++)
+            {
+                if (Schedule[i] == TimesToNotFind[0] || Schedule[i] == TimesToNotFind[1])
+                {
+                    TimeToWakeUp = i;
+                    break;
+                }
+            }
+        }
+
+        return TimeToWakeUp;
     }
 
     private void OnDestroy()

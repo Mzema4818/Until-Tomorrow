@@ -20,10 +20,11 @@ public class Sleeping : MonoBehaviour
         FindNext(time.WhatTimeIsIt(), new int[] { 1, 2 });
         //print(TimeToWakeUp);
 
-        transform.parent.gameObject.AddComponent<TurnOnGameObjects>().resident = gameObject;
-        transform.parent.gameObject.GetComponent<TurnOnGameObjects>().time = time;
-        transform.parent.gameObject.GetComponent<TurnOnGameObjects>().TimeToWakeUp = TimeToWakeUp;
-        transform.parent.gameObject.GetComponent<TurnOnGameObjects>().building = building;
+        TurnOnGameObjects turnOnGameObjects = transform.parent.gameObject.AddComponent<TurnOnGameObjects>();
+        turnOnGameObjects.resident = gameObject;
+        turnOnGameObjects.time = time;
+        turnOnGameObjects.TimeToWakeUp = TimeToWakeUp;
+        turnOnGameObjects.building = building;
 
         gameObject.SetActive(false);
     }

@@ -210,7 +210,6 @@ public class Crosshair : MonoBehaviour
                         }
                         else if (playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayerHome)
                         {
-                            print("selected home");
                             Tent tent = parent.GetComponent<Tent>();
 
                             //Check if job was selected
