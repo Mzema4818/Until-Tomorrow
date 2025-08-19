@@ -90,6 +90,7 @@ public class Chef : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance <= messhall.GetComponent<IsABuilding>().distance)
         {
             DeliverItemsToMesshall();
+            JoinJob();
             WalkToMesshall = false;
             Cooking = true;
         }
@@ -110,6 +111,7 @@ public class Chef : MonoBehaviour
             WalkToFarm = false;
             WalkToMesshall = false;
             Cooking = true;
+            JoinJob();
         }
     }
 
@@ -137,13 +139,12 @@ public class Chef : MonoBehaviour
 
         item = ItemType.nothing;
         amount = 0;
-        JoinJob();
     }
 
     private void JoinJob()
     {
         locationEntered = transform.position;
-
+        
         residentTools.TurnOffAll();
         residentTools.ChangeEnable(5, true);
         agent.ResetPath();

@@ -149,7 +149,11 @@ public class ResidentHealth : MonoBehaviour
 
         transform.parent = tempObject;
         transform.GetComponent<Animator>().enabled = false;
-        transform.GetComponent<NavMeshAgent>().isStopped = true;
-        transform.GetComponent<NavMeshAgent>().speed = 0;
+        NavMeshAgent navMeshAgent = transform.GetComponent<NavMeshAgent>();
+        if (navMeshAgent.enabled)
+        {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.speed = 0;
+        }
     }
 }

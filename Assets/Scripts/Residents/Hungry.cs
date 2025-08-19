@@ -17,6 +17,8 @@ public class Hungry : MonoBehaviour
     public bool goingToSit;
     public bool goingToEat;
 
+    public Item.ItemType heldFood;
+
     [Header("NavMeshStuff")]
     public NavMeshAgent agent;
 
@@ -74,7 +76,7 @@ public class Hungry : MonoBehaviour
     {
         //might want to add something where if resident already grabbed the food from the messhall, he can still go to the tavern and eat 
 
-        return messhall == null ||
+        /*return messhall == null ||
                tavern == null ||
                tavern.GetComponent<IsABuilding>().beingMoved ||
                messhall.GetComponent<IsABuilding>().beingMoved ||
@@ -82,7 +84,19 @@ public class Hungry : MonoBehaviour
                residentScheudle.followPlayer ||
                residentScheudle.isBeingTalkedTo ||
                (residentScheudle.shouldSleep && residentScheudle.home != null) ||
-               (residentScheudle.shouldWork && residentScheudle.job != null);
+               (residentScheudle.shouldWork && residentScheudle.job != null);*/
+
+        bool tavernProblem = tavern == null || (tavern != null && tavern.GetComponent<IsABuilding>().beingMoved) ||
+                                 (tavernScript != null && tavernScript.sitting > tavernScript.maxSeats);
+
+        bool messhallProblem = heldFood == ItemType.empty &&
+                               (messhall == null || (messhall != null && messhall.GetComponent<IsABuilding>().beingMoved));
+
+        bool residentProblem = residentScheudle.followPlayer ||
+                               (residentScheudle.shouldSleep && residentScheudle.home != null) ||
+                               (residentScheudle.shouldWork && residentScheudle.job != null);
+
+        return tavernProblem || messhallProblem || residentProblem;
     }
 
     private void HandleGoingToFood()
@@ -98,8 +112,10 @@ public class Hungry : MonoBehaviour
 
             // Grab food
             Item.ItemType food = messhallScript.GetItemInSlot(messhallScript.cookedFoodSlots);
-            messhallScript.RemoveItem(food, messhallScript.cookedFoodSlots);
-            residentTools.ChangeEnable(ItemToInt(food), true);
+            heldFood = food;
+
+            messhallScript.RemoveItem(heldFood, messhallScript.cookedFoodSlots);
+            residentTools.ChangeEnable(ItemToInt(heldFood), true);
 
             goingToFood = false;
             goingToSit = true;
@@ -151,9 +167,9 @@ public class Hungry : MonoBehaviour
     {
         yield return new WaitForSeconds(5);
         animator.SetBool("Eating", false);
-        transform.GetComponent<ResidentHunger>().ModifyHunger(30);
-        //foodBar.GetComponent<Image>().fillAmount += (float).3; //Hard coded how much food per food.  Gotta change it depending on food held. //also sometimes food doesnt go up?
-        transform.GetComponent<ResidentStats>().Stats[1] += 30;
+
+        transform.GetComponent<ResidentHunger>().ModifyHunger(FoodToItem(heldFood));
+        transform.GetComponent<ResidentStats>().Stats[1] += FoodToItem(heldFood);
 
         Destroy(gameObject.GetComponent<Hungry>());
     }
@@ -164,6 +180,15 @@ public class Hungry : MonoBehaviour
         {
             default:
             case ItemType.charredBerry: return 6;
+        }
+    }
+
+    private int FoodToItem(Item.ItemType itemType)
+    {
+        switch (itemType)
+        {
+            default:
+            case ItemType.charredBerry: return 30;
         }
     }
 
