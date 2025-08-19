@@ -38,49 +38,65 @@ public class ResidentChoices : MonoBehaviour
 
     private void OnEnable()
     {
-        //turn on Farm Attached: if job is a messhall
-        if(residentScheudle.job != null && residentScheudle.job.GetComponent<Messhall>() != null)
+        SetupFarmInfo();
+        SetupDialogue();
+    }
+
+    public void SetupFarmInfo()
+    {
+        if (residentScheudle.job != null && residentScheudle.job.TryGetComponent(out Messhall messhall))
         {
             farmAttached.gameObject.SetActive(true);
-            if (residentScheudle.job.GetComponent<Messhall>().farm != null) farmAttached.text = "Farm Attached: Yes";
-            else farmAttached.text = "Farm Attached: No";
-        } else farmAttached.gameObject.SetActive(false);
-
-        //regular text
-        if (resident.transform.parent.name != "Resident")
-        {
-            text.text = "I just got here, leave me alone";
+            farmAttached.text = messhall.farm != null ? "Farm Attached: Yes" : "Farm Attached: No";
         }
         else
         {
-            if (!resident.joinedTown)
-            {
-                if (buildMenuUpdater.AccessToLevel0Buildings)
-                {
-                    text.text = "You don't have anything for me right now, go away";
-                }
-                else
-                {
-                    text.text = "Hmm, what do you want?";
-                    joinTownButton.SetActive(true);
-                    giveItemButton.SetActive(false);
-                }
-            }
-            else
-            {
-                if (residentScheudle.job != null)
-                {
-                    if (residentScheudle.job.GetComponent<Messhall>() != null)
-                    {
-                        AssignButton.SetActive(true);
-                    }
-                }
-
-                text.text = "What can I do for you boss?";
-                CheckIfHasJob();
-                CheckIfHasHome();
-            }
+            farmAttached.gameObject.SetActive(false);
         }
+    }
+
+    public void SetupDialogue()
+    {
+        if (resident.transform.parent.name != "Resident")
+        {
+            text.text = "I just got here, leave me alone";
+            return;
+        }
+
+        if (!resident.joinedTown)
+        {
+            SetupPreTownDialogue();
+        }
+        else
+        {
+            SetupPostTownDialogue();
+        }
+    }
+
+    private void SetupPreTownDialogue()
+    {
+        if (buildMenuUpdater.AccessToLevel0Buildings)
+        {
+            text.text = "You don't have anything for me right now, go away";
+        }
+        else
+        {
+            text.text = "Hmm, what do you want?";
+            joinTownButton.SetActive(true);
+            giveItemButton.SetActive(false);
+        }
+    }
+
+    private void SetupPostTownDialogue()
+    {
+        if (residentScheudle.job != null && residentScheudle.job.GetComponent<Messhall>() != null)
+        {
+            AssignButton.SetActive(true);
+        }
+
+        text.text = "What can I do for you boss?";
+        CheckIfHasJob();
+        CheckIfHasHome();
     }
 
     private void CheckIfHasJob()

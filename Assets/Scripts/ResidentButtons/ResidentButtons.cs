@@ -59,6 +59,8 @@ public class ResidentButtons : MonoBehaviour
                     constant.Announcement.gameObject.SetActive(true);
                     constant.Announcement.text = "New Buildings Unlocked";
                 }
+
+                constant.residentChoices.SetupDialogue();
             }
             else
             {

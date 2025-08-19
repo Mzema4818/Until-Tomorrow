@@ -34,7 +34,7 @@ public class ChangeButtonColor : MonoBehaviour
 
         residentScheudle.Schedule[index] = scheduleIndex;
 
-        print(index + " " + residentScheudle.time.WhatTimeIsIt());
+        //Change resident scheudle when you change what they should be doing at the time they should be doing it
         if(index == residentScheudle.time.WhatTimeIsIt()) residentScheudle.UpdateActivityOnce(scheduleIndex);
     }
 

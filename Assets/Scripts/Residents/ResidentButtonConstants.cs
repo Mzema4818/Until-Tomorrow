@@ -13,6 +13,7 @@ public class ResidentButtonConstants : MonoBehaviour
     public BuildMenuUpdater buildMenuUpdater;
     public TextMeshProUGUI Announcement;
     public InventoryManager inventoryManager;
+    public ResidentChoices residentChoices;
     public GameObject player;
 
     public GameObject jobBoard;
