@@ -66,7 +66,7 @@ public class ResidentScheudle : MonoBehaviour
 
         UpdateActivity(time.WhatTimeIsIt());
 
-        if (shouldWander || (shouldWork && job == null) || (shouldSleep && home == null)) shouldGoWander = true;
+        //if (shouldWander || (shouldWork && job == null) || (shouldSleep && home == null)) shouldGoWander = true;
     }
 
     void Start()
@@ -175,7 +175,6 @@ public class ResidentScheudle : MonoBehaviour
         }
         else
         {
-            // Only start wander once
             if (wanderRoutine == null)
             {
                 wanderRoutine = StartCoroutine(WaitForWander());
@@ -186,9 +185,11 @@ public class ResidentScheudle : MonoBehaviour
     private void GoHome()
     {
         if (!AtLocation)
-        {
-            agent.SetDestination(home.transform.position);
+        { 
+            //sometimes tent is too far above terrain to get recongized???
+            agent.SetDestination(home.transform.position - new Vector3(0,2,0));
             StopCoroutine(WaitForWander());
+            wanderRoutine = null;
             GoToWork(home, shouldSleep);
         }
     }
@@ -199,17 +200,19 @@ public class ResidentScheudle : MonoBehaviour
         {
             agent.SetDestination(job.transform.position);
             StopCoroutine(WaitForWander());
+            wanderRoutine = null;
             GoToWork(job, shouldWork);
         }
     }
 
     IEnumerator WaitForWander()
     {
-        shouldGoWander = false;
+        //shouldGoWander = false;
         yield return new WaitForSeconds(Random.Range(2, 5));
-        shouldGoWander = true;
+        //shouldGoWander = true;
         try { 
             if(agent.isActiveAndEnabled) agent.SetDestination(RandomNavMeshLocation());
+            wanderRoutine = null;
         } catch { }; //might need to get rid of try catch for testing
     }
 

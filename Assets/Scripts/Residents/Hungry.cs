@@ -203,6 +203,7 @@ public class Hungry : MonoBehaviour
         }
 
         agent.enabled = true;
+        agent.ResetPath();
 
         animator.SetBool("Eating", false);
         animator.SetBool("Holding", false);
