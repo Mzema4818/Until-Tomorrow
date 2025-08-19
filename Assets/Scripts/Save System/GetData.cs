@@ -1663,7 +1663,7 @@ public class GetData : MonoBehaviour
 
     public void LoadData()
     {
-        ClearGameObjects();
+        //ClearGameObjects();
         GameData data = SaveSystem.LoadData();
 
         //Terrain Data

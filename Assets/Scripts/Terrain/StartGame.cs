@@ -258,7 +258,7 @@ public class StartGame : MonoBehaviour
         foreach (TurnOnGameObjects component in turnOnGameObjects) Destroy(component);
     }
 
-    private void StartMusic(bool start)
+    public void StartMusic(bool start)
     {
         if (start)
         {

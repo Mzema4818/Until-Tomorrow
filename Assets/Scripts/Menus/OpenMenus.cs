@@ -48,6 +48,11 @@ public class OpenMenus : MonoBehaviour
     [Header("Animator")]
     public Animator animator;
 
+    [Header("Main Menu Stuff")]
+    public StartGame startGame;
+    public GameObject popups;
+    public GameObject popups2;
+
     [Header("Sounds")]
     public AudioSource audioSource;
     public AudioClip openInventory;
@@ -262,11 +267,20 @@ public class OpenMenus : MonoBehaviour
 
     public void MainMenuOpen()
     {
+        startGame.ClearGameObjects();
         MainMenuWorld.SetActive(true);
         TurnOffMenus();
-        ContinueSign.SetActive(true);
-        ConintueWords.SetActive(true);
+        //ContinueSign.SetActive(true);
+        //ConintueWords.SetActive(true);
         changePlayerState(false);
+        transform.GetComponent<PlayerController>().enabled = false;
+        transform.position = new Vector3(0, 100, 0);
+
+        startGame.mainMenuMusic.Play();
+        startGame.StartMusic(true);
+
+        foreach (Transform child in popups.transform) child.gameObject.SetActive(false);
+        foreach (Transform child in popups2.transform) child.gameObject.SetActive(false);
     }
 
     public void TurnOffContinue()
