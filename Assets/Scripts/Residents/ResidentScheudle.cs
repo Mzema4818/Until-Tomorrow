@@ -296,6 +296,36 @@ public class ResidentScheudle : MonoBehaviour
         }
     }
 
+    public void UpdateActivityOnce(int num)
+    {
+        //0 = sleep
+        //1 = work
+        //2 = wander
+
+        switch (num)
+        {
+            case 0:
+                shouldSleep = true;
+                shouldWork = false;
+                shouldWander = false;
+                RemoveJobs();
+                break;
+
+            case 1:
+                shouldWork = true;
+                shouldSleep = false;
+                shouldWander = false;
+                break;
+
+            case 2:
+                shouldWander = true;
+                shouldWork = false;
+                shouldSleep = false;
+                RemoveJobs();
+                break;
+        }
+    }
+
     public void RemoveJobs()
     {
         Destroy(transform.GetComponent<Farmer>());

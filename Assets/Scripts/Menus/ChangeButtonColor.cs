@@ -33,6 +33,9 @@ public class ChangeButtonColor : MonoBehaviour
         ChangeNum();
 
         residentScheudle.Schedule[index] = scheduleIndex;
+
+        print(index + " " + residentScheudle.time.WhatTimeIsIt());
+        if(index == residentScheudle.time.WhatTimeIsIt()) residentScheudle.UpdateActivityOnce(scheduleIndex);
     }
 
     private Color GetColor(int i)
