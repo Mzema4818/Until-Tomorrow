@@ -111,6 +111,11 @@ public class ResidentButtons : MonoBehaviour
         }
         else if (GiveHome)
         {
+            if(constant.resident.GetComponent<ResidentScheudle>().AtLocation == true)
+            {
+                constant.text.text = "Sorry, I'm kinda busy right now";
+                return;
+            }
             constant.GiveJobButton.SetActive(false);
             constant.GiveHomeButton.SetActive(false);
             constant.resident.GetComponent<NavMeshAgent>().stoppingDistance = 5;
