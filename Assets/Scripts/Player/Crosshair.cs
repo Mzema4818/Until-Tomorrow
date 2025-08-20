@@ -109,269 +109,275 @@ public class Crosshair : MonoBehaviour
 
     public void TouchingObjects()
     {
-        if(hit.distance <= distance && CheckIfAllTrue() && !mainMenu.activeSelf)
+        if (hit.distance > distance || !CheckIfAllTrue() || mainMenu.activeSelf) return;
+
+        if (Input.GetMouseButtonDown(0)) HandleLeftClick();
+        if (Input.GetKeyDown(KeyCode.F)) HandleKeyF();
+    }
+
+    private void HandleLeftClick()
+    {
+        Transform parent = hit.collider.transform.parent;
+        Transform clickedObject = hit.collider.transform;
+
+        if (parent == null && clickedObject == null) return;
+
+        //Buildings
+        if (parent != null && playerInteractions.residentTalkingTo == null)
         {
-            //If user clicks mouse 0 
-            if (Input.GetMouseButtonDown(0))
+            TryHandleBuildingClick(parent);
+        }
+        else if (parent != null && playerInteractions.residentTalkingTo != null)
+        {
+            TryHandleFarmAssignment(parent);
+            TryHandleResidentJobOrHomeAssignment(parent);
+        }
+
+        //Collectables, Tools, Residents
+        TryHandleCollectable(clickedObject);
+        TryHandleTool(clickedObject);
+        TryHandleResident(clickedObject);
+    }
+
+    private void HandleKeyF()
+    {
+        Transform parent = hit.collider.transform.parent;
+        Transform clickedObject = hit.collider.transform;
+
+        if (parent == null && clickedObject == null) return;
+
+        PickUp pickUp = parent?.GetComponent<PickUp>() ?? clickedObject?.GetComponent<PickUp>();
+        if (pickUp != null)
+        {
+            HandlePickUp(pickUp);
+            return;
+        }
+
+        Gravestone gravestone = parent?.GetComponent<Gravestone>();
+        if (gravestone != null)
+        {
+            gravestone.ReturnInventory();
+            Destroy(parent.gameObject);
+        }
+    }
+
+    private void TryHandleBuildingClick(Transform parent)
+    {
+        if (playerInteractions.residentFollowing || playerInteractions.assign) return;
+
+        IsABuilding isABuilding = parent.GetComponent<IsABuilding>();
+        if (isABuilding == null) return;
+
+        //If there's already a building open, close its actions
+        if (builder.buildingData != null && builder.buildingData != parent.gameObject)
+        {
+            IsABuilding previousBuilding = builder.buildingData.GetComponent<IsABuilding>();
+            if (previousBuilding != null) previousBuilding.actions.SetActive(false);
+        }
+
+        //If we're clicking the same building again, toggle it off
+        if (builder.buildingData == parent.gameObject && isABuilding.actions.activeSelf)
+        {
+            isABuilding.actions.SetActive(false);
+            builder.buildingData = null;
+            audioSource.PlayOneShot(openingBuilding);
+            return;
+        }
+
+        //Set the new building and activate
+        builder.buildingData = parent.gameObject;
+        buildingHealth = parent.GetComponent<BuildingHealth>();
+        builder.buildingHealth = buildingHealth;
+
+        isABuilding.actions.SetActive(true);
+        audioSource.PlayOneShot(openingBuilding);
+    }
+
+    private void TryHandleFarmAssignment(Transform parent)
+    {
+        if (!playerInteractions.assign) return;
+        if (!parent.TryGetComponent(out Farm farm)) return;
+
+        ResidentScheudle residentScheudle = playerInteractions.resident.GetComponent<ResidentScheudle>();
+        Messhall messhall = residentScheudle.job.GetComponent<Messhall>();
+        messhall.farm = parent.gameObject;
+        farm.messhall = messhall;
+
+        playerInteractions.residentText.text = "Okay perfect I will collect food from here now";
+        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+        residentScheudle.isBeingTalkedTo = true;
+        residentScheudle.followPlayer = false;
+        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+
+        playerInteractions.resident = null;
+        playerInteractions.residentText = null;
+        playerInteractions.assign = false;
+
+        messhall.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().farmCheck.text = "Farm: yes";
+    }
+
+    private void TryHandleResidentJobOrHomeAssignment(Transform parent)
+    {
+        if (!playerInteractions.residentFollowing) return;
+
+        ResidentScheudle schedule = playerInteractions.resident.GetComponent<ResidentScheudle>();
+
+        if (schedule.followPlayer)
+        {
+            Job job = parent.GetComponent<Job>();
+            if (job != null && job.Workers < job.MaxWorkers)
             {
-                Transform parent = hit.collider.transform.parent;
-                Transform gameObject = hit.collider.transform;
+                SelectButton(playerInteractions.resident, parent.gameObject);
+                job.Workers++;
+                job.WorkersActive[job.Workers - 1] = playerInteractions.resident;
 
-                if (parent != null && playerInteractions.residentTalkingTo == null)
-                {
-                    //opening buildings
-                    if (parent.GetComponent<IsABuilding>() != null && !playerInteractions.residentFollowing && !playerInteractions.assign)
-                    {
-                        IsABuilding isABuilding = parent.GetComponent<IsABuilding>();
-
-                        //If there's already a building open, close its actions
-                        if (builder.buildingData != null && builder.buildingData != parent.gameObject)
-                        {
-                            IsABuilding previousBuilding = builder.buildingData.GetComponent<IsABuilding>();
-                            if (previousBuilding != null) previousBuilding.actions.SetActive(false);
-                        }
-
-                        //If we're clicking the same building again, toggle it off
-                        if (builder.buildingData == parent.gameObject && isABuilding.actions.activeSelf)
-                        {
-                            isABuilding.actions.SetActive(false);
-                            builder.buildingData = null;
-                            audioSource.PlayOneShot(openingBuilding);
-                            return;
-                        }
-
-                        //Set the new building and activate
-                        builder.buildingData = parent.gameObject;
-                        buildingHealth = hit.collider.transform.parent.GetComponent<BuildingHealth>();
-                        builder.buildingHealth = buildingHealth;
-
-                        //isABuilding.SetPosition();
-                        isABuilding.actions.SetActive(true);
-                        audioSource.PlayOneShot(openingBuilding);
-                    }
-                }
-
-                if (parent != null && playerInteractions.residentTalkingTo != null)
-                {
-                    //Assigning farm
-                    if (parent.GetComponent<Farm>() && playerInteractions.assign)
-                    {
-                        ResidentScheudle residentScheudle = playerInteractions.resident.GetComponent<ResidentScheudle>();
-                        Messhall messhall = residentScheudle.job.GetComponent<Messhall>();
-                        messhall.farm = parent.gameObject;
-                        parent.GetComponent<Farm>().messhall = messhall;
-
-                        playerInteractions.residentText.text = "Okay perfect I will collect food from here now";
-                        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                        residentScheudle.isBeingTalkedTo = true;
-                        residentScheudle.followPlayer = false;
-                        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-
-                        playerInteractions.resident = null;
-                        playerInteractions.residentText = null;
-                        playerInteractions.assign = false;
-                        playerInteractions.resident = null;
-
-                        messhall.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().farmCheck.text = "Farm: yes";
-                    }
-
-                    //While resident is following player
-                    if (playerInteractions.residentFollowing)
-                    {
-                        //Assigning a job or home to resident
-                        if (playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer)
-                        {
-                            Job job = parent.GetComponent<Job>();
-
-                            //Check if job was selected
-                            if (job != null && (job.Workers < job.MaxWorkers))
-                            {
-                                SelectButton(playerInteractions.resident, parent.gameObject);
-                                job.Workers++;
-                                job.WorkersActive[job.Workers - 1] = playerInteractions.resident;
-
-                                playerInteractions.residentText.text = "Thanks! I will work here from now on.";
-                                playerInteractions.resident.GetComponent<StatBar>().UpdateJob();
-                                parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidents();
-                            }
-                            else
-                            {
-                                playerInteractions.residentText.text = "I can't do anything with this, can I go?";
-                            }
-
-                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
-                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-
-                            playerInteractions.residentFollowing = false;
-                            playerInteractions.resident = null;
-                            playerInteractions.residentText = null;
-                        }
-                        else if (playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayerHome)
-                        {
-                            Tent tent = parent.GetComponent<Tent>();
-
-                            //Check if job was selected
-                            if (tent != null && (tent.Residents < tent.MaxResidents))
-                            {
-                                tent.Residents++;
-                                tent.ResidentsActive[tent.Residents - 1] = playerInteractions.resident;
-                                playerInteractions.resident.GetComponent<ResidentScheudle>().home = parent.gameObject;
-
-                                playerInteractions.residentText.text = "Thanks! I will sleep here from now on.";
-                                playerInteractions.resident.GetComponent<StatBar>().UpdateHome();
-                                parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidentsTent();
-                            }
-                            else
-                            {
-                                playerInteractions.residentText.text = "I can't do anything with this, can I go?";
-                            }
-
-                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayerHome = false;
-                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-
-                            playerInteractions.residentFollowing = false;
-                            playerInteractions.resident = null;
-                            playerInteractions.residentText = null;
-                        }
-                    }
-                }
-
-                if (gameObject != null)
-                {
-                    //user touches a collectable
-                    if (gameObject.GetComponent<IsACollectable>() != null)
-                    {
-                        hit.collider.transform.gameObject.SetActive(false);
-                        exclamation.SetActive(true);
-
-                        if (gameObject.name == "Opening Letter")
-                        {
-                            collectables[0].SetActive(true);
-                        }
-                    }
-
-                    //User touches a tool
-                    if (gameObject.GetComponent<IsATool>() != null)
-                    {
-                        hit.collider.transform.gameObject.SetActive(false);
-
-                        gameObject.GetComponent<IsATool>().AddItem();
-
-                        storyManager.toolsCollected++;
-                        //Once all tools are collected
-                        if (storyManager.toolsCollected == 4)
-                        {
-                            storyManager.CanSpawnShips = true;
-                            storyManager.SpawnShipDay = storyManager.lightingManager.numberOfDays + 1;
-                        }
-
-                        //storyManager.CheckSpawnShips = true;
-                        //pickup.Play();
-                    }
-
-                    //User talks to a resident as long as they arent dead or being attacked
-                    if (gameObject.GetComponent<ResidentStats>() != null && !gameObject.GetComponent<ResidentScheudle>().recentlyAttacked && !gameObject.GetComponent<ResidentScheudle>().dead)
-                    {
-                        //Turn off all menus of the resident, if you are were just talking to one
-                        if (playerInteractions.residentTalkingTo != null)
-                        {
-                            ResidentStats resident = playerInteractions.residentTalkingTo.GetComponent<ResidentStats>();
-                            resident.textBox.SetActive(false);
-                            resident.schedule.SetActive(false);
-                            resident.StatObject.SetActive(false);
-                            //playerInteractions.residentTalkingTo.GetComponent<StatBar>().starbar.transform.parent.gameObject.SetActive(false);
-                        }
-
-                        playerInteractions.residentTalkingTo = hit.collider.gameObject;
-                        hit.collider.GetComponent<ResidentScheudle>().isBeingTalkedTo = true;
-
-                        //stops having 2 residents following you at once, after you tell one to follow you, if one is following you, stop that first
-                        if (playerInteractions.resident != null)
-                        {
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().followPlayer = false;
-                            playerInteractions.resident.GetComponent<ResidentScheudle>().isBeingTalkedTo = false;
-                            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
-                            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
-
-                            playerInteractions.resident = null;
-                            playerInteractions.residentFollowing = false;
-                            playerInteractions.residentText = null;
-                        }
-
-                        GameObject textBox = hit.collider.GetComponent<ResidentStats>().textBox;
-                        if (!textBox.activeSelf) textBox.SetActive(true);
-                        
-                    }
-                }
-
+                playerInteractions.residentText.text = "Thanks! I will work here from now on.";
+                playerInteractions.resident.GetComponent<StatBar>().UpdateJob();
+                parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidents();
             }
-
-            //If user clicks F
-            if (Input.GetKeyDown(KeyCode.F))
+            else
             {
-                if(hit.collider.transform.parent != null || hit.collider.transform != null)
-                {
-                    Transform GameObject = hit.collider.transform;
-                    Transform parent = hit.collider.transform.parent;
-                    PickUp pickUp = null;
-
-                    if (parent.GetComponent<PickUp>() != null) pickUp = parent.GetComponent<PickUp>();
-                    else if (GameObject.GetComponent<PickUp>() != null) pickUp = GameObject.GetComponent<PickUp>();
-
-                    //Pickupables 
-                    if (pickUp != null)
-                    {
-                        if (pickUp.name.Contains("mushroom"))
-                        {
-                            inventoryManager.AddItem(new Item { itemType = Item.ItemType.mushroom });
-                            Destroy(hit.collider.transform.parent.gameObject);
-                        }
-                        else if (pickUp.name.Contains("flower"))
-                        {
-                            inventoryManager.AddItem(new Item { itemType = Item.ItemType.flower });
-                            Destroy(hit.collider.transform.parent.gameObject);
-                        }
-                        else if (pickUp.name.Contains("rock"))
-                        {
-                            inventoryManager.AddItem(new Item { itemType = Item.ItemType.rock });
-                            Destroy(hit.collider.transform.gameObject);
-                        }
-                        else if (pickUp.name.Contains("BerryBush"))
-                        {
-                            GameObject berries = pickUp.transform.Find("Berries").gameObject;
-
-                            if (berries.activeSelf)
-                            {
-                                inventoryManager.AddItem(new Item { itemType = Item.ItemType.berry });
-                                berries.SetActive(false);
-                            }
-                            else
-                            {
-                                inventoryManager.AddItem(new Item { itemType = Item.ItemType.bush });
-                                Destroy(hit.collider.transform.parent.gameObject);
-                            }
-                        }
-                        else if (pickUp.name.Contains("sapling"))
-                        {
-                            inventoryManager.AddItem(new Item { itemType = Item.ItemType.sapling });
-                            Destroy(hit.collider.transform.parent.gameObject);
-                        }
-
-                        //pickup.Play();
-                    }
-
-                    //Open gravestone
-                    if (parent.GetComponent<Gravestone>() != null)
-                    {
-                        parent.GetComponent<Gravestone>().ReturnInventory();
-                        Destroy(hit.collider.transform.parent.gameObject);
-                    }
-                }
+                playerInteractions.residentText.text = "I can't do anything with this, can I go?";
             }
+        }
+        else if (schedule.followPlayerHome)
+        {
+            Tent tent = parent.GetComponent<Tent>();
+            if (tent != null && tent.Residents < tent.MaxResidents)
+            {
+                tent.Residents++;
+                tent.ResidentsActive[tent.Residents - 1] = playerInteractions.resident;
+                schedule.home = parent.gameObject;
+
+                playerInteractions.residentText.text = "Thanks! I will sleep here from now on.";
+                playerInteractions.resident.GetComponent<StatBar>().UpdateHome();
+                parent.GetComponent<IsABuilding>().actions.GetComponent<BuildingMenuUpdater>().ChangeResidentsTent();
+            }
+            else
+            {
+                playerInteractions.residentText.text = "I can't do anything with this, can I go?";
+            }
+        }
+
+        playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+        schedule.isBeingTalkedTo = true;
+        schedule.followPlayer = false;
+        schedule.followPlayerHome = false;
+        playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+
+        playerInteractions.residentFollowing = false;
+        playerInteractions.resident = null;
+        playerInteractions.residentText = null;
+    }
+
+    private void TryHandleCollectable(Transform clickedObject)
+    {
+        if (clickedObject == null) return;
+
+        IsACollectable collectable = clickedObject.GetComponent<IsACollectable>();
+        if (collectable == null) return;
+
+        clickedObject.gameObject.SetActive(false);
+        exclamation.SetActive(true);
+
+        if (clickedObject.name == "Opening Letter")
+        {
+            collectables[0].SetActive(true);
+        }
+    }
+
+    private void TryHandleTool(Transform clickedObject)
+    {
+        if (clickedObject == null) return;
+
+        IsATool tool = clickedObject.GetComponent<IsATool>();
+        if (tool == null) return;
+
+        clickedObject.gameObject.SetActive(false);
+        tool.AddItem();
+
+        storyManager.toolsCollected++;
+        if (storyManager.toolsCollected == 4)
+        {
+            storyManager.CanSpawnShips = true;
+            storyManager.SpawnShipDay = storyManager.lightingManager.numberOfDays + 1;
+        }
+    }
+
+    private void TryHandleResident(Transform clickedObject)
+    {
+        if (clickedObject == null) return;
+
+        ResidentStats stats = clickedObject.GetComponent<ResidentStats>();
+        ResidentScheudle schedule = clickedObject.GetComponent<ResidentScheudle>();
+        if (stats == null || schedule == null) return;
+
+        if (schedule.recentlyAttacked || schedule.dead) return;
+
+        //Turn off menus of the resident we were talking to
+        if (playerInteractions.residentTalkingTo != null)
+        {
+            ResidentStats prev = playerInteractions.residentTalkingTo.GetComponent<ResidentStats>();
+            prev.textBox.SetActive(false);
+            prev.schedule.SetActive(false);
+            prev.StatObject.SetActive(false);
+        }
+
+        playerInteractions.residentTalkingTo = clickedObject.gameObject;
+        schedule.isBeingTalkedTo = true;
+
+        //Stop multiple residents following
+        if (playerInteractions.resident != null)
+        {
+            ResidentScheudle prevSchedule = playerInteractions.resident.GetComponent<ResidentScheudle>();
+            prevSchedule.followPlayer = false;
+            prevSchedule.isBeingTalkedTo = false;
+            playerInteractions.resident.GetComponent<NavMeshAgent>().stoppingDistance = 0;
+            playerInteractions.resident.GetComponent<BoxCollider>().enabled = true;
+
+            playerInteractions.resident = null;
+            playerInteractions.residentFollowing = false;
+            playerInteractions.residentText = null;
+        }
+
+        if (!stats.textBox.activeSelf) stats.textBox.SetActive(true);
+    }
+
+    private void HandlePickUp(PickUp pickUp)
+    {
+        if (pickUp.name.Contains("mushroom"))
+        {
+            inventoryManager.AddItem(new Item { itemType = Item.ItemType.mushroom });
+            Destroy(pickUp.transform.parent.gameObject);
+        }
+        else if (pickUp.name.Contains("flower"))
+        {
+            inventoryManager.AddItem(new Item { itemType = Item.ItemType.flower });
+            Destroy(pickUp.transform.parent.gameObject);
+        }
+        else if (pickUp.name.Contains("rock"))
+        {
+            inventoryManager.AddItem(new Item { itemType = Item.ItemType.rock });
+            Destroy(pickUp.gameObject);
+        }
+        else if (pickUp.name.Contains("BerryBush"))
+        {
+            GameObject berries = pickUp.transform.Find("Berries").gameObject;
+            if (berries.activeSelf)
+            {
+                inventoryManager.AddItem(new Item { itemType = Item.ItemType.berry });
+                berries.SetActive(false);
+            }
+            else
+            {
+                inventoryManager.AddItem(new Item { itemType = Item.ItemType.bush });
+                Destroy(pickUp.transform.parent.gameObject);
+            }
+        }
+        else if (pickUp.name.Contains("sapling"))
+        {
+            inventoryManager.AddItem(new Item { itemType = Item.ItemType.sapling });
+            Destroy(pickUp.transform.parent.gameObject);
         }
     }
 
@@ -498,7 +504,6 @@ public class Crosshair : MonoBehaviour
             audioSource.PlayOneShot(buildingInventory);
         }
     }
-
 
     private bool CheckIfAllTrue()
     {
