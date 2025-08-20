@@ -12,6 +12,7 @@ public class GraphicRaycasterRaycasterExample : MonoBehaviour
     GraphicRaycaster m_Raycaster;
     PointerEventData m_PointerEventData;
     EventSystem m_EventSystem;
+    public Crosshair crosshair;
 
     void Start()
     {
@@ -49,6 +50,13 @@ public class GraphicRaycasterRaycasterExample : MonoBehaviour
                     result.gameObject.GetComponent<ChangeButtonColor>().ChangeColor();
                 }else if (result.gameObject.GetComponent<BuildingButtons>() != null)
                 {
+                    if (crosshair.justOpened)
+                    {
+                        //Skip input for one frame so menu can't open and be clicked on the same frame
+                        crosshair.justOpened = false;
+                        return;
+                    }
+
                     result.gameObject.GetComponent<BuildingButtons>().ButtonClick();
                 }
             }

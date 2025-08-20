@@ -80,6 +80,8 @@ public class Crosshair : MonoBehaviour
     public HealthBar healthBar;
     public TextMeshProUGUI repairCosts;
 
+    public bool justOpened;
+
     //Start is called before the first frame update
     void Start()
     {
@@ -190,6 +192,7 @@ public class Crosshair : MonoBehaviour
         builder.buildingHealth = buildingHealth;
 
         isABuilding.actions.SetActive(true);
+        justOpened = true;
         audioSource.PlayOneShot(openingBuilding);
     }
 
