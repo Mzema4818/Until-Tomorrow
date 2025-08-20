@@ -13,7 +13,7 @@ public class IsABuilding : MonoBehaviour
     {
         int distance = transform.GetComponent<ProximitySettings>().maxDistance;
 
-        transform.GetComponent<PickUpPopUpAdvanced>().distance = distance + 5;
+        transform.GetComponent<PickUpPopUpAdvanced>().distance = distance + 10;
         actions.GetComponent<Orbiting>().distanceFromBuilding = distance;
     }
 
