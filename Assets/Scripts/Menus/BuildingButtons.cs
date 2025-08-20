@@ -18,6 +18,7 @@ public class BuildingButtons : MonoBehaviour
     public bool remove;
     public bool yes;
     public bool no;
+    public bool close;
 
     public void ButtonClick()
     {
@@ -48,10 +49,17 @@ public class BuildingButtons : MonoBehaviour
         {
             BuildingHealth buildingHealth = builder.buildingData.GetComponent<BuildingHealth>();
             buildingHealth.ModifyHealth(-buildingHealth.maxHealth);
+            builder.buildingData = null;
         }
         else if (no)
         {
             checkpoint.SetActive(false);
+        }
+        else if (close)
+        {
+            IsABuilding isABuilding = transform.parent.parent.parent.parent.GetComponent<IsABuilding>();
+            if (isABuilding != null) isABuilding.actions.SetActive(false);
+            builder.buildingData = null;
         }
     }
 }

@@ -131,6 +131,7 @@ public class Builder : MonoBehaviour
             if (buildingData.GetComponent<IsABuilding>() != null) buildingData.GetComponent<IsABuilding>().actions.SetActive(false);
             AddBuildingScripts(buildingData, true, CheckParentName(buildingData.transform.name));
             proximityShader.RemoveBuilding(buildingData);
+            buildingData = null;
         }
     }
 

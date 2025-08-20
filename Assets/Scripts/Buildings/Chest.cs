@@ -50,6 +50,7 @@ public class Chest : MonoBehaviour
             if (inventorySlots[i].transform.childCount == 0) continue;
 
             InventoryItem item = inventorySlots[i].transform.GetChild(0).GetComponent<InventoryItem>();
+            print(item.item.itemType);
             item.DropItem();
         }
     }
