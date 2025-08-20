@@ -323,6 +323,14 @@ public class Crosshair : MonoBehaviour
             prev.StatObject.SetActive(false);
         }
 
+        //Turn off any building that might be on
+        if (builder.buildingData != null)
+        {
+            IsABuilding previousBuilding = builder.buildingData.GetComponent<IsABuilding>();
+            if (previousBuilding != null) previousBuilding.actions.SetActive(false);
+            builder.buildingData = null;
+        }
+
         playerInteractions.residentTalkingTo = clickedObject.gameObject;
         schedule.isBeingTalkedTo = true;
 
